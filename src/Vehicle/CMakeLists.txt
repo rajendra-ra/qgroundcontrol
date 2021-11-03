@@ -20,6 +20,8 @@ endif()
 add_library(Vehicle
 	CompInfo.cc
 	CompInfo.h
+	CompInfoActuators.cc
+	CompInfoActuators.h
 	CompInfoEvents.cc
 	CompInfoEvents.h
 	CompInfoParam.cc
