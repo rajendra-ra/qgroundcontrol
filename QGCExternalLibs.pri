@@ -48,7 +48,6 @@ isEmpty(MAVLINKPATH) {
         MAVLINKPATH     = $$SOURCE_DIR/$$MAVLINKPATH_REL
     }
 }
-
 isEmpty(MAVLINK_CONF) {
     exists(user_config.pri):infile(user_config.pri, MAVLINK_CONF) {
         MAVLINK_CONF = $$fromfile(user_config.pri, MAVLINK_CONF)

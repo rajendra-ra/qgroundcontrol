@@ -26,12 +26,12 @@ message(STATUS "CMake version = ${CMAKE_VERSION}")
 message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
 # Version 2.8.5 or above of cmake is currently required for all platforms.
-cmake_minimum_required(VERSION 2.8.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
 # libraries are all shared by default.
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
-cmake_policy(SET CMP0026 OLD) # Disallow use of the LOCATION property for build targets
+cmake_policy(SET CMP0026 NEW) # Disallow use of the LOCATION property for build targets
 
 if(NOT MSVC)
   add_compile_options(
