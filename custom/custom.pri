@@ -3,7 +3,7 @@ message("Adding Custom Plugin")
 #-- Version control
 #   Major and minor versions are defined here (manually)
 
-CUSTOM_QGC_VER_MAJOR = 0
+CUSTOM_QGC_VER_MAJOR = 2
 CUSTOM_QGC_VER_MINOR = 0
 CUSTOM_QGC_VER_FIRST_BUILD = 0
 
@@ -23,30 +23,30 @@ DEFINES += GIT_VERSION=\"\\\"$$CUSTOM_QGC_VERSION\\\"\"
 message(Custom QGC Version: $${CUSTOM_QGC_VERSION})
 
 # Build a single flight stack by disabling APM support
-MAVLINK_CONF = common
-CONFIG  += QGC_DISABLE_APM_MAVLINK
-CONFIG  += QGC_DISABLE_APM_PLUGIN QGC_DISABLE_APM_PLUGIN_FACTORY
+MAVLINK_CONF = ardupilotmega
+#CONFIG  += QGC_DISABLE_APM_MAVLINK
+#CONFIG  += QGC_DISABLE_APM_PLUGIN QGC_DISABLE_APM_PLUGIN_FACTORY
 
 # We implement our own PX4 plugin factory
-CONFIG  += QGC_DISABLE_PX4_PLUGIN_FACTORY
+#CONFIG  += QGC_DISABLE_PX4_PLUGIN_FACTORY
 
 # Branding
 
 DEFINES += CUSTOMHEADER=\"\\\"CustomPlugin.h\\\"\"
 DEFINES += CUSTOMCLASS=CustomPlugin
 
-TARGET   = CustomQGroundControl
-DEFINES += QGC_APPLICATION_NAME='"\\\"Custom QGroundControl\\\""'
+TARGET   = Aquila-v2
+DEFINES += QGC_APPLICATION_NAME='"\\\"Aquila\\\""'
 
 DEFINES += QGC_ORG_NAME=\"\\\"qgroundcontrol.org\\\"\"
 DEFINES += QGC_ORG_DOMAIN=\"\\\"org.qgroundcontrol\\\"\"
 
-QGC_APP_NAME        = "Custom QGroundControl"
-QGC_BINARY_NAME     = "CustomQGroundControl"
-QGC_ORG_NAME        = "Custom"
-QGC_ORG_DOMAIN      = "org.custom"
-QGC_ANDROID_PACKAGE = "org.custom.qgroundcontrol"
-QGC_APP_DESCRIPTION = "Custom QGroundControl"
+QGC_APP_NAME        = "Aquila"
+QGC_BINARY_NAME     = "Aquila"
+QGC_ORG_NAME        = "rangeaero"
+QGC_ORG_DOMAIN      = "aero.range"
+QGC_ANDROID_PACKAGE = "aero.range"
+QGC_APP_DESCRIPTION = "Aquila"
 QGC_APP_COPYRIGHT   = "Copyright (C) 2020 QGroundControl Development Team. All rights reserved."
 
 # Our own, custom resources
