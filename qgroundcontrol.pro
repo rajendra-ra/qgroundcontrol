@@ -89,7 +89,7 @@ exists(user_config.pri):infile(user_config.pri, CONFIG) {
 # This allows you to ignore the custom build even if the custom build
 # is present. It's useful to run "regular" builds to make sure you didn't
 # break anything.
-
+# CONFIG += QGC_DISABLE_CUSTOM_BUILD
 contains (CONFIG, QGC_DISABLE_CUSTOM_BUILD) {
     message("Disable custom build override")
 } else {
