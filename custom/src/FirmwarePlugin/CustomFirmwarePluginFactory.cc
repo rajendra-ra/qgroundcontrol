@@ -6,7 +6,7 @@
  * COPYING.md in the root of the source code directory.
  *
  * @file
- *   @brief Custom Firmware Plugin Factory (PX4)
+ *   @brief Custom Firmware Plugin Factory (ArduPilot)
  *   @author Gus Grubba <gus@auterion.com>
  *
  */
@@ -25,7 +25,7 @@ CustomFirmwarePluginFactory::CustomFirmwarePluginFactory()
 QList<QGCMAVLink::FirmwareClass_t> CustomFirmwarePluginFactory::supportedFirmwareClasses() const
 {
     QList<QGCMAVLink::FirmwareClass_t> firmwareClasses;
-    firmwareClasses.append(QGCMAVLink::FirmwareClassPX4);
+    firmwareClasses.append(QGCMAVLink::FirmwareClassArduPilot);
     return firmwareClasses;
 }
 
@@ -38,7 +38,7 @@ QList<QGCMAVLink::VehicleClass_t> CustomFirmwarePluginFactory::supportedVehicleC
 
 FirmwarePlugin* CustomFirmwarePluginFactory::firmwarePluginForAutopilot(MAV_AUTOPILOT autopilotType, MAV_TYPE /*vehicleType*/)
 {
-    if (autopilotType == MAV_AUTOPILOT_PX4) {
+    if (autopilotType == MAV_AUTOPILOT_ARDUPILOTMEGA) {
         if (!_pluginInstance) {
             _pluginInstance = new CustomFirmwarePlugin;
         }
