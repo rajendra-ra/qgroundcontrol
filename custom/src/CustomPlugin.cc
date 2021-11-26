@@ -147,7 +147,6 @@ bool CustomPlugin::overrideSettingsGroupVisibility(QString name)
     // can't change it.
     if (name == BrandImageSettings::name) {
         return false;
-
     }
     return true;
 }
@@ -161,7 +160,7 @@ bool CustomPlugin::adjustSettingMetaData(const QString& settingsGroup, FactMetaD
         // This tells QGC than when you are creating Plans while not connected to a vehicle
         // the specific firmware/vehicle the plan is for.
         if (metaData.name() == AppSettings::offlineEditingFirmwareClassName) {
-            metaData.setRawDefaultValue(QGCMAVLink::FirmwareClassArduPilot);
+            metaData.setRawDefaultValue(QGCMAVLink::FirmwareClassPX4);
             return false;
         } else if (metaData.name() == AppSettings::offlineEditingVehicleClassName) {
             metaData.setRawDefaultValue(QGCMAVLink::VehicleClassMultiRotor);
