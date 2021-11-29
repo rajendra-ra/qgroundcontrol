@@ -36,9 +36,9 @@ Rectangle {
         id: geoController
     }
 
-    LogDownloadController {
-        id: logController
-    }
+//    LogDownloadController {
+//        id: logController
+//    }
 
     QGCFlickable {
         id:                 buttonScroll
@@ -81,7 +81,7 @@ Rectangle {
                 id:     buttonRepeater
                 model:  QGroundControl.corePlugin ? QGroundControl.corePlugin.analyzePages : []
 
-                Component.onCompleted:  itemAt(0).checked = true
+                Component.onCompleted:  itemAt(2).checked = true
 
                 SubMenuButton {
                     id:                 subMenu
@@ -122,7 +122,7 @@ Rectangle {
         anchors.right:          parent.right
         anchors.top:            parent.top
         anchors.bottom:         parent.bottom
-        source:                 "LogDownloadPage.qml"
+        source:                 "MAVLinkInspectorPage.qml"
 
         property string title
 
