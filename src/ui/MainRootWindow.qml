@@ -159,7 +159,9 @@ ApplicationWindow {
     function showSetupTool() {
         showTool(qsTr("Vehicle Setup"), "SetupView.qml", "/qmlimages/Gears.svg")
     }
-
+    function showPostFlightTool() {
+        showTool(qsTr("Post Flight"), "PostFlightView.qml", "/qmlimages/Analyze.svg")
+    }
     function showSettingsTool() {
         showTool(qsTr("Application Settings"), "AppSettings.qml", "/res/QGCLogoWhite")
     }
@@ -393,7 +395,21 @@ ApplicationWindow {
                             }
                         }
                     }
-
+                    SubMenuButton {
+                        id:                 postFlightButton
+                        height:             _toolButtonHeight
+                        Layout.fillWidth:   true
+                        text:               qsTr("Post Flight")
+                        imageResource:      "/qmlimages/Analyze.svg"
+                        imageColor:         qgcPal.text
+                        visible:            QGroundControl.corePlugin.showAdvancedUI
+                        onClicked: {
+                            if (!mainWindow.preventViewSwitch()) {
+                                toolSelectDialog.hideDialog()
+                                mainWindow.showPostFlightTool()
+                            }
+                        }
+                    }
                     SubMenuButton {
                         id:                 settingsButton
                         height:             _toolButtonHeight

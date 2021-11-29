@@ -48,6 +48,7 @@ public:
 
     Q_PROPERTY(QVariantList         settingsPages                   READ settingsPages                                  NOTIFY settingsPagesChanged)
     Q_PROPERTY(QVariantList         analyzePages                    READ analyzePages                                   NOTIFY analyzePagesChanged)
+    Q_PROPERTY(QVariantList         postFlightPages                 READ postFlightPages                                NOTIFY postFlightPagesChanged)
     Q_PROPERTY(int                  defaultSettings                 READ defaultSettings                                CONSTANT)
     Q_PROPERTY(QGCOptions*          options                         READ options                                        CONSTANT)
     Q_PROPERTY(bool                 showTouchAreas                  READ showTouchAreas         WRITE setShowTouchAreas NOTIFY showTouchAreasChanged)
@@ -69,6 +70,10 @@ public:
     /// The list of pages/buttons under the Analyze Menu
     /// @return A list of QmlPageInfo
     virtual QVariantList& analyzePages();
+
+    /// The list of pages/buttons under the Post Flight Menu
+    /// @return A list of QmlPageInfo
+    virtual QVariantList& postFlightPages();
 
     /// The default settings panel to show
     /// @return The settings index
@@ -200,6 +205,7 @@ public:
 signals:
     void settingsPagesChanged       ();
     void analyzePagesChanged        ();
+    void postFlightPagesChanged     ();
     void showTouchAreasChanged      (bool showTouchAreas);
     void showAdvancedUIChanged      (bool showAdvancedUI);
     void toolBarIndicatorsChanged   ();
