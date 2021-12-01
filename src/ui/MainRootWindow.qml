@@ -390,14 +390,15 @@ ApplicationWindow {
                         width:             _toolButtonWidth
                         Layout.fillHeight:   true
                         Layout.fillWidth:   true
-                        text:               qsTr("In Flight")
+                        text:               qsTr("Flight")
                         imageResource:      "/qmlimages/PaperPlane.svg"
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI
                         onClicked: {
                             if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
-                                mainWindow.showAnalyzeTool()
+//                                mainWindow.showAnalyzeTool()
+                                mainWindow.showPlanView()
                             }
                         }
                     }
