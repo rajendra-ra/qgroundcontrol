@@ -99,6 +99,7 @@ public:
     QGCOptions*         defaultOptions          = nullptr;
     QVariantList        settingsList;
     QVariantList        analyzeList;
+    QVariantList        postFlightList;
 
     QmlObjectListModel _emptyCustomMapItems;
 };
@@ -139,10 +140,10 @@ QVariantList &QGCCorePlugin::settingsPages()
                                               QUrl::fromUserInput("qrc:/qml/LinkSettings.qml"),
                                               QUrl::fromUserInput("qrc:/res/waves.svg"));
         _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pCommLinks)));
-        _p->pOfflineMaps = new QmlComponentInfo(tr("Offline Maps"),
-                                                QUrl::fromUserInput("qrc:/qml/OfflineMap.qml"),
-                                                QUrl::fromUserInput("qrc:/res/waves.svg"));
-        _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pOfflineMaps)));
+//        _p->pOfflineMaps = new QmlComponentInfo(tr("Offline Maps"),
+//                                                QUrl::fromUserInput("qrc:/qml/OfflineMap.qml"),
+//                                                QUrl::fromUserInput("qrc:/res/waves.svg"));
+//        _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pOfflineMaps)));
 #if defined(QGC_GST_TAISYNC_ENABLED)
         _p->pTaisync = new QmlComponentInfo(tr("Taisync"),
                                             QUrl::fromUserInput("qrc:/qml/TaisyncSettings.qml"),
@@ -156,21 +157,21 @@ QVariantList &QGCCorePlugin::settingsPages()
         _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pMicrohard)));
 #endif
 #if defined(QGC_AIRMAP_ENABLED)
-        _p->pAirmap = new QmlComponentInfo(tr("AirMap"),
-                                           QUrl::fromUserInput("qrc:/qml/AirmapSettings.qml"),
-                                           QUrl::fromUserInput(""));
-        _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pAirmap)));
+//        _p->pAirmap = new QmlComponentInfo(tr("AirMap"),
+//                                           QUrl::fromUserInput("qrc:/qml/AirmapSettings.qml"),
+//                                           QUrl::fromUserInput(""));
+//        _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pAirmap)));
 #endif
         _p->pMAVLink = new QmlComponentInfo(tr("MAVLink"),
                                             QUrl::fromUserInput("qrc:/qml/MavlinkSettings.qml"),
                                             QUrl::fromUserInput("qrc:/res/waves.svg"));
         _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pMAVLink)));
-        _p->pConsole = new QmlComponentInfo(tr("Console"),
-                                            QUrl::fromUserInput("qrc:/qml/QGroundControl/Controls/AppMessages.qml"));
-        _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pConsole)));
-        _p->pHelp = new QmlComponentInfo(tr("Help"),
-                                         QUrl::fromUserInput("qrc:/qml/HelpSettings.qml"));
-        _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pHelp)));
+//        _p->pConsole = new QmlComponentInfo(tr("Console"),
+//                                            QUrl::fromUserInput("qrc:/qml/QGroundControl/Controls/AppMessages.qml"));
+//        _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pConsole)));
+//        _p->pHelp = new QmlComponentInfo(tr("Help"),
+//                                         QUrl::fromUserInput("qrc:/qml/HelpSettings.qml"));
+//        _p->settingsList.append(QVariant::fromValue(reinterpret_cast<QmlComponentInfo*>(_p->pHelp)));
 #if defined(QT_DEBUG)
         //-- These are always present on Debug builds
         _p->pMockLink = new QmlComponentInfo(tr("Mock Link"),
@@ -190,7 +191,7 @@ QVariantList &QGCCorePlugin::settingsPages()
 QVariantList& QGCCorePlugin::analyzePages()
 {
     if (!_p->analyzeList.count()) {
-        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("Log Download"),     QUrl::fromUserInput("qrc:/qml/LogDownloadPage.qml"),        QUrl::fromUserInput("qrc:/qmlimages/LogDownloadIcon"))));
+//        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("Log Download"),     QUrl::fromUserInput("qrc:/qml/LogDownloadPage.qml"),        QUrl::fromUserInput("qrc:/qmlimages/LogDownloadIcon"))));
 #if !defined(__mobile__)
         _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("GeoTag Images"),    QUrl::fromUserInput("qrc:/qml/GeoTagPage.qml"),             QUrl::fromUserInput("qrc:/qmlimages/GeoTagIcon"))));
 #endif
@@ -202,7 +203,21 @@ QVariantList& QGCCorePlugin::analyzePages()
     }
     return _p->analyzeList;
 }
-
+QVariantList& QGCCorePlugin::postFlightPages()
+{
+    if (!_p->postFlightList.count()) {
+        _p->postFlightList.append(QVariant::fromValue(new QmlComponentInfo(tr("Log Download"),     QUrl::fromUserInput("qrc:/qml/LogDownloadPage.qml"),        QUrl::fromUserInput("qrc:/qmlimages/LogDownloadIcon"))));
+//#if !defined(__mobile__)
+//        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("GeoTag Images"),    QUrl::fromUserInput("qrc:/qml/GeoTagPage.qml"),             QUrl::fromUserInput("qrc:/qmlimages/GeoTagIcon"))));
+//#endif
+//        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("MAVLink Console"),  QUrl::fromUserInput("qrc:/qml/MavlinkConsolePage.qml"),     QUrl::fromUserInput("qrc:/qmlimages/MavlinkConsoleIcon"))));
+//#if !defined(QGC_DISABLE_MAVLINK_INSPECTOR)
+//        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("MAVLink Inspector"),QUrl::fromUserInput("qrc:/qml/MAVLinkInspectorPage.qml"),   QUrl::fromUserInput("qrc:/qmlimages/MAVLinkInspector"))));
+//#endif
+//        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("Vibration"),        QUrl::fromUserInput("qrc:/qml/VibrationPage.qml"),          QUrl::fromUserInput("qrc:/qmlimages/VibrationPageIcon"))));
+    }
+    return _p->postFlightList;
+}
 int QGCCorePlugin::defaultSettings()
 {
     return 0;

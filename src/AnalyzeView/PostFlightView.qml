@@ -32,13 +32,13 @@ Rectangle {
     readonly property real  _verticalMargin:        _defaultTextHeight / 2
     readonly property real  _buttonWidth:           _defaultTextWidth * 18
 
-    GeoTagController {
-        id: geoController
-    }
-
-//    LogDownloadController {
-//        id: logController
+//    GeoTagController {
+//        id: geoController
 //    }
+
+    LogDownloadController {
+        id: logController
+    }
 
     QGCFlickable {
         id:                 buttonScroll
@@ -64,7 +64,7 @@ Rectangle {
             // I don't know why this does not work
             Connections {
                 target:         QGroundControl.settingsManager.appSettings.appFontPointSize
-                onValueChanged: buttonColumn.reflowWidths()
+                function onValueChanged (){ buttonColumn.reflowWidths()}
             }
 
             function reflowWidths() {
@@ -79,9 +79,9 @@ Rectangle {
 
             Repeater {
                 id:     buttonRepeater
-                model:  QGroundControl.corePlugin ? QGroundControl.corePlugin.analyzePages : []
+                model:  QGroundControl.corePlugin ? QGroundControl.corePlugin.postFlightPages : []
 
-                Component.onCompleted:  itemAt(2).checked = true
+                Component.onCompleted:  itemAt(0).checked = true
 
                 SubMenuButton {
                     id:                 subMenu
@@ -122,13 +122,13 @@ Rectangle {
         anchors.right:          parent.right
         anchors.top:            parent.top
         anchors.bottom:         parent.bottom
-        source:                 "MAVLinkInspectorPage.qml"
+        source:                 "LogDownloadPage.qml"
 
         property string title
 
         Connections {
             target: panelLoader.item
-            onPopout: {
+            function onPopout() {
                 var windowedPage = windowedAnalyzePage.createObject(mainWindow)
                 windowedPage.title = panelLoader.title
                 windowedPage.source = panelLoader.source

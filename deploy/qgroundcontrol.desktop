@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=QGroundControl
+Name=Aquila
 GenericName=Ground Control Station
 Comment=UAS ground control station
-Icon=qgroundcontrol
+Icon=rangeaero
 Exec=qgroundcontrol-start.sh
 Terminal=false
 Categories=Utility;

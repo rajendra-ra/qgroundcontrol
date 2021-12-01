@@ -27,7 +27,7 @@ message(Qt version $$[QT_VERSION])
 
 include(QGCCommon.pri)
 
-TARGET   = QGroundControl
+TARGET   = Aquila
 TEMPLATE = app
 QGCROOT  = $$PWD
 
@@ -49,7 +49,7 @@ LinuxBuild {
 }
 
 WindowsBuild {
-    RC_ICONS = resources/icons/qgroundcontrol.ico
+    RC_ICONS = resources/icons/rangeaero.ico
     CONFIG += resources_big
 }
 
@@ -57,9 +57,9 @@ WindowsBuild {
 # Branding
 #
 
-QGC_APP_NAME        = "QGroundControl"
-QGC_ORG_NAME        = "QGroundControl.org"
-QGC_ORG_DOMAIN      = "org.qgroundcontrol"
+QGC_APP_NAME        = "Aquila"
+QGC_ORG_NAME        = "RangeAero"
+QGC_ORG_DOMAIN      = "aero.range"
 QGC_APP_DESCRIPTION = "Open source ground control app provided by QGroundControl dev team"
 QGC_APP_COPYRIGHT   = "Copyright (C) 2019 QGroundControl Development Team. All rights reserved."
 
@@ -354,9 +354,9 @@ CustomBuild {
         RESOURCES += $$PWD/resources/InstrumentValueIcons/InstrumentValueIcons.qrc
     }
 } else {
-    DEFINES += QGC_APPLICATION_NAME=\"\\\"QGroundControl\\\"\"
-    DEFINES += QGC_ORG_NAME=\"\\\"QGroundControl.org\\\"\"
-    DEFINES += QGC_ORG_DOMAIN=\"\\\"org.qgroundcontrol\\\"\"
+    DEFINES += QGC_APPLICATION_NAME=\"\\\"Aquila\\\"\"
+    DEFINES += QGC_ORG_NAME=\"\\\"RangeAero\\\"\"
+    DEFINES += QGC_ORG_DOMAIN=\"\\\"aero.range\\\"\"
     RESOURCES += \
         $$PWD/qgroundcontrol.qrc \
         $$PWD/qgcresources.qrc \
