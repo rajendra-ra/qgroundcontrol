@@ -39,6 +39,7 @@ ApplicationWindow {
 
         // Start the sequence of first run prompt(s)
         firstRunPromptManager.nextPrompt()
+        mainWindow.showToolSelectDialog()
     }
 
     QtObject {
@@ -354,22 +355,26 @@ ApplicationWindow {
             buttons:    StandardButton.Close
 
             property real _toolButtonHeight:    ScreenTools.defaultFontPixelHeight * 3
+            property real _toolButtonWidth:    ScreenTools.defaultFontPixelWidth * 3
             property real _margins:             ScreenTools.defaultFontPixelWidth
 
             ColumnLayout {
-                width:  innerLayout.width + (_margins * 2)
-                height: innerLayout.height + (_margins * 2)
+                width:  innerLayout.width*1.4 + (_margins * 2)
+                height: innerLayout.height*1.2 + (_margins * 2)
 
-                ColumnLayout {
+                RowLayout {
                     id:             innerLayout
                     Layout.margins: _margins
                     spacing:        ScreenTools.defaultFontPixelWidth
+//                    anchors.horizontalCenter: parent.horizontalCenter
+//                    Layout.alignment: Qt.AlignCenter
 
-                    SubMenuButton {
+                    SubMenuButtonV {
                         id:                 setupButton
-                        height:             _toolButtonHeight
+                        width:             _toolButtonWidth
+                        Layout.fillHeight:   true
                         Layout.fillWidth:   true
-                        text:               qsTr("Vehicle Setup")
+                        text:               qsTr("Pre Flight")
                         imageColor:         qgcPal.text
                         imageResource:      "/qmlimages/Gears.svg"
                         onClicked: {
@@ -380,12 +385,13 @@ ApplicationWindow {
                         }
                     }
 
-                    SubMenuButton {
+                    SubMenuButtonV {
                         id:                 analyzeButton
-                        height:             _toolButtonHeight
+                        width:             _toolButtonWidth
+                        Layout.fillHeight:   true
                         Layout.fillWidth:   true
-                        text:               qsTr("Analyze Tools")
-                        imageResource:      "/qmlimages/Analyze.svg"
+                        text:               qsTr("In Flight")
+                        imageResource:      "/qmlimages/PaperPlane.svg"
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI
                         onClicked: {
@@ -395,9 +401,10 @@ ApplicationWindow {
                             }
                         }
                     }
-                    SubMenuButton {
+                    SubMenuButtonV {
                         id:                 postFlightButton
-                        height:             _toolButtonHeight
+                        width:             _toolButtonWidth
+                        Layout.fillHeight:   true
                         Layout.fillWidth:   true
                         text:               qsTr("Post Flight")
                         imageResource:      "/qmlimages/Analyze.svg"
@@ -410,9 +417,10 @@ ApplicationWindow {
                             }
                         }
                     }
-                    SubMenuButton {
+                    SubMenuButtonV {
                         id:                 settingsButton
-                        height:             _toolButtonHeight
+                        width:             _toolButtonWidth
+                        Layout.fillHeight:   true
                         Layout.fillWidth:   true
                         text:               qsTr("Application Settings")
                         imageResource:      "/res/QGCLogoFull"
@@ -427,7 +435,8 @@ ApplicationWindow {
                     }
 
                     ColumnLayout {
-                        width:      innerLayout.width
+                        visible: false
+//                        width:      innerLayout.width
                         spacing:    0
 
                         QGCLabel {

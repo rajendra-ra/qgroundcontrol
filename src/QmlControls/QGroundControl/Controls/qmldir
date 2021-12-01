@@ -101,6 +101,7 @@ SignalStrength                          1.0 SignalStrength.qml
 SimpleItemMapVisuals                    1.0 SimpleItemMapVisuals.qml
 SliderSwitch                            1.0 SliderSwitch.qml
 SubMenuButton                           1.0 SubMenuButton.qml
+SubMenuButtonV                          1.0 SubMenuButtonV.qml
 SurveyMapVisuals                        1.0 SurveyMapVisuals.qml
 TerrainStatus                           1.0 TerrainStatus.qml
 TransectStyleComplexItemEditor          1.0 TransectStyleComplexItemEditor.qml
