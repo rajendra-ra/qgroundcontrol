@@ -85,7 +85,7 @@ public:
 
     /// Should QGC hide its settings menu and colapse it into one single menu (Settings and Vehicle Setup)?
     /// @return true if QGC should consolidate both menus into one.
-    virtual bool        combineSettingsAndSetup     () { return false; }
+    virtual bool        combineSettingsAndSetup     () { return true; }
 
     /// Main ToolBar Multiplier.
     /// @return Factor to use when computing toolbar height
