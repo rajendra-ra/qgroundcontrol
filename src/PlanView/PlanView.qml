@@ -108,9 +108,9 @@ Item {
         if(visible) {
             editorMap.zoomLevel = QGroundControl.flightMapZoom
             editorMap.center    = QGroundControl.flightMapPosition
-            if (!_planMasterController.containsItems) {
+//            if (!_planMasterController.containsItems) {
                 toolStrip.simulateClick(toolStrip.presetButtonIndex)
-            }
+//            }
         }
     }
 
