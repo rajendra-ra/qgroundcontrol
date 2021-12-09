@@ -26,14 +26,14 @@ public:
     PresetMissionItem(PlanMasterController* masterController, bool flyView, const MissionItem& missionItem);
     PresetMissionItem(MAV_CMD presetCmd, PlanMasterController* masterController, bool flyView);
 
-//    Q_PROPERTY(QGeoCoordinate   coordinate            READ coordinate               WRITE setCoordinate)
-//    Q_PROPERTY(bool             launchPresetAtSameLocation READ launchPresetAtSameLocation    WRITE setLaunchPresetAtSameLocation    NOTIFY launchPresetAtSameLocationChanged)
+//    Q_PROPERTY(QGeoCoordinate   previousCoordinate            READ previousCoordinate               WRITE setPreviousCoordinate NOTIFY previousCoordinateChanged)
+//    Q_PROPERTY(bool             previousPresetAtSameLocation READ previousPresetAtSameLocation    WRITE setPreviousPresetAtSameLocation    NOTIFY previousPresetAtSameLocationChanged)
 
-//    QGeoCoordinate  launchCoordinate            (void) const { return _settingsItem->coordinate(); }
-//    bool            launchPresetAtSameLocation (void) const { return _launchPresetAtSameLocation; }
+//    QGeoCoordinate  previousCoordinate            (void) const { return _settingsItem->coordinate(); }
+//    bool            previousPresetAtSameLocation (void) const { return _previousPresetAtSameLocation; }
 
-//    void setLaunchCoordinate            (const QGeoCoordinate& launchCoordinate);
-//    void setLaunchPresetAtSameLocation (bool launchPresetAtSameLocation);
+//    void setPreviousCoordinate            (const QGeoCoordinate& previousCoordinate);
+//    void setPreviousPresetAtSameLocation (bool previousPresetAtSameLocation);
 
 //    static bool isPresetCommand(MAV_CMD command);
 
