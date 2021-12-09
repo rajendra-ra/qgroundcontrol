@@ -20,19 +20,6 @@
 #include "SettingsManager.h"
 #include "PlanMasterController.h"
 
-class LabelPoint : public QObject
-{
-    Q_OBJECT
-public:
-    LabelPoint(const char* name,const QGeoCoordinate &coordinate) {
-        _name = name;
-        _coordinate = coordinate;
-    }
-    virtual ~LabelPoint() {}
-private:
-    QGeoCoordinate _coordinate;
-    QString _name;
-};
 PresetMissionItem::PresetMissionItem(PlanMasterController* masterController, bool flyView, bool forLoad)
     : SimpleMissionItem (masterController, flyView, forLoad)
 {
