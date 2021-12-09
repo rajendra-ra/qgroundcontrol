@@ -14,7 +14,7 @@ QGC_CUSTOM_APP_NAME="${QGC_CUSTOM_APP_NAME:-/Aquila}"
 QGC_CUSTOM_GENERIC_NAME="${QGC_CUSTOM_GENERIC_NAME:-Ground Control Station}"
 QGC_CUSTOM_BINARY_NAME="${QGC_CUSTOM_BINARY_NAME:-Aquila}"
 QGC_CUSTOM_LINUX_START_SH="${QGC_CUSTOM_LINUX_START_SH:-${QGC_SRC}/build/staging/qgroundcontrol-start.sh}"
-QGC_CUSTOM_APP_ICON="${QGC_CUSTOM_APP_ICON:-${QGC_SRC}/resourses/rangeaero.png}"
+QGC_CUSTOM_APP_ICON="${QGC_CUSTOM_APP_ICON:-${QGC_SRC}/resources/rangeaero.png}"
 QGC_CUSTOM_APP_ICON_NAME="${QGC_CUSTOM_APP_ICON_NAME:-rangeaero}"
 
 if [ ! -f ${QGC_SRC}/qgroundcontrol.pro ]; then
