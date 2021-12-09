@@ -362,6 +362,7 @@ VisualMissionItem* MissionController::_insertPresetItemWorker(QGeoCoordinate coo
 
     if (newItem->specifiesAltitude()) {
         if (!qgcApp()->toolbox()->missionCommandTree()->isLandCommand(command)) {
+//            qWarning() << "PresetItemworker:Not a Land Item";
             double                              prevAltitude;
             QGroundControlQmlGlobal::AltMode    prevAltMode;
 
@@ -372,6 +373,9 @@ VisualMissionItem* MissionController::_insertPresetItemWorker(QGeoCoordinate coo
                     newItem->setAltitudeMode(static_cast<QGroundControlQmlGlobal::AltMode>(prevAltMode));
                 }
             }
+        } else {
+//            qWarning() << "PresetItemworker:Land Item";
+            newItem->missionItem().setParam4(0.0);
         }
     }
     if (visualItemIndex == -1) {
