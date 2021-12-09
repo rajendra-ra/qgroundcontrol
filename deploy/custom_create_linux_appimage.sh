@@ -44,7 +44,7 @@ mkdir -p ${APPDIR}
 echo "downloading libsdl2"
 cd ${TMPDIR}
 #wget -c http://ftp.us.debian.org/debian/pool/main/libs/libsdl2/libsdl2-2.0-0_2.0.2%2bdfsg1-6_amd64.deb
-cp ${OUTPUT_DIR}/libs/libsdl2-2.0-0_2.0.2+dfsg1-6_amd64 .
+cp ${OUTPUT_DIR}/libs/libsdl2-2.0-0_2.0.2+dfsg1-6_amd64.deb .
 echo "extracting libsdl2"
 cd ${APPDIR}
 find ../ -name *.deb -exec dpkg -x {} . \;
