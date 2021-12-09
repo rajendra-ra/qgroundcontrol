@@ -647,7 +647,8 @@ Item {
                         showAlternateIcon:      _planMasterController.dirty
                         iconSource:             "/qmlimages/MapSync.svg"
                         alternateIconSource:    "/qmlimages/MapSyncChanged.svg"
-                        dropPanelComponent:     presetDropPanel
+                        onTriggered: showPresetSelectDialog()
+                        //dropPanelComponent:     presetDropPanel
                     },
                     ToolStripAction {
                         text:                   qsTr("File")
@@ -1249,12 +1250,26 @@ Item {
             }
         }
     }
+    function showPresetSelectDialog(){
+        showPopupDialogFromComponent(presetDropPanel)
+    }
+
     Component {
         id: presetDropPanel
+        QGCPopupDialog {
+            id:         presetSelectDialog
+            title:      qsTr("Select Preset")
+            buttons:    StandardButton.Close
 
+//            width: innerLayout.width
+//            height: innerLayout.height
         ColumnLayout {
             id:         columnHolder
             spacing:    _margin
+            width: innerLayout.width
+            height: innerLayout.height
+//            anchors.fill: parent
+//            height: planCreatorImage.height
 
             property string _overwriteText: (_editingLayer == _layerMission) ? qsTr("Mission overwrite") : ((_editingLayer == _layerGeoFence) ? qsTr("GeoFence overwrite") : qsTr("Rally Points overwrite"))
 
@@ -1276,7 +1291,8 @@ Item {
 //            }
 
             GridLayout {
-                columns:            2
+                id: innerLayout
+                columns:            3
                 columnSpacing:      _margin
                 rowSpacing:         _margin
                 Layout.fillWidth:   true
@@ -1287,7 +1303,13 @@ Item {
 
                     Rectangle {
                         id:     button
-                        width:  ScreenTools.defaultFontPixelHeight * 7
+                        Layout.rowSpan: 1
+                        Layout.columnSpan: 1
+//                        Layout.minimumWidth: 50
+//                        Layout.minimumHeight: 50
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        width:  ScreenTools.defaultFontPixelHeight * 10
                         height: planCreatorNameLabel.y + planCreatorNameLabel.height
                         color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.button
 
@@ -1327,7 +1349,7 @@ Item {
                                 } else {
                                     object.createPlan(_mapCenter())
                                 }
-                                dropPanel.hide()
+                                presetSelectDialog.hideDialog()
                             }
 
                             function _mapCenter() {
@@ -1467,6 +1489,17 @@ Item {
                 }
             }*/
         }
+        }
     }
 
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;formeditorZoom:1.5;height:480;width:640}D{i:1}D{i:2}D{i:3}D{i:5}
+D{i:11}D{i:13}D{i:14}D{i:16}D{i:17}D{i:18}D{i:19}D{i:25}D{i:47}D{i:58}D{i:60}D{i:62}
+D{i:65}D{i:66}D{i:64}D{i:67}D{i:68}D{i:63}D{i:69}D{i:61}D{i:74}D{i:73}D{i:76}D{i:77}
+D{i:78}D{i:59}D{i:79}D{i:80}D{i:24}D{i:81}D{i:83}D{i:85}D{i:87}D{i:89}D{i:91}D{i:96}
+D{i:117}
+}
+##^##*/

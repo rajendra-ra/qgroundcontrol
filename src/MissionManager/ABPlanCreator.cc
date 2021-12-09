@@ -21,4 +21,10 @@ ABPlanCreator::ABPlanCreator(PlanMasterController* planMasterController, QObject
 void ABPlanCreator::createPlan(const QGeoCoordinate& mapCenterCoord)
 {
     _planMasterController->removeAll();
+    VisualMissionItem* takeoffItem = _missionController->insertTakeoffItem(mapCenterCoord, -1);
+    _missionController->insertPresetItem(mapCenterCoord,MAV_CMD_NAV_WAYPOINT,-1,true); //->insertComplexMissionItem(CorridorScanComplexItem::name, mapCenterCoord, -1);
+    _missionController->insertPresetItem(mapCenterCoord,MAV_CMD_NAV_LAND,-1);
+//    _missionController->insertPresetItem(mapCenterCoord,-1,true);
+//    _missionController->setCurrentPlanViewSeqNum(takeoffItem->sequenceNumber(), true);
+    takeoffItem->setWizardMode(false);
 }
