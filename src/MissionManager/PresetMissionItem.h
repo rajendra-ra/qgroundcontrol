@@ -22,20 +22,20 @@ class PresetMissionItem : public SimpleMissionItem
 
 public:
     // Note: forLoad = true indicates that PresetMissionItem::load will be called onthe item
-    PresetMissionItem(PlanMasterController* masterController, bool flyView, bool forLoad);
-    PresetMissionItem(PlanMasterController* masterController, bool flyView, const MissionItem& missionItem);
-    PresetMissionItem(MAV_CMD presetCmd, PlanMasterController* masterController, bool flyView);
+    PresetMissionItem(PlanMasterController* masterController, bool flyView, VisualMissionItem* prevItem, bool forLoad);
+    PresetMissionItem(PlanMasterController* masterController,VisualMissionItem* prevItem, bool flyView,const MissionItem& missionItem);
+    PresetMissionItem(MAV_CMD presetCmd, PlanMasterController* masterController, VisualMissionItem* prevItem,bool flyView);
 
-//    Q_PROPERTY(QGeoCoordinate   previousCoordinate            READ previousCoordinate               WRITE setPreviousCoordinate NOTIFY previousCoordinateChanged)
-//    Q_PROPERTY(bool             previousPresetAtSameLocation READ previousPresetAtSameLocation    WRITE setPreviousPresetAtSameLocation    NOTIFY previousPresetAtSameLocationChanged)
+    Q_PROPERTY(QGeoCoordinate   prevCoordinate              READ prevCoordinate             WRITE setPrevCoordinate              NOTIFY prevCoordinateChanged)
+    Q_PROPERTY(bool             prevPresetAtSameLocation    READ prevPresetAtSameLocation   WRITE setPrevPresetAtSameLocation    NOTIFY prevPresetAtSameLocationChanged)
 
-//    QGeoCoordinate  previousCoordinate            (void) const { return _settingsItem->coordinate(); }
-//    bool            previousPresetAtSameLocation (void) const { return _previousPresetAtSameLocation; }
+    QGeoCoordinate  prevCoordinate           (void) const { return _prevItem->coordinate(); }
+    bool            prevPresetAtSameLocation (void) const { return _prevPresetAtSameLocation; }
 
-//    void setPreviousCoordinate            (const QGeoCoordinate& previousCoordinate);
-//    void setPreviousPresetAtSameLocation (bool previousPresetAtSameLocation);
-
-//    static bool isPresetCommand(MAV_CMD command);
+    void setPrevCoordinate            (const QGeoCoordinate& prevCoordinate);
+    void setPrevPresetAtSameLocation (bool prevPresetAtSameLocation);
+//    connect(this,)
+    static bool isLandCommand(MAV_CMD command);
 
     ~PresetMissionItem();
 
@@ -52,14 +52,15 @@ public:
 
     //void setDirty(bool dirty) final;
 
-//signals:
-//    void launchCoordinateChanged            (const QGeoCoordinate& launchCoordinate);
-//    void launchPresetAtSameLocationChanged (bool launchPresetAtSameLocation);
+signals:
+    void prevCoordinateChanged            (const QGeoCoordinate& prevCoordinate);
+    void prevPresetAtSameLocationChanged  (bool prevPresetAtSameLocation);
 
 private:
     void _init(bool forLoad);
-//    void _initLaunchPresetAtSameLocation(void);
+    void _initPrevPresetAtSameLocation(void);
+    void _updateCoordinate            (const QGeoCoordinate& coordinate);
 
-    MissionSettingsItem*    _settingsItem;
-//    bool                    _launchPresetAtSameLocation = false;
+    VisualMissionItem*      _prevItem;
+    bool                    _prevPresetAtSameLocation = false;
 };

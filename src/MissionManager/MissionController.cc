@@ -354,7 +354,8 @@ VisualMissionItem* MissionController::_insertSimpleMissionItemWorker(QGeoCoordin
 VisualMissionItem* MissionController::_insertPresetItemWorker(QGeoCoordinate coordinate, MAV_CMD command, int visualItemIndex, bool makeCurrentItem)
 {
     int sequenceNumber = _nextSequenceNumber();
-    PresetMissionItem * newItem = new PresetMissionItem(command, _masterController, _flyView);
+    VisualMissionItem* _prevItem = _visualItems->value<VisualMissionItem*>(_visualItems->count() - 1);
+    PresetMissionItem * newItem = new PresetMissionItem(command, _masterController, _prevItem,_flyView);
     newItem->setSequenceNumber(sequenceNumber);
     newItem->setCoordinate(coordinate);
     newItem->setCommand(command);
@@ -376,6 +377,7 @@ VisualMissionItem* MissionController::_insertPresetItemWorker(QGeoCoordinate coo
         } else {
 //            qWarning() << "PresetItemworker:Land Item";
             newItem->missionItem().setParam4(0.0);
+//            newItem->setPrevPresetAtSameLocation(true);
         }
     }
     if (visualItemIndex == -1) {
