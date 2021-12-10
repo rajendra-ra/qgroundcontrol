@@ -4,18 +4,18 @@
 #set -Eeuxo pipefail # https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
 
 if [[ $# -eq 0 ]]; then
-  echo 'create_linux_appimage.sh QGC_SRC_DIR QGC_RELEASE_DIR'
+  echo 'custom_create_linux_appimage.sh QGC_SRC_DIR QGC_RELEASE_DIR'
   exit 1
 fi
 
 QGC_SRC=$(readlink -f $1)
 
-QGC_CUSTOM_APP_NAME="${QGC_CUSTOM_APP_NAME:-/Aquila-v2}"
+QGC_CUSTOM_APP_NAME="${QGC_CUSTOM_APP_NAME:-/Aquila}"
 QGC_CUSTOM_GENERIC_NAME="${QGC_CUSTOM_GENERIC_NAME:-Ground Control Station}"
-QGC_CUSTOM_BINARY_NAME="${QGC_CUSTOM_BINARY_NAME:-Aquila-v2}"
+QGC_CUSTOM_BINARY_NAME="${QGC_CUSTOM_BINARY_NAME:-Aquila}"
 QGC_CUSTOM_LINUX_START_SH="${QGC_CUSTOM_LINUX_START_SH:-${QGC_SRC}/build/staging/qgroundcontrol-start.sh}"
-QGC_CUSTOM_APP_ICON="${QGC_CUSTOM_APP_ICON:-${QGC_SRC}/custom/res/Images/CustomAppIcon.png}"
-QGC_CUSTOM_APP_ICON_NAME="${QGC_CUSTOM_APP_ICON_NAME:-Aquila}"
+QGC_CUSTOM_APP_ICON="${QGC_CUSTOM_APP_ICON:-${QGC_SRC}/resources/rangeaero.png}"
+QGC_CUSTOM_APP_ICON_NAME="${QGC_CUSTOM_APP_ICON_NAME:-rangeaero}"
 
 if [ ! -f ${QGC_SRC}/qgroundcontrol.pro ]; then
   echo "please specify path to ${QGC_CUSTOM_APP_NAME} source as the 1st argument"
@@ -37,32 +37,34 @@ echo "Output directory:" ${OUTPUT_DIR}
 # On the other hand, 2.14 is not that recent so maybe we can just live with it.
 
 APP=${QGC_CUSTOM_BINARY_NAME}
-
+echo "making temporary directory"
 TMPDIR=`mktemp -d`
 APPDIR=${TMPDIR}/$APP".AppDir"
 mkdir -p ${APPDIR}
-
+echo "downloading libsdl2"
 cd ${TMPDIR}
-wget -c --quiet http://ftp.us.debian.org/debian/pool/main/libs/libsdl2/libsdl2-2.0-0_2.0.2%2bdfsg1-6_amd64.deb
-
+#wget -c http://ftp.us.debian.org/debian/pool/main/libs/libsdl2/libsdl2-2.0-0_2.0.2%2bdfsg1-6_amd64.deb
+cp ${OUTPUT_DIR}/libs/libsdl2-2.0-0_2.0.2+dfsg1-6_amd64.deb .
+echo "extracting libsdl2"
 cd ${APPDIR}
 find ../ -name *.deb -exec dpkg -x {} . \;
 
-# copy libdirectfb-1.2.so.9
+echo "copy libdirectfb-1.2.so.9"
 cd ${TMPDIR}
-wget -c --quiet http://ftp.us.debian.org/debian/pool/main/d/directfb/libdirectfb-1.2-9_1.2.10.0-5.1_amd64.deb
+#wget -c http://ftp.us.debian.org/debian/pool/main/d/directfb/libdirectfb-1.2-9_1.2.10.0-5.1_amd64.deb
+cp ${OUTPUT_DIR}/libs/libdirectfb-1.2-9_1.2.10.0-5.1_amd64.deb .
 mkdir libdirectfb
 dpkg -x libdirectfb-1.2-9_1.2.10.0-5.1_amd64.deb libdirectfb
 cp -L libdirectfb/usr/lib/x86_64-linux-gnu/libdirectfb-1.2.so.9 ${APPDIR}/usr/lib/x86_64-linux-gnu/
 cp -L libdirectfb/usr/lib/x86_64-linux-gnu/libfusion-1.2.so.9 ${APPDIR}/usr/lib/x86_64-linux-gnu/
 cp -L libdirectfb/usr/lib/x86_64-linux-gnu/libdirect-1.2.so.9 ${APPDIR}/usr/lib/x86_64-linux-gnu/
 
-# copy QGroundControl release into appimage
+echo "copy QGroundControl release into appimage"
 rsync -av --exclude=*.cpp --exclude=*.h --exclude=*.o --exclude="CMake*" --exclude="*.cmake" ${QGC_RELEASE_DIR}/* ${APPDIR}/
 rm -rf ${APPDIR}/package
 cp ${QGC_CUSTOM_LINUX_START_SH} ${APPDIR}/AppRun
 
-# copy icon
+echo "copy icon"
 cp ${QGC_CUSTOM_APP_ICON} ${APPDIR}/
 
 cat > ./QGroundControl.desktop <<\EOF
@@ -81,9 +83,10 @@ EOF
 VERSION=$(strings ${APPDIR}/${QGC_CUSTOM_BINARY_NAME} | grep '^v[0-9*]\.[0-9*].[0-9*]' | head -n 1)
 echo ${QGC_CUSTOM_APP_NAME} Version: ${VERSION}
 
-# Go out of AppImage
+echo "Go out of AppImage"
 cd ${TMPDIR}
-wget -c --quiet "https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage"
+#wget -c "https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage"
+cp ${OUTPUT_DIR}/libs/appimagetool-x86_64.AppImage .
 chmod a+x ./appimagetool-x86_64.AppImage
 
 ./appimagetool-x86_64.AppImage ./$APP.AppDir/ ${TMPDIR}/$APP".AppImage"

@@ -40,8 +40,8 @@ Button {
             id:     innerRect
             color:  showHighlight ? qgcPal.buttonHighlight : qgcPal.windowShade
 
-            implicitWidth:innerColumn.width// titleBar.contentWidth + ScreenTools.defaultFontPixelWidth*2
-            implicitHeight: innerColumn.height//titleBar.y + titleBar.contentHeight + ScreenTools.defaultFontPixelHeight
+            implicitWidth:innerColumn.width//+ScreenTools.defaultFontPixelWidth*2// titleBar.contentWidth + ScreenTools.defaultFontPixelWidth*2
+            implicitHeight: innerColumn.height//+ScreenTools.defaultFontPixelWidth*2//titleBar.y + titleBar.contentHeight + ScreenTools.defaultFontPixelHeight
             ColumnLayout {
                 id:innerColumn
                 anchors.verticalCenter: parent.verticalCenter
@@ -54,6 +54,8 @@ Button {
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                     Layout.preferredHeight: 100
                     Layout.preferredWidth: 100
+                    Layout.margins: ScreenTools.defaultFontPixelHeight
+                    Layout.bottomMargin:0// ScreenTools.defaultFontPixelHeight
 //                    anchors.topMargin:     ScreenTools.defaultFontPixelHeight
     //                anchors.top:           parent.top
 //                    anchors.verticalCenter: parent.verticalCenter
@@ -78,6 +80,8 @@ Button {
                     verticalAlignment: Text.AlignVCenter
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.margins: ScreenTools.defaultFontPixelHeight
+                    Layout.topMargin:0// ScreenTools.defaultFontPixelHeight
                     font.bold: true
                     color:                  showHighlight ? qgcPal.buttonHighlightText : qgcPal.buttonText
                     text:                   control.text

@@ -108,9 +108,9 @@ Item {
         if(visible) {
             editorMap.zoomLevel = QGroundControl.flightMapZoom
             editorMap.center    = QGroundControl.flightMapPosition
-            if (!_planMasterController.containsItems) {
-                toolStrip.simulateClick(toolStrip.fileButtonIndex)
-            }
+//            if (!_planMasterController.containsItems) {
+                toolStrip.simulateClick(toolStrip.presetButtonIndex)
+//            }
         }
     }
 
@@ -619,13 +619,15 @@ Item {
             title:              qsTr("Plan")
 
             readonly property int flyButtonIndex:       0
-            readonly property int fileButtonIndex:      1
-            readonly property int takeoffButtonIndex:   2
-            readonly property int waypointButtonIndex:  3
-            readonly property int roiButtonIndex:       4
-            readonly property int patternButtonIndex:   5
-            readonly property int landButtonIndex:      6
-            readonly property int centerButtonIndex:    7
+            readonly property int presetButtonIndex:    1
+            readonly property int fileButtonIndex:      2
+            readonly property int takeoffButtonIndex:   3
+            readonly property int waypointButtonIndex:  4
+            readonly property int roiButtonIndex:       5
+            readonly property int patternButtonIndex:   6
+            readonly property int landButtonIndex:      7
+            readonly property int centerButtonIndex:    8
+
 
             property bool _isRallyLayer:    _editingLayer == _layerRallyPoints
             property bool _isMissionLayer:  _editingLayer == _layerMission
@@ -637,6 +639,16 @@ Item {
                         text:           qsTr("Fly")
                         iconSource:     "/qmlimages/PaperPlane.svg"
                         onTriggered:    mainWindow.showFlyView()
+                    },
+                    ToolStripAction {
+                        text:                   qsTr("Preset")
+                        enabled:                !_planMasterController.syncInProgress
+                        visible:                true
+                        showAlternateIcon:      _planMasterController.dirty
+                        iconSource:             "/qmlimages/MapSync.svg"
+                        alternateIconSource:    "/qmlimages/MapSyncChanged.svg"
+                        onTriggered: showPresetSelectDialog()
+                        //dropPanelComponent:     presetDropPanel
                     },
                     ToolStripAction {
                         text:                   qsTr("File")
@@ -1238,4 +1250,256 @@ Item {
             }
         }
     }
+    function showPresetSelectDialog(){
+        showPopupDialogFromComponent(presetDropPanel)
+    }
+
+    Component {
+        id: presetDropPanel
+        QGCPopupDialog {
+            id:         presetSelectDialog
+            title:      qsTr("Select Preset")
+            buttons:    StandardButton.Close
+
+//            width: innerLayout.width
+//            height: innerLayout.height
+        ColumnLayout {
+            id:         columnHolder
+            spacing:    _margin
+            width: innerLayout.width
+            height: innerLayout.height
+//            anchors.fill: parent
+//            height: planCreatorImage.height
+
+            property string _overwriteText: (_editingLayer == _layerMission) ? qsTr("Mission overwrite") : ((_editingLayer == _layerGeoFence) ? qsTr("GeoFence overwrite") : qsTr("Rally Points overwrite"))
+
+//            QGCLabel {
+//                id:                 unsavedChangedLabel
+//                Layout.fillWidth:   true
+//                wrapMode:           Text.WordWrap
+//                text:               globals.activeVehicle ?
+//                                        qsTr("You have unsaved changes. You should upload to your vehicle, or save to a file.") :
+//                                        qsTr("You have unsaved changes.")
+//                visible:            _planMasterController.dirty
+//            }
+
+//            SectionHeader {
+//                id:                 createSection
+//                Layout.fillWidth:   true
+//                text:               qsTr("Create Plan")
+//                showSpacer:         false
+//            }
+
+            GridLayout {
+                id: innerLayout
+                columns:            3
+                columnSpacing:      _margin
+                rowSpacing:         _margin
+                Layout.fillWidth:   true
+                visible:            true//createSection.visible
+
+                Repeater {
+                    model: _planMasterController.planCreatorsPreset
+
+                    Rectangle {
+                        id:     button
+                        Layout.rowSpan: 1
+                        Layout.columnSpan: 1
+//                        Layout.minimumWidth: 50
+//                        Layout.minimumHeight: 50
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        width:  ScreenTools.defaultFontPixelHeight * 10
+                        height: planCreatorNameLabel.y + planCreatorNameLabel.height
+                        color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.button
+
+                        property bool highlighted: mouseArea.containsMouse
+                        property bool pressed:     mouseArea.pressed
+
+                        Image {
+                            id:                 planCreatorImage
+                            anchors.left:       parent.left
+                            anchors.right:      parent.right
+                            source:             object.imageResource
+                            sourceSize.width:   width
+                            fillMode:           Image.PreserveAspectFit
+                            mipmap:             true
+                        }
+
+                        QGCLabel {
+                            id:                     planCreatorNameLabel
+                            anchors.top:            planCreatorImage.bottom
+                            anchors.left:           parent.left
+                            anchors.right:          parent.right
+                            horizontalAlignment:    Text.AlignHCenter
+                            text:                   object.name
+                            color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
+                        }
+
+                        QGCMouseArea {
+                            id:                 mouseArea
+                            anchors.fill:       parent
+                            hoverEnabled:       true
+                            preventStealing:    true
+                            onClicked:          {
+                                if (_planMasterController.containsItems) {
+                                    createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
+                                    createPlanRemoveAllPromptDialogPlanCreator = object
+                                    mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+                                } else {
+                                    object.createPlan(_mapCenter())
+                                }
+                                presetSelectDialog.hideDialog()
+                            }
+
+                            function _mapCenter() {
+                                var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
+                                return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
+                            }
+                        }
+                    }
+                }
+            }
+
+//            SectionHeader {
+//                id:                 storageSection
+//                Layout.fillWidth:   true
+//                text:               qsTr("Storage")
+//            }
+
+//            GridLayout {
+//                columns:            3
+//                rowSpacing:         _margin
+//                columnSpacing:      ScreenTools.defaultFontPixelWidth
+//                visible:            storageSection.visible
+
+                /*QGCButton {
+                    text:               qsTr("New...")
+                    Layout.fillWidth:   true
+                    onClicked:  {
+                        dropPanel.hide()
+                        if (_planMasterController.containsItems) {
+                            mainWindow.showComponentDialog(removeAllPromptDialog, qsTr("New Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+                        }
+                    }
+                }*/
+
+                /*QGCButton {
+                    text:               qsTr("Open...")
+                    Layout.fillWidth:   true
+                    enabled:            !_planMasterController.syncInProgress
+                    onClicked: {
+                        dropPanel.hide()
+                        if (_planMasterController.dirty) {
+                            mainWindow.showComponentDialog(syncLoadFromFileOverwrite, columnHolder._overwriteText, mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.Cancel)
+                        } else {
+                            _planMasterController.loadFromSelectedFile()
+                        }
+                    }
+                }
+
+                QGCButton {
+                    text:               qsTr("Save")
+                    Layout.fillWidth:   true
+                    enabled:            !_planMasterController.syncInProgress && _planMasterController.currentPlanFile !== ""
+                    onClicked: {
+                        dropPanel.hide()
+                        if(_planMasterController.currentPlanFile !== "") {
+                            _planMasterController.saveToCurrent()
+                        } else {
+                            _planMasterController.saveToSelectedFile()
+                        }
+                    }
+                }
+
+                QGCButton {
+                    text:               qsTr("Save As...")
+                    Layout.fillWidth:   true
+                    enabled:            !_planMasterController.syncInProgress && _planMasterController.containsItems
+                    onClicked: {
+                        dropPanel.hide()
+                        _planMasterController.saveToSelectedFile()
+                    }
+                }
+
+                QGCButton {
+                    Layout.columnSpan:  3
+                    Layout.fillWidth:   true
+                    text:               qsTr("Save Mission Waypoints As KML...")
+                    enabled:            !_planMasterController.syncInProgress && _visualItems.count > 1
+                    onClicked: {
+                        // First point does not count
+                        if (_visualItems.count < 2) {
+                            mainWindow.showComponentDialog(noItemForKML, qsTr("KML"), mainWindow.showDialogDefaultWidth, StandardButton.Cancel)
+                            return
+                        }
+                        dropPanel.hide()
+                        _planMasterController.saveKmlToSelectedFile()
+                    }
+                }
+            }*/
+
+//            SectionHeader {
+//                id:                 vehicleSection
+//                Layout.fillWidth:   true
+//                text:               qsTr("Vehicle")
+//            }
+
+            /*RowLayout {
+                Layout.fillWidth:   true
+                spacing:            _margin
+                visible:            vehicleSection.visible
+
+                QGCButton {
+                    text:               qsTr("Upload")
+                    Layout.fillWidth:   true
+                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress && _planMasterController.containsItems
+                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
+                    onClicked: {
+                        dropPanel.hide()
+                        _planMasterController.upload()
+                    }
+                }
+
+                QGCButton {
+                    text:               qsTr("Download")
+                    Layout.fillWidth:   true
+                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress
+                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
+                    onClicked: {
+                        dropPanel.hide()
+                        if (_planMasterController.dirty) {
+                            mainWindow.showComponentDialog(syncLoadFromVehicleOverwrite, columnHolder._overwriteText, mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.Cancel)
+                        } else {
+                            _planMasterController.loadFromVehicle()
+                        }
+                    }
+                }
+
+                QGCButton {
+                    text:               qsTr("Clear")
+                    Layout.fillWidth:   true
+                    Layout.columnSpan:  2
+                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress
+                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
+                    onClicked: {
+                        dropPanel.hide()
+                        mainWindow.showComponentDialog(clearVehicleMissionDialog, text, mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.Cancel)
+                    }
+                }
+            }*/
+        }
+        }
+    }
+
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;formeditorZoom:1.5;height:480;width:640}D{i:1}D{i:2}D{i:3}D{i:5}
+D{i:11}D{i:13}D{i:14}D{i:16}D{i:17}D{i:18}D{i:19}D{i:25}D{i:47}D{i:58}D{i:60}D{i:62}
+D{i:65}D{i:66}D{i:64}D{i:67}D{i:68}D{i:63}D{i:69}D{i:61}D{i:74}D{i:73}D{i:76}D{i:77}
+D{i:78}D{i:59}D{i:79}D{i:80}D{i:24}D{i:81}D{i:83}D{i:85}D{i:87}D{i:89}D{i:91}D{i:96}
+D{i:117}
+}
+##^##*/

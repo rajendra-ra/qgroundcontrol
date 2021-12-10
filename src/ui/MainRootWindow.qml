@@ -359,8 +359,9 @@ ApplicationWindow {
             property real _margins:             ScreenTools.defaultFontPixelWidth
 
             ColumnLayout {
-                width:  innerLayout.width*1.4 + (_margins * 2)
-                height: innerLayout.height*1.2 + (_margins * 2)
+                id: rootColumn
+                width:  innerLayout.width + (_margins * 10)
+                height: innerLayout.height + (_margins * 3)
 
                 RowLayout {
                     id:             innerLayout
@@ -393,12 +394,29 @@ ApplicationWindow {
                         text:               qsTr("Flight")
                         imageResource:      "/qmlimages/PaperPlane.svg"
                         imageColor:         qgcPal.text
-                        visible:            QGroundControl.corePlugin.showAdvancedUI
+                        visible:            QGroundControl.corePlugin.showAdvancedUI// && !planView.visible && !flightView.visible
                         onClicked: {
                             if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
 //                                mainWindow.showAnalyzeTool()
                                 mainWindow.showPlanView()
+                            }
+                        }
+                    }
+                    SubMenuButtonV {
+                        id:                 flightButton
+                        width:             _toolButtonWidth
+                        Layout.fillHeight:   true
+                        Layout.fillWidth:   true
+                        text:               qsTr("Analyze")
+                        imageResource:      "/qmlimages/Analyze.svg"
+                        imageColor:         qgcPal.text
+                        visible:            QGroundControl.corePlugin.showAdvancedUI
+                        onClicked: {
+                            if (!mainWindow.preventViewSwitch()) {
+                                toolSelectDialog.hideDialog()
+                                mainWindow.showAnalyzeTool()
+//                                mainWindow.showPlanView()
                             }
                         }
                     }
@@ -486,6 +504,24 @@ ApplicationWindow {
                             }
                         }
                     }
+                }
+
+            }
+
+            function setInnerLayoutWidth(){
+                console.log("Width:",toolSelectDialog._dialogWidth)
+                if ((innerLayout.width*1.4 + (_margins * 2))<toolSelectDialog._dialogWidth){
+                    rootColumn.width = innerLayout.width*1.3 + (_margins * 2)
+                } else {
+                    rootColumn.width =  toolSelectDialog._dialogWidth
+                }
+            }
+            function setInnerLayoutHeight(){
+                console.log("Height:",toolSelectDialog._dialogHeight)
+                if ((innerLayout.height*1.2 + (_margins * 2))<toolSelectDialog._dialogHeight){
+                    rootColumn.height = innerLayout.height*1.1 + (_margins * 2)
+                } else {
+                    rootColumn.height = toolSelectDialog._dialogHeight
                 }
             }
         }

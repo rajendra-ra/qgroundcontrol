@@ -15,6 +15,7 @@
 #include "FirmwarePlugin.h"
 #include "QGCApplication.h"
 #include "SimpleMissionItem.h"
+#include "PresetMissionItem.h"
 #include "SurveyComplexItem.h"
 #include "FixedWingLandingComplexItem.h"
 #include "VTOLLandingComplexItem.h"
@@ -350,11 +351,61 @@ VisualMissionItem* MissionController::_insertSimpleMissionItemWorker(QGeoCoordin
 
     return newItem;
 }
+VisualMissionItem* MissionController::_insertPresetItemWorker(QGeoCoordinate coordinate, MAV_CMD command, int visualItemIndex, bool makeCurrentItem)
+{
+    int sequenceNumber = _nextSequenceNumber();
+    VisualMissionItem* _prevItem = _visualItems->value<VisualMissionItem*>(_visualItems->count() - 1);
+    PresetMissionItem * newItem = new PresetMissionItem(command, _masterController, _prevItem,_flyView);
+    newItem->setSequenceNumber(sequenceNumber);
+    newItem->setCoordinate(coordinate);
+    newItem->setCommand(command);
+    _initVisualItem(newItem);
 
+    if (newItem->specifiesAltitude()) {
+        if (!qgcApp()->toolbox()->missionCommandTree()->isLandCommand(command)) {
+//            qWarning() << "PresetItemworker:Not a Land Item";
+            double                              prevAltitude;
+            QGroundControlQmlGlobal::AltMode    prevAltMode;
+
+            if (_findPreviousAltitude(visualItemIndex, &prevAltitude, &prevAltMode)) {
+                newItem->altitude()->setRawValue(prevAltitude);
+                if (globalAltitudeMode() == QGroundControlQmlGlobal::AltitudeModeMixed) {
+                    // We are in mixed altitude modes, so copy from previous. Otherwise alt mode will be set from global setting.
+                    newItem->setAltitudeMode(static_cast<QGroundControlQmlGlobal::AltMode>(prevAltMode));
+                }
+            }
+        } else {
+//            qWarning() << "PresetItemworker:Land Item";
+            newItem->missionItem().setParam4(0.0);
+//            newItem->setPrevPresetAtSameLocation(true);
+        }
+    }
+    if (visualItemIndex == -1) {
+        _visualItems->append(newItem);
+    } else {
+        _visualItems->insert(visualItemIndex, newItem);
+    }
+
+    // We send the click coordinate through here to be able to set the planned home position from the user click location if needed
+    _recalcAllWithCoordinate(coordinate);
+
+    if (makeCurrentItem) {
+        setCurrentPlanViewSeqNum(newItem->sequenceNumber(), true);
+    }
+
+    _firstItemAdded();
+
+    return newItem;
+}
 
 VisualMissionItem* MissionController::insertSimpleMissionItem(QGeoCoordinate coordinate, int visualItemIndex, bool makeCurrentItem)
 {
     return _insertSimpleMissionItemWorker(coordinate, MAV_CMD_NAV_WAYPOINT, visualItemIndex, makeCurrentItem);
+}
+
+VisualMissionItem* MissionController::insertPresetItem(QGeoCoordinate coordinate,MAV_CMD command, int visualItemIndex, bool makeCurrentItem)
+{
+    return _insertPresetItemWorker(coordinate, command, visualItemIndex, makeCurrentItem);
 }
 
 VisualMissionItem* MissionController::insertTakeoffItem(QGeoCoordinate /*coordinate*/, int visualItemIndex, bool makeCurrentItem)

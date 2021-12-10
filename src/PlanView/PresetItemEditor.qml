@@ -2,6 +2,7 @@ import QtQuick                      2.11
 import QtQuick.Controls             2.4
 import QtQuick.Controls.Styles      1.4
 import QtQuick.Layouts              1.11
+import QtPositioning 5.2
 
 import QGroundControl               1.0
 import QGroundControl.ScreenTools   1.0
@@ -10,7 +11,7 @@ import QGroundControl.Controls      1.0
 import QGroundControl.FactControls  1.0
 import QGroundControl.Palette       1.0
 
-// Editor for Simple mission items
+// Editor for Preset mission items
 Rectangle {
     width:  availableWidth
     height: editorColumn.height + (_margin * 2)
@@ -43,7 +44,7 @@ Rectangle {
 
     Connections {
         target:                 missionItem
-        function onAltitudeModeChanged() {
+        function onAltitudeModeChanged(){
             updateAltitudeModeText()
         }
     }
@@ -123,6 +124,37 @@ Rectangle {
                 anchors.right:  parent.right
                 spacing:        0
                 visible:        _specifiesAltitude
+//                Repeater {
+//                    model: missionItem.comboboxFacts
+
+                    ColumnLayout {
+                        Layout.fillWidth:   true
+                        spacing:            0
+                        visible: !missionItem.isLandCommand
+
+                        QGCLabel {
+                            font.pointSize: ScreenTools.smallFontPointSize
+                            text:           qsTr("Choose Destination Point")
+//                            visible:        true
+                        }
+
+                        ComboBox {
+                            textRole: "text"
+                            valueRole: "coordinate"
+                            Layout.fillWidth:   true
+//                            indexModel:         false
+                            currentIndex: 0
+
+                            model:  [
+                                { text: qsTr("RangeAero Office"), coordinate: QtPositioning.coordinate(13.0436028,77.5773236) },
+                                { text: qsTr("Peacock layout"), coordinate: QtPositioning.coordinate(13.0472723,77.4711951) },
+                            ]
+//                            fact:               object
+                            Component.onCompleted: {/*console.debug(currentIndex,currentText,currentValue);*/missionItem.coordinate = currentValue}
+                            onActivated: missionItem.coordinate = currentValue
+                        }
+                    }
+//                }
 
                 QGCLabel {
                     Layout.fillWidth:   true

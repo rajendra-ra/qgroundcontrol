@@ -20,6 +20,7 @@
 #include "StructureScanPlanCreator.h"
 #include "CorridorScanPlanCreator.h"
 #include "BlankPlanCreator.h"
+#include "ABPlanCreator.h"
 #if defined(QGC_AIRMAP_ENABLED)
 #include "AirspaceFlightPlanProvider.h"
 #endif
@@ -78,6 +79,7 @@ void PlanMasterController::_commonInit(void)
 
     // Offline vehicle can change firmware/vehicle type
     connect(_controllerVehicle,     &Vehicle::vehicleTypeChanged,                   this, &PlanMasterController::_updatePlanCreatorsList);
+    connect(_controllerVehicle,     &Vehicle::vehicleTypeChanged,                   this, &PlanMasterController::_updatePlanCreatorsPresetList);
 }
 
 
@@ -96,6 +98,7 @@ void PlanMasterController::start(void)
     connect(_multiVehicleMgr, &MultiVehicleManager::activeVehicleChanged, this, &PlanMasterController::_activeVehicleChanged);
 
     _updatePlanCreatorsList();
+    _updatePlanCreatorsPresetList();
 
 #if defined(QGC_AIRMAP_ENABLED)
     //-- This assumes there is one single instance of PlanMasterController in edit mode.
@@ -209,6 +212,7 @@ void PlanMasterController::_activeVehicleChanged(Vehicle* activeVehicle)
     emit dirtyChanged(dirty());
 
     _updatePlanCreatorsList();
+    _updatePlanCreatorsPresetList();
 }
 
 void PlanMasterController::loadFromVehicle(void)
@@ -655,7 +659,28 @@ void PlanMasterController::_updatePlanCreatorsList(void)
         }
     }
 }
+void PlanMasterController::_updatePlanCreatorsPresetList(void)
+{
+    if (!_flyView) {
+        if (!_planCreatorsPreset) {
+            _planCreatorsPreset = new QmlObjectListModel(this);
+            _planCreatorsPreset->append(new ABPlanCreator(this, this));
+            _planCreatorsPreset->append(new SurveyPlanCreator(this, this));
+            _planCreatorsPreset->append(new CorridorScanPlanCreator(this, this));
+            emit planCreatorsPresetChanged(_planCreatorsPreset);
+        }
 
+//        if (_managerVehicle->fixedWing()) {
+//            if (_planCreatorsPreset->count() == 4) {
+//                _planCreatorsPreset->removeAt(_planCreatorsPreset->count() - 1);
+//            }
+//        } else {
+//            if (_planCreatorsPreset->count() != 4) {
+//                _planCreatorsPreset->append(new StructureScanPlanCreator(this, this));
+//            }
+//        }
+    }
+}
 void PlanMasterController::showPlanFromManagerVehicle(void)
 {
     if (offline()) {

@@ -283,6 +283,8 @@
         <file alias="VirtualJoystick.qml">src/FlightDisplay/VirtualJoystick.qml</file>
         <file alias="VTOLLandingPatternEditor.qml">src/PlanView/VTOLLandingPatternEditor.qml</file>
         <file alias="PostFlightView.qml">src/AnalyzeView/PostFlightView.qml</file>
+        <file alias="PresetItemEditor.qml">src/PlanView/PresetItemEditor.qml</file>
+        <file>src/QmlControls/Test.qml</file>
     </qresource>
     <qresource prefix="/FirstRunPromptDialogs">
         <file alias="UnitsFirstRunPrompt.qml">src/FirstRunPromptDialogs/UnitsFirstRunPrompt.qml</file>
@@ -350,7 +352,5 @@
         <file alias="Parameter.MetaData.json.xz">src/comm/MockLink.Parameter.MetaData.json.xz</file>
         <file alias="Parameter.MetaData.json">src/comm/MockLink.Parameter.MetaData.json</file>
     </qresource>
-    <qresource prefix="/">
-        <file>src/QmlControls/test.qml</file>
-    </qresource>
+    <qresource prefix="/"/>
 </RCC>
