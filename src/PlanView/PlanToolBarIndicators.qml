@@ -88,7 +88,7 @@ Item {
     // Progress bar
     Connections {
         target: _controllerValid ? _planMasterController.missionController : null
-        onProgressPctChanged: {
+        function onProgressPctChanged() {
             if (_controllerProgressPct === 1) {
                 missionStats.visible = false
                 uploadCompleteText.visible = true
@@ -293,7 +293,7 @@ Item {
 
         Connections {
             target:                 QGroundControl.multiVehicleManager
-            onActiveVehicleChanged: largeProgressBar._userHide = false
+            function onActiveVehicleChanged() {largeProgressBar._userHide = false}
         }
 
         Rectangle {

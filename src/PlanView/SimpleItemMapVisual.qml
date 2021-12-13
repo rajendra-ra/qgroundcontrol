@@ -96,14 +96,14 @@ Item {
     Connections {
         target: _missionItem.isSimpleItem ? _missionItem : null
 
-        onLoiterRadiusChanged: {
+        function onLoiterRadiusChanged() {
             _loiterVisual.blockSignals = true
             _loiterVisual.clockwiseRotation = _missionItem.loiterRadius>= 0
             _loiterVisual.blockSignals = false
             _loiterVisual.radius.rawValue = Math.abs(_missionItem.loiterRadius)
         }
 
-        onCoordinateChanged: {
+        function onCoordinateChanged() {
             _loiterVisual.coordinate = _missionItem.coordinate
         }
     }
