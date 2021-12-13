@@ -84,6 +84,8 @@ Popup {
 
     Component.onCompleted: {
         _dialogTitle = dialogComponentLoader.item.title
+        titleRowLayout.visible = dialogComponentLoader.item.titleBarEnabled
+        titleBarShade.visible = dialogComponentLoader.item.titleBarEnabled
         setupDialogButtons(dialogComponentLoader.item.buttons)
     }
 
@@ -170,6 +172,7 @@ Popup {
     }
 
     Rectangle {
+        id:titleBarShade
         width:  titleRowLayout.width
         height: titleRowLayout.height
         color:  qgcPal.windowShade

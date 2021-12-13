@@ -13,6 +13,7 @@ import QtQuick.Dialogs  1.3
 Item {
     property string title
     property var    buttons: StandardButton.Ok
+    property bool titleBarEnabled: true
 
     width:  childrenRect.width
     height: childrenRect.height
