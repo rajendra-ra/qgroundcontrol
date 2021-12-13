@@ -408,15 +408,15 @@ ApplicationWindow {
                         width:             _toolButtonWidth
                         Layout.fillHeight:   true
                         Layout.fillWidth:   true
-                        text:               qsTr("Analyze")
-                        imageResource:      "/qmlimages/Analyze.svg"
+                        text:               qsTr("Monitoring")
+                        imageResource:      "/qmlimages/Radar.svg"
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI
                         onClicked: {
                             if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
-                                mainWindow.showAnalyzeTool()
-//                                mainWindow.showPlanView()
+//                                mainWindow.showAnalyzeTool()
+                                mainWindow.showFlyView()
                             }
                         }
                     }
