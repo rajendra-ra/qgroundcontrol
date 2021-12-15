@@ -420,7 +420,7 @@ Item {
             mapName:                    "MissionEditor"
             allowGCSLocationCenter:     true
             allowVehicleLocationCenter: true
-            planView:                   true
+            planView:                   true && !globals.toolSelectMode
 
             zoomLevel:                  QGroundControl.flightMapZoom
             center:                     QGroundControl.flightMapPosition
@@ -617,6 +617,7 @@ Item {
             z:                  QGroundControl.zOrderWidgets
             maxHeight:          parent.height - toolStrip.y
             title:              qsTr("Plan")
+            visible: !globals.toolSelectMode
 
             readonly property int flyButtonIndex:       0
             readonly property int presetButtonIndex:    1
@@ -747,12 +748,14 @@ Item {
             anchors.bottom:     parent.bottom
             anchors.right:      parent.right
             anchors.rightMargin: _toolsMargin
+            visible: !globals.toolSelectMode
         }
         //-------------------------------------------------------
         // Right Panel Controls
         Item {
             anchors.fill:           rightPanel
             anchors.topMargin:      _toolsMargin
+            visible: !globals.toolSelectMode
             DeadMouseArea {
                 anchors.fill:   parent
             }
@@ -922,7 +925,7 @@ Item {
             anchors.bottom:     parent.bottom
             height:             ScreenTools.defaultFontPixelHeight * 7
             missionController:  _missionController
-            visible:            _internalVisible && _editingLayer === _layerMission && QGroundControl.corePlugin.options.showMissionStatus
+            visible:            _internalVisible && _editingLayer === _layerMission && QGroundControl.corePlugin.options.showMissionStatus && !globals.toolSelectMode
 
             onSetCurrentSeqNum: _missionController.setCurrentPlanViewSeqNum(seqNum, true)
 
@@ -944,6 +947,7 @@ Item {
             terrainButtonVisible:   _editingLayer === _layerMission
             terrainButtonChecked:   terrainStatus.visible
             onTerrainButtonClicked: terrainStatus.toggleVisible()
+            visible: !globals.toolSelectMode
         }
     }
 

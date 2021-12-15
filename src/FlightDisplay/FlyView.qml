@@ -83,7 +83,7 @@ Item {
         z:                      _fullItemZorder + 1
         parentToolInsets:       _toolInsets
         mapControl:             _mapControl
-        visible:                !QGroundControl.videoManager.fullScreen
+        visible:                !QGroundControl.videoManager.fullScreen && !globals.toolSelectMode
     }
 
     FlyViewCustomLayer {

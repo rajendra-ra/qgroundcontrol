@@ -87,6 +87,7 @@ ApplicationWindow {
 
         property var                planMasterControllerPlanView:   null
         property var                currentPlanMissionItem:         planMasterControllerPlanView ? planMasterControllerPlanView.missionController.currentPlanViewItem : null
+        property bool toolSelectMode: false
     }
 
     /// Default color palette used throughout the UI
@@ -130,6 +131,7 @@ ApplicationWindow {
         flightView.visible      = false
         planView.visible        = false
         toolbar.currentToolbar  = currentToolbar
+        globals.toolSelectMode = false
     }
 
     function showFlyView() {
@@ -151,6 +153,7 @@ ApplicationWindow {
         toolDrawer.toolSource   = toolSource
         toolDrawer.toolIcon     = toolIcon
         toolDrawer.visible      = true
+        globals.toolSelectMode = false
     }
 
     function showAnalyzeTool() {
@@ -333,8 +336,21 @@ ApplicationWindow {
     header: MainToolBar {
         id:         toolbar
         height:     ScreenTools.toolbarHeight
-        visible:    !QGroundControl.videoManager.fullScreen
+        visible:    !QGroundControl.videoManager.fullScreen && !globals.toolSelectMode
     }
+//    MouseArea {
+//        hoverEnabled: true
+//        anchors.left: parent.left
+//        anchors.right: parent.right
+//        anchors.top: parent.top
+//        height: ScreenTools.toolbarHeight
+//        onEntered: {
+//            toolbar.visible = true
+//        }
+//        onExited: {
+//            toolbar.visible = false
+//        }
+//    }
 
     footer: LogReplayStatusBar {
         visible: QGroundControl.settingsManager.flyViewSettings.showLogReplayStatusBar.rawValue
@@ -343,6 +359,8 @@ ApplicationWindow {
     function showToolSelectDialog() {
         if (!mainWindow.preventViewSwitch()) {
             showPopupDialogFromComponent(toolSelectDialogComponent)
+            //flightView.visible = false
+            globals.toolSelectMode = true
         }
     }
 
