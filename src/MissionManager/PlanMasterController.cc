@@ -21,6 +21,9 @@
 #include "CorridorScanPlanCreator.h"
 #include "BlankPlanCreator.h"
 #include "ABPlanCreator.h"
+#include "ABCPlanCreator.h"
+#include "ABAPlanCreator.h"
+#include "MultiPlanCreator.h"
 #if defined(QGC_AIRMAP_ENABLED)
 #include "AirspaceFlightPlanProvider.h"
 #endif
@@ -665,8 +668,10 @@ void PlanMasterController::_updatePlanCreatorsPresetList(void)
         if (!_planCreatorsPreset) {
             _planCreatorsPreset = new QmlObjectListModel(this);
             _planCreatorsPreset->append(new ABPlanCreator(this, this));
-            _planCreatorsPreset->append(new SurveyPlanCreator(this, this));
-            _planCreatorsPreset->append(new CorridorScanPlanCreator(this, this));
+            _planCreatorsPreset->append(new ABCPlanCreator(this, this));
+            _planCreatorsPreset->append(new ABAPlanCreator(this, this));
+            _planCreatorsPreset->append(new MultiPlanCreator(this, this));
+//            _planCreatorsPreset->append(new CorridorScanPlanCreator(this, this));
             emit planCreatorsPresetChanged(_planCreatorsPreset);
         }
 

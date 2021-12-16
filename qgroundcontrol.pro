@@ -428,7 +428,10 @@ contains (DEFINES, QGC_ENABLE_PAIRING) {
 #
 
 HEADERS += \
+    src/MissionManager/ABAPlanCreator.h \
+    src/MissionManager/ABCPlanCreator.h \
     src/MissionManager/ABPlanCreator.h \
+    src/MissionManager/MultiPlanCreator.h \
     src/MissionManager/PresetMissionItem.h \
     src/QmlControls/QmlUnitsConversion.h \
     src/Vehicle/VehicleEscStatusFactGroup.h \
@@ -444,7 +447,10 @@ contains (DEFINES, QGC_ENABLE_PAIRING) {
 }
 
 SOURCES += \
+    src/MissionManager/ABAPlanCreator.cc \
+    src/MissionManager/ABCPlanCreator.cc \
     src/MissionManager/ABPlanCreator.cc \
+    src/MissionManager/MultiPlanCreator.cc \
     src/MissionManager/PresetMissionItem.cc \
     src/Vehicle/VehicleEscStatusFactGroup.cc \
     src/api/QGCCorePlugin.cc \
