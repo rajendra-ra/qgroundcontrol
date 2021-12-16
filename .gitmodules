@@ -4,6 +4,7 @@
 [submodule "libs/mavlink/include/mavlink/v2.0"]
 	path = libs/mavlink/include/mavlink/v2.0
 	url = https://github.com/rajendra-ra/c_library_v2.git
+	branch=ra/mav/bms
 [submodule "libs/OpenSSL/android_openssl"]
 	path = libs/OpenSSL/android_openssl
 	url = https://github.com/Auterion/android_openssl
