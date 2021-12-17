@@ -1256,6 +1256,32 @@ Item {
             }
         }
     }
+    // Progress bar
+    Connections {
+        target: _missionController
+        function onProgressPctChanged(progressPct) {
+            console.debug("mission upload progress:",progressPct)
+            console.debug("offline",_planMasterController.offline,"\n syncInProgress:",_planMasterController.syncInProgress,"\n contains Item:",_planMasterController.containsItems)
+            if (progressPct === 1 && _planMasterController.containsItems) {
+                switchToMonitortimer.start()
+//                missionStats.visible = false
+//                uploadCompleteText.visible = true
+//                progressBar.visible = false
+//                resetProgressTimer.start()
+            } else if (progressPct > 0) {
+//                progressBar.visible = true
+            }
+        }
+    }
+    Timer {
+        id:             switchToMonitortimer
+        interval:       1000
+        onTriggered: {
+           showFlyView()
+            //missionStats.visible = true
+            //uploadCompleteText.visible = false
+        }
+    }
     function showPresetSelectDialog(){
         showPopupDialogFromComponent(presetDropPanel)
     }
