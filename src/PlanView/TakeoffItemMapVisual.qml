@@ -62,7 +62,7 @@ Item {
     Connections {
         target: _missionItem
 
-        onIsCurrentItemChanged: {
+        function onIsCurrentItemChanged() {
             if (_missionItem.isCurrentItem && map.planView) {
                 addEditingVisuals()
             } else {

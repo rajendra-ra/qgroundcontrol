@@ -83,6 +83,7 @@ Button {
                     Layout.margins: ScreenTools.defaultFontPixelHeight
                     Layout.topMargin:0// ScreenTools.defaultFontPixelHeight
                     font.bold: true
+                    font.pointSize: ScreenTools.defaultFontPointSize*2
                     color:                  showHighlight ? qgcPal.buttonHighlightText : qgcPal.buttonText
                     text:                   control.text
                 }

@@ -14,6 +14,7 @@ import QtLocation       5.3
 import QtPositioning    5.3
 import QtQuick.Layouts  1.2
 import QtQuick.Window   2.2
+import QtGraphicalEffects 1.12
 
 import QGroundControl                   1.0
 import QGroundControl.FlightMap         1.0
@@ -110,6 +111,7 @@ Item {
             editorMap.center    = QGroundControl.flightMapPosition
 //            if (!_planMasterController.containsItems) {
                 toolStrip.simulateClick(toolStrip.presetButtonIndex)
+                globals.toolSelectMode = true
 //            }
         }
     }
@@ -420,7 +422,7 @@ Item {
             mapName:                    "MissionEditor"
             allowGCSLocationCenter:     true
             allowVehicleLocationCenter: true
-            planView:                   true
+            planView:                   true && !globals.toolSelectMode
 
             zoomLevel:                  QGroundControl.flightMapZoom
             center:                     QGroundControl.flightMapPosition
@@ -617,6 +619,7 @@ Item {
             z:                  QGroundControl.zOrderWidgets
             maxHeight:          parent.height - toolStrip.y
             title:              qsTr("Plan")
+            visible: !globals.toolSelectMode
 
             readonly property int flyButtonIndex:       0
             readonly property int presetButtonIndex:    1
@@ -747,12 +750,14 @@ Item {
             anchors.bottom:     parent.bottom
             anchors.right:      parent.right
             anchors.rightMargin: _toolsMargin
+            visible: !globals.toolSelectMode
         }
         //-------------------------------------------------------
         // Right Panel Controls
         Item {
             anchors.fill:           rightPanel
             anchors.topMargin:      _toolsMargin
+            visible: !globals.toolSelectMode
             DeadMouseArea {
                 anchors.fill:   parent
             }
@@ -922,7 +927,7 @@ Item {
             anchors.bottom:     parent.bottom
             height:             ScreenTools.defaultFontPixelHeight * 7
             missionController:  _missionController
-            visible:            _internalVisible && _editingLayer === _layerMission && QGroundControl.corePlugin.options.showMissionStatus
+            visible:            _internalVisible && _editingLayer === _layerMission && QGroundControl.corePlugin.options.showMissionStatus && !globals.toolSelectMode
 
             onSetCurrentSeqNum: _missionController.setCurrentPlanViewSeqNum(seqNum, true)
 
@@ -944,6 +949,7 @@ Item {
             terrainButtonVisible:   _editingLayer === _layerMission
             terrainButtonChecked:   terrainStatus.visible
             onTerrainButtonClicked: terrainStatus.toggleVisible()
+            visible: !globals.toolSelectMode
         }
     }
 
@@ -1258,18 +1264,20 @@ Item {
         id: presetDropPanel
         QGCPopupDialog {
             id:         presetSelectDialog
-            title:      qsTr("Select Preset")
-            buttons:    StandardButton.Close
+            title:      qsTr("")//qsTr("Select Preset")
+            buttons:    StandardButton.NoButton//StandardButton.Close
+            titleBarEnabled: false
 
 //            width: innerLayout.width
 //            height: innerLayout.height
         ColumnLayout {
             id:         columnHolder
-            spacing:    _margin
+            //spacing:    _margin
             width: innerLayout.width
-            height: innerLayout.height
+            height: innerLayout.height + _margin
 //            anchors.fill: parent
 //            height: planCreatorImage.height
+//            leftMargin: 0
 
             property string _overwriteText: (_editingLayer == _layerMission) ? qsTr("Mission overwrite") : ((_editingLayer == _layerGeoFence) ? qsTr("GeoFence overwrite") : qsTr("Rally Points overwrite"))
 
@@ -1292,26 +1300,38 @@ Item {
 
             GridLayout {
                 id: innerLayout
-                columns:            3
-                columnSpacing:      _margin
-                rowSpacing:         _margin
-                Layout.fillWidth:   true
+                columns:            2
+//                columnSpacing:      ScreenTools.defaultFontPixelWidth//_margin
+//                rowSpacing:         ScreenTools.defaultFontPixelWidth//_margin
+//                Layout.bottomMargin: ScreenTools.defaultFontPixelWidth*2
+                Layout.topMargin: ScreenTools.defaultFontPixelWidth
+//                anchors.horizontalCenter: parent.horizontalCenter
+                Layout.alignment: Qt.AlignCenter
+
+//                Layout.fillWidth:   true
+//                Layout.fillHeight:   true
                 visible:            true//createSection.visible
 
                 Repeater {
                     model: _planMasterController.planCreatorsPreset
-
+//                    Rectangle {
+//                        Layout.rowSpan:     1
+//                        Layout.columnSpan:  1
+//                        width:              button.width
+//                        height:             button.height
                     Rectangle {
                         id:     button
                         Layout.rowSpan: 1
                         Layout.columnSpan: 1
-//                        Layout.minimumWidth: 50
-//                        Layout.minimumHeight: 50
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        width:  ScreenTools.defaultFontPixelHeight * 10
+//                        Layout.margins: ScreenTools.defaultFontPixelWidth
+//                        Layout.bottomMargin: 0
+//                        Layout.preferredWidth: ScreenTools.defaultFontPixelWidth*10
+//                        Layout.preferredHeight: ScreenTools.defaultFontPixelWidth
+//                        Layout.fillWidth: true
+//                        Layout.fillHeight: true
+                        width:  ScreenTools.defaultFontPixelHeight * 15
                         height: planCreatorNameLabel.y + planCreatorNameLabel.height
-                        color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.button
+                        color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
 
                         property bool highlighted: mouseArea.containsMouse
                         property bool pressed:     mouseArea.pressed
@@ -1331,7 +1351,10 @@ Item {
                             anchors.top:            planCreatorImage.bottom
                             anchors.left:           parent.left
                             anchors.right:          parent.right
+                            height:                 ScreenTools.defaultFontPixelHeight*2
                             horizontalAlignment:    Text.AlignHCenter
+                            verticalAlignment:      Text.AlignVCenter
+                            font.pixelSize:         height*0.5
                             text:                   object.name
                             color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
                         }
@@ -1350,6 +1373,7 @@ Item {
                                     object.createPlan(_mapCenter())
                                 }
                                 presetSelectDialog.hideDialog()
+                                globals.toolSelectMode = false
                             }
 
                             function _mapCenter() {
@@ -1358,6 +1382,16 @@ Item {
                             }
                         }
                     }
+//                    DropShadow {
+//                        anchors.fill: button
+//                        horizontalOffset: 3
+//                        verticalOffset: 3
+//                        radius: 8.0
+//                        samples: 17
+//                        color: "#80000000"
+//                        source: button
+//                    }
+//                    }
                 }
             }
 

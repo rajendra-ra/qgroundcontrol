@@ -87,6 +87,7 @@ ApplicationWindow {
 
         property var                planMasterControllerPlanView:   null
         property var                currentPlanMissionItem:         planMasterControllerPlanView ? planMasterControllerPlanView.missionController.currentPlanViewItem : null
+        property bool toolSelectMode: false
     }
 
     /// Default color palette used throughout the UI
@@ -130,6 +131,7 @@ ApplicationWindow {
         flightView.visible      = false
         planView.visible        = false
         toolbar.currentToolbar  = currentToolbar
+        globals.toolSelectMode = false
     }
 
     function showFlyView() {
@@ -151,6 +153,7 @@ ApplicationWindow {
         toolDrawer.toolSource   = toolSource
         toolDrawer.toolIcon     = toolIcon
         toolDrawer.visible      = true
+        globals.toolSelectMode = false
     }
 
     function showAnalyzeTool() {
@@ -333,8 +336,21 @@ ApplicationWindow {
     header: MainToolBar {
         id:         toolbar
         height:     ScreenTools.toolbarHeight
-        visible:    !QGroundControl.videoManager.fullScreen
+        visible:    !QGroundControl.videoManager.fullScreen && !globals.toolSelectMode
     }
+//    MouseArea {
+//        hoverEnabled: true
+//        anchors.left: parent.left
+//        anchors.right: parent.right
+//        anchors.top: parent.top
+//        height: ScreenTools.toolbarHeight
+//        onEntered: {
+//            toolbar.visible = true
+//        }
+//        onExited: {
+//            toolbar.visible = false
+//        }
+//    }
 
     footer: LogReplayStatusBar {
         visible: QGroundControl.settingsManager.flyViewSettings.showLogReplayStatusBar.rawValue
@@ -343,6 +359,8 @@ ApplicationWindow {
     function showToolSelectDialog() {
         if (!mainWindow.preventViewSwitch()) {
             showPopupDialogFromComponent(toolSelectDialogComponent)
+            //flightView.visible = false
+            globals.toolSelectMode = true
         }
     }
 
@@ -351,8 +369,9 @@ ApplicationWindow {
 
         QGCPopupDialog {
             id:         toolSelectDialog
-            title:      qsTr("Select Tool")
-            buttons:    StandardButton.Close
+            title:      qsTr("")//qsTr("Select Tool")
+            buttons:    StandardButton.NoButton
+            titleBarEnabled: false
 
             property real _toolButtonHeight:    ScreenTools.defaultFontPixelHeight * 3
             property real _toolButtonWidth:    ScreenTools.defaultFontPixelWidth * 3
@@ -360,13 +379,16 @@ ApplicationWindow {
 
             ColumnLayout {
                 id: rootColumn
-                width:  innerLayout.width + (_margins * 10)
-                height: innerLayout.height + (_margins * 3)
+                width:  innerLayout.width + (_margins * 20)
+                height: innerLayout.height + (_margins * 12)
 
-                RowLayout {
+                GridLayout {
                     id:             innerLayout
                     Layout.margins: _margins
-                    spacing:        ScreenTools.defaultFontPixelWidth
+                    Layout.topMargin: _margins*2.5
+                    columns: 2
+
+//                    spacing:        ScreenTools.defaultFontPixelWidth
 //                    anchors.horizontalCenter: parent.horizontalCenter
 //                    Layout.alignment: Qt.AlignCenter
 
@@ -391,8 +413,8 @@ ApplicationWindow {
                         width:             _toolButtonWidth
                         Layout.fillHeight:   true
                         Layout.fillWidth:   true
-                        text:               qsTr("Flight")
-                        imageResource:      "/qmlimages/PaperPlane.svg"
+                        text:               qsTr("Missions")
+                        imageResource:      "/qmlimages/Plan.svg"
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI// && !planView.visible && !flightView.visible
                         onClicked: {
@@ -408,15 +430,15 @@ ApplicationWindow {
                         width:             _toolButtonWidth
                         Layout.fillHeight:   true
                         Layout.fillWidth:   true
-                        text:               qsTr("Analyze")
-                        imageResource:      "/qmlimages/Analyze.svg"
+                        text:               qsTr("Monitoring")
+                        imageResource:      "/qmlimages/Radar.svg"
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI
                         onClicked: {
                             if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
-                                mainWindow.showAnalyzeTool()
-//                                mainWindow.showPlanView()
+//                                mainWindow.showAnalyzeTool()
+                                mainWindow.showFlyView()
                             }
                         }
                     }

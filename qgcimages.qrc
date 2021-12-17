@@ -136,9 +136,14 @@
         <file alias="pipResize.svg">src/FlightMap/Images/pipResize.svg</file>
         <file alias="Plan.svg">src/ui/toolbar/Images/Plan.svg</file>
         <file alias="PlanCreator/BlankPlanCreator.png">src/MissionManager/BlankPlanCreator.png</file>
+        <file alias="PlanCreator/ABPlanCreator.png">src/MissionManager/ABPlanCreator.png</file>
         <file alias="PlanCreator/CorridorScanPlanCreator.png">src/MissionManager/CorridorScanPlanCreator.png</file>
         <file alias="PlanCreator/StructureScanPlanCreator.png">src/MissionManager/StructureScanPlanCreator.png</file>
         <file alias="PlanCreator/SurveyPlanCreator.png">src/MissionManager/SurveyPlanCreator.png</file>
+        <file alias="PlanCreator/ABPlanCreator.svg">src/MissionManager/ab_nav.svg</file>
+        <file alias="PlanCreator/ABAPlanCreator.svg">src/MissionManager/aba_nav.svg</file>
+        <file alias="PlanCreator/ABCPlanCreator.svg">src/MissionManager/abc_nav.svg</file>
+        <file alias="PlanCreator/MultiPlanCreator.svg">src/MissionManager/multi_nav.svg</file>
         <file alias="PowerComponentBattery_01cell.svg">src/AutoPilotPlugins/PX4/Images/PowerComponentBattery_01cell.svg</file>
         <file alias="PowerComponentBattery_02cell.svg">src/AutoPilotPlugins/PX4/Images/PowerComponentBattery_02cell.svg</file>
         <file alias="PowerComponentBattery_03cell.svg">src/AutoPilotPlugins/PX4/Images/PowerComponentBattery_03cell.svg</file>
@@ -196,5 +201,6 @@
         <file alias="Yield.svg">src/ui/toolbar/Images/Yield.svg</file>
         <file alias="ZoomMinus.svg">src/FlightMap/Images/ZoomMinus.svg</file>
         <file alias="ZoomPlus.svg">src/FlightMap/Images/ZoomPlus.svg</file>
+        <file alias="Radar.svg">resources/radar.svg</file>
     </qresource>
 </RCC>
