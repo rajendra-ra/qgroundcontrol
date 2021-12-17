@@ -1331,7 +1331,7 @@ Item {
 //                        Layout.fillHeight: true
                         width:  ScreenTools.defaultFontPixelHeight * 15
                         height: planCreatorNameLabel.y + planCreatorNameLabel.height
-                        color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.button
+                        color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
 
                         property bool highlighted: mouseArea.containsMouse
                         property bool pressed:     mouseArea.pressed
