@@ -13,7 +13,7 @@
 #include "FixedWingLandingComplexItem.h"
 
 ABAPlanCreator::ABAPlanCreator(PlanMasterController* planMasterController, QObject* parent)
-    : PlanCreator(planMasterController, tr("A to B to A"), QStringLiteral("/qmlimages/PlanCreator/ABPlanCreator.png"), parent)
+    : PlanCreator(planMasterController, tr("A to B to A"), QStringLiteral("/qmlimages/PlanCreator/ABAPlanCreator.svg"), parent)
 {
 
 }
