@@ -1355,7 +1355,7 @@ Item {
                             horizontalAlignment:    Text.AlignHCenter
                             verticalAlignment:      Text.AlignVCenter
                             font.pixelSize:         height*0.5
-                            text:                   object.name
+                            text:                   ""//object.name
                             color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
                         }
 
