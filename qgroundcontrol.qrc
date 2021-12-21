@@ -284,7 +284,9 @@
         <file alias="VTOLLandingPatternEditor.qml">src/PlanView/VTOLLandingPatternEditor.qml</file>
         <file alias="PostFlightView.qml">src/AnalyzeView/PostFlightView.qml</file>
         <file alias="PresetItemEditor.qml">src/PlanView/PresetItemEditor.qml</file>
-        <file>src/QmlControls/Test.qml</file>
+        <file alias="Test.qml">src/QmlControls/Test.qml</file>
+        <file alias="TestModel.qml">src/QmlControls/TestModel.qml</file>
+        <file alias="PresetListModel.qml">src/QmlControls/PresetListModel.qml</file>
     </qresource>
     <qresource prefix="/FirstRunPromptDialogs">
         <file alias="UnitsFirstRunPrompt.qml">src/FirstRunPromptDialogs/UnitsFirstRunPrompt.qml</file>
