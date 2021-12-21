@@ -1400,6 +1400,7 @@ Item {
                                 }
                                 presetSelectDialog.hideDialog()
                                 globals.toolSelectMode = false
+                                showPresetEditDialog()
                             }
 
                             function _mapCenter() {
@@ -1549,6 +1550,449 @@ Item {
                 }
             }*/
         }
+        }
+    }
+    function showPresetEditDialog(){
+        showPopupDialogFromComponent(presetEditDialog)
+    }
+    Component {
+        id: presetEditDialog
+        QGCPopupDialog {
+            id:         presetSelectDialog
+            title:      qsTr("")//qsTr("Select Preset")
+            buttons:    StandardButton.NoButton//StandardButton.Close
+            titleBarEnabled: false
+            height: 480//mainWindow.width
+            width: 640//mainWindow.width
+
+//**************************************************//
+            ColumnLayout {
+                anchors.fill: parent
+                ColumnLayout {
+                    id: inputLayout
+                    Layout.topMargin: ScreenTools.defaultFontPixelWidth
+                    Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    spacing: 2
+                    Layout.fillWidth: true
+                    Repeater {
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        model: ListModel{
+                            id:myModel
+                            ListElement{text:"Launch"}
+                            ListElement{text:"Destination"}
+                        }
+                        GridLayout {
+                            id:_grid
+                            columnSpacing: 1
+                            rows: 1
+                            columns: 2
+                            rowSpacing: 1
+                            Layout.fillWidth: true
+                            Rectangle {
+                                id: locationInputBox
+                                Layout.row: 0
+                                Layout.column: 0
+                                radius: 3
+                                color: index===0?"green":((index+1)===myModel.count?"red":"gray")
+                                border.width: 0
+                                height: 40
+                                width: childrenRect.width
+                                Layout.fillWidth: true
+                                Image {
+                                    id: locationImg
+                                    anchors.left: parent.left
+                                    anchors.bottom: parent.bottom
+                                    anchors.top: parent.top
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    source: "qrc:/qmlimages/location.svg"
+                                    mipmap: true
+                                    sourceSize.height: height
+                                    sourceSize.width: width
+                                    fillMode: Image.PreserveAspectFit
+                                }
+                                TextField {
+                                    id: locationInput
+                                    anchors.left: locationImg.right
+                                    anchors.right: parent.right
+                                    color: "gray"
+                                    horizontalAlignment: Text.AlignLeft
+                                    onPressed: {
+                                        dropdown.open()
+                                    }
+
+                                    onActiveFocusChanged: {
+                                        if (focus) {
+                                            dropdown.open()
+
+                                        } else {
+                                            dropdown.close()
+                                        }
+                                    }
+//                                    onEditingFinished: {
+//                                        dropdown.open()
+//                                    }
+                                    Popup {
+                                        id:dropdown
+                                        modal: false
+                                        clip: true
+                                        y:parent.height
+                                        width:parent.width
+                                        padding: 10
+//                                        closePolicy: Popup.CloseOnPressOutside
+                                        contentItem: ListView {
+                                            property alias popup: dropdown
+                                            maximumFlickVelocity: 1000
+                                            implicitHeight: contentHeight
+                                            model: presetModel
+                                            delegate: presetDelegate
+                                            anchors.fill:parent
+                                            onCurrentIndexChanged: {
+                                                locationInput.text = model.get(currentIndex).name
+                                                dropdown.close()
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            Rectangle {
+                                id: altitudeInputBox
+                                Layout.row: 0
+                                Layout.column: 1
+                                height: 40
+                                width: childrenRect.width
+                                radius: 5
+
+                                Image {
+                                    id: altitudeImg
+                                    anchors.left: parent.left
+                                    anchors.bottom: parent.bottom
+                                    anchors.top: parent.top
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    source: "qrc:/qmlimages/height.svg"
+                                    mipmap: true
+                                    sourceSize.height: height
+                                    sourceSize.width: width
+                                    fillMode: Image.PreserveAspectFit
+                                }
+                                TextField {
+                                    anchors.left: altitudeImg.right
+                                    color: "gray"
+                                    horizontalAlignment: Text.AlignLeft
+                                    Layout.fillWidth: true
+                                    placeholderText: "Altitude"
+                                    width:ScreenTools.defaultFontPixelWidth*10
+                                    text: "50"
+                                }
+                            }
+                        }
+                    }
+                }
+
+                PresetListModel {
+                    id: presetModel
+                }
+
+                Component {
+                    id: presetDelegate
+                    Rectangle {
+                        id:_rootListDelegate
+                        width: parent.width
+                        height: childrenRect.height
+                        color: "white"
+                        border.color: "gray"
+                        RowLayout {
+                            Text {
+                                Layout.margins: 5
+                                text: name
+                                horizontalAlignment: TextField.AlignLeft
+                                verticalAlignment: TextField.AlignVCenter
+                            }
+                            Text {
+                                Layout.margins: 5
+                                text: "("+coordinate.latitude+","+coordinate.longitude+")"
+                                horizontalAlignment: TextField.AlignLeft
+                                verticalAlignment: TextField.AlignVCenter
+                            }
+                        }
+                        MouseArea {
+                            hoverEnabled: true
+                            anchors.fill: parent
+                            onEntered: {
+                                parent.color = "lightblue"
+                            }
+                            onExited: {
+                                parent.color = "white"
+                            }
+                            onClicked: {
+                                _rootListDelegate.ListView.view.currentIndex = index
+                                _rootListDelegate.ListView.view.popup.close()
+                            }
+                        }
+                    }
+                }
+            }
+//**************************************************//
+//            width: innerLayout.width
+//            height: innerLayout.height
+//        ColumnLayout {
+//            id:         columnHolder
+//            //spacing:    _margin
+//            width: innerLayout.width
+//            height: innerLayout.height + _margin
+////            anchors.fill: parent
+////            height: planCreatorImage.height
+////            leftMargin: 0
+
+//            property string _overwriteText: (_editingLayer == _layerMission) ? qsTr("Mission overwrite") : ((_editingLayer == _layerGeoFence) ? qsTr("GeoFence overwrite") : qsTr("Rally Points overwrite"))
+
+////            QGCLabel {
+////                id:                 unsavedChangedLabel
+////                Layout.fillWidth:   true
+////                wrapMode:           Text.WordWrap
+////                text:               globals.activeVehicle ?
+////                                        qsTr("You have unsaved changes. You should upload to your vehicle, or save to a file.") :
+////                                        qsTr("You have unsaved changes.")
+////                visible:            _planMasterController.dirty
+////            }
+
+////            SectionHeader {
+////                id:                 createSection
+////                Layout.fillWidth:   true
+////                text:               qsTr("Create Plan")
+////                showSpacer:         false
+////            }
+
+//            GridLayout {
+//                id: innerLayout
+//                columns:            2
+////                columnSpacing:      ScreenTools.defaultFontPixelWidth//_margin
+////                rowSpacing:         ScreenTools.defaultFontPixelWidth//_margin
+////                Layout.bottomMargin: ScreenTools.defaultFontPixelWidth*2
+//                Layout.topMargin: ScreenTools.defaultFontPixelWidth
+////                anchors.horizontalCenter: parent.horizontalCenter
+//                Layout.alignment: Qt.AlignCenter
+
+////                Layout.fillWidth:   true
+////                Layout.fillHeight:   true
+//                visible:            true//createSection.visible
+
+//                Repeater {
+//                    model: _planMasterController.planCreatorsPreset
+////                    Rectangle {
+////                        Layout.rowSpan:     1
+////                        Layout.columnSpan:  1
+////                        width:              button.width
+////                        height:             button.height
+//                    Rectangle {
+//                        id:     button
+//                        Layout.rowSpan: 1
+//                        Layout.columnSpan: 1
+////                        Layout.margins: ScreenTools.defaultFontPixelWidth
+////                        Layout.bottomMargin: 0
+////                        Layout.preferredWidth: ScreenTools.defaultFontPixelWidth*10
+////                        Layout.preferredHeight: ScreenTools.defaultFontPixelWidth
+////                        Layout.fillWidth: true
+////                        Layout.fillHeight: true
+//                        width:  ScreenTools.defaultFontPixelHeight * 15
+//                        height: planCreatorNameLabel.y + planCreatorNameLabel.height
+//                        color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
+
+//                        property bool highlighted: mouseArea.containsMouse
+//                        property bool pressed:     mouseArea.pressed
+
+//                        Image {
+//                            id:                 planCreatorImage
+//                            anchors.left:       parent.left
+//                            anchors.right:      parent.right
+//                            source:             object.imageResource
+//                            sourceSize.width:   width
+//                            fillMode:           Image.PreserveAspectFit
+//                            mipmap:             true
+//                        }
+
+//                        QGCLabel {
+//                            id:                     planCreatorNameLabel
+//                            anchors.top:            planCreatorImage.bottom
+//                            anchors.left:           parent.left
+//                            anchors.right:          parent.right
+//                            height:                 ScreenTools.defaultFontPixelHeight*2
+//                            horizontalAlignment:    Text.AlignHCenter
+//                            verticalAlignment:      Text.AlignVCenter
+//                            font.pixelSize:         height*0.5
+//                            text:                   ""//object.name
+//                            color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
+//                        }
+
+//                        QGCMouseArea {
+//                            id:                 mouseArea
+//                            anchors.fill:       parent
+//                            hoverEnabled:       true
+//                            preventStealing:    true
+//                            onClicked:          {
+//                                if (_planMasterController.containsItems) {
+//                                    createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
+//                                    createPlanRemoveAllPromptDialogPlanCreator = object
+//                                    mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+//                                } else {
+//                                    object.createPlan(_mapCenter())
+//                                }
+//                                presetSelectDialog.hideDialog()
+//                                globals.toolSelectMode = false
+//                            }
+
+//                            function _mapCenter() {
+//                                var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
+//                                return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
+//                            }
+//                        }
+//                    }
+////                    DropShadow {
+////                        anchors.fill: button
+////                        horizontalOffset: 3
+////                        verticalOffset: 3
+////                        radius: 8.0
+////                        samples: 17
+////                        color: "#80000000"
+////                        source: button
+////                    }
+////                    }
+//                }
+//            }
+
+////            SectionHeader {
+////                id:                 storageSection
+////                Layout.fillWidth:   true
+////                text:               qsTr("Storage")
+////            }
+
+////            GridLayout {
+////                columns:            3
+////                rowSpacing:         _margin
+////                columnSpacing:      ScreenTools.defaultFontPixelWidth
+////                visible:            storageSection.visible
+
+//                /*QGCButton {
+//                    text:               qsTr("New...")
+//                    Layout.fillWidth:   true
+//                    onClicked:  {
+//                        dropPanel.hide()
+//                        if (_planMasterController.containsItems) {
+//                            mainWindow.showComponentDialog(removeAllPromptDialog, qsTr("New Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+//                        }
+//                    }
+//                }*/
+
+//                /*QGCButton {
+//                    text:               qsTr("Open...")
+//                    Layout.fillWidth:   true
+//                    enabled:            !_planMasterController.syncInProgress
+//                    onClicked: {
+//                        dropPanel.hide()
+//                        if (_planMasterController.dirty) {
+//                            mainWindow.showComponentDialog(syncLoadFromFileOverwrite, columnHolder._overwriteText, mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.Cancel)
+//                        } else {
+//                            _planMasterController.loadFromSelectedFile()
+//                        }
+//                    }
+//                }
+
+//                QGCButton {
+//                    text:               qsTr("Save")
+//                    Layout.fillWidth:   true
+//                    enabled:            !_planMasterController.syncInProgress && _planMasterController.currentPlanFile !== ""
+//                    onClicked: {
+//                        dropPanel.hide()
+//                        if(_planMasterController.currentPlanFile !== "") {
+//                            _planMasterController.saveToCurrent()
+//                        } else {
+//                            _planMasterController.saveToSelectedFile()
+//                        }
+//                    }
+//                }
+
+//                QGCButton {
+//                    text:               qsTr("Save As...")
+//                    Layout.fillWidth:   true
+//                    enabled:            !_planMasterController.syncInProgress && _planMasterController.containsItems
+//                    onClicked: {
+//                        dropPanel.hide()
+//                        _planMasterController.saveToSelectedFile()
+//                    }
+//                }
+
+//                QGCButton {
+//                    Layout.columnSpan:  3
+//                    Layout.fillWidth:   true
+//                    text:               qsTr("Save Mission Waypoints As KML...")
+//                    enabled:            !_planMasterController.syncInProgress && _visualItems.count > 1
+//                    onClicked: {
+//                        // First point does not count
+//                        if (_visualItems.count < 2) {
+//                            mainWindow.showComponentDialog(noItemForKML, qsTr("KML"), mainWindow.showDialogDefaultWidth, StandardButton.Cancel)
+//                            return
+//                        }
+//                        dropPanel.hide()
+//                        _planMasterController.saveKmlToSelectedFile()
+//                    }
+//                }
+//            }*/
+
+////            SectionHeader {
+////                id:                 vehicleSection
+////                Layout.fillWidth:   true
+////                text:               qsTr("Vehicle")
+////            }
+
+//            /*RowLayout {
+//                Layout.fillWidth:   true
+//                spacing:            _margin
+//                visible:            vehicleSection.visible
+
+//                QGCButton {
+//                    text:               qsTr("Upload")
+//                    Layout.fillWidth:   true
+//                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress && _planMasterController.containsItems
+//                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
+//                    onClicked: {
+//                        dropPanel.hide()
+//                        _planMasterController.upload()
+//                    }
+//                }
+
+//                QGCButton {
+//                    text:               qsTr("Download")
+//                    Layout.fillWidth:   true
+//                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress
+//                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
+//                    onClicked: {
+//                        dropPanel.hide()
+//                        if (_planMasterController.dirty) {
+//                            mainWindow.showComponentDialog(syncLoadFromVehicleOverwrite, columnHolder._overwriteText, mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.Cancel)
+//                        } else {
+//                            _planMasterController.loadFromVehicle()
+//                        }
+//                    }
+//                }
+
+//                QGCButton {
+//                    text:               qsTr("Clear")
+//                    Layout.fillWidth:   true
+//                    Layout.columnSpan:  2
+//                    enabled:            !_planMasterController.offline && !_planMasterController.syncInProgress
+//                    visible:            !QGroundControl.corePlugin.options.disableVehicleConnection
+//                    onClicked: {
+//                        dropPanel.hide()
+//                        mainWindow.showComponentDialog(clearVehicleMissionDialog, text, mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.Cancel)
+//                    }
+//                }
+//            }*/
+//        }
         }
     }
 
