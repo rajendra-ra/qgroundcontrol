@@ -1399,17 +1399,18 @@ Item {
                             anchors.fill:       parent
                             hoverEnabled:       true
                             preventStealing:    true
-                            onClicked:          {
+                            onClicked:{
+                                presetSelectDialog.hideDialog()
+                                globals.toolSelectMode = true
                                 if (_planMasterController.containsItems) {
                                     createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
                                     createPlanRemoveAllPromptDialogPlanCreator = object
                                     mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+
                                 } else {
                                     object.createPlan(_mapCenter())
+                                    showPresetEditDialog()
                                 }
-                                presetSelectDialog.hideDialog()
-                                globals.toolSelectMode = false
-                                showPresetEditDialog()
                             }
 
                             function _mapCenter() {
