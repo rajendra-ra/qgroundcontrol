@@ -990,6 +990,11 @@ Item {
             function accept() {
                 createPlanRemoveAllPromptDialogPlanCreator.createPlan(createPlanRemoveAllPromptDialogMapCenter)
                 hideDialog()
+                showPresetEditDialog()
+            }
+            function reject() {
+                hideDialog()
+                showToolSelectDialog()
             }
         }
     }
