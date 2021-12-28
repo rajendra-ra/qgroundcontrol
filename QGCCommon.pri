@@ -187,7 +187,7 @@ exists ($$PWD/.git) {
         MAC_BUILD    = $$section(VERSION, ".", 3, 3)
         message(QGroundControl version $${MAC_VERSION} build $${MAC_BUILD} describe $${GIT_VERSION})
     } else {
-        message(QGroundControl $${GIT_VERSION})
+        message(Aquila $${GIT_VERSION})
     }
 } else {
     GIT_VERSION             = None
