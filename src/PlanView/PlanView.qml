@@ -84,6 +84,10 @@ Item {
     property bool _firstFenceLoadComplete:      false
     property bool _firstRallyLoadComplete:      false
     property bool _firstLoadComplete:           false
+    property var presetModel :[
+        { text: qsTr("RangeAero Office"), coordinate: QtPositioning.coordinate(13.0436028,77.5773236,20) },
+        { text: qsTr("Peacock layout"), coordinate: QtPositioning.coordinate(13.0472723,77.4711951,25) },
+    ]
 
     MapFitFunctions {
         id:                         mapFitFunctions  // The name for this id cannot be changed without breaking references outside of this code. Beware!
