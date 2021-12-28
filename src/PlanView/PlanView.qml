@@ -1267,7 +1267,7 @@ Item {
             console.debug("mission upload progress:",progressPct)
             console.debug("offline",_planMasterController.offline,"\n syncInProgress:",_planMasterController.syncInProgress,"\n contains Item:",_planMasterController.containsItems)
             if (progressPct === 1 && _planMasterController.containsItems) {
-                switchToMonitortimer.start()
+                switchToMonitorTimer.start()
 //                missionStats.visible = false
 //                uploadCompleteText.visible = true
 //                progressBar.visible = false
@@ -1278,7 +1278,7 @@ Item {
         }
     }
     Timer {
-        id:             switchToMonitortimer
+        id:             switchToMonitorTimer
         interval:       1000
         onTriggered: {
            showFlyView()
