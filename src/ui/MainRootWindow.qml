@@ -87,7 +87,9 @@ ApplicationWindow {
 
         property var                planMasterControllerPlanView:   null
         property var                currentPlanMissionItem:         planMasterControllerPlanView ? planMasterControllerPlanView.missionController.currentPlanViewItem : null
-        property bool toolSelectMode: false
+        property bool               toolSelectMode: false
+//        property bool               hideToolStrip:false|toolSelectMode
+//        property type name: value
     }
 
     /// Default color palette used throughout the UI
