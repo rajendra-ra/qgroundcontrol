@@ -492,7 +492,8 @@ Item {
                 model: _missionController.visualItems
                 delegate: MissionItemMapVisual {
                     map:         editorMap
-                    onClicked:   _missionController.setCurrentPlanViewSeqNum(sequenceNumber, false)
+                    onClicked:   {_missionController.setCurrentPlanViewSeqNum(sequenceNumber, false);}
+                    onDoubleClicked:   {_missionController.setCurrentPlanViewSeqNum(sequenceNumber, false);showPresetEditDialog();}
                     opacity:     _editingLayer == _layerMission ? 1 : editorMap._nonInteractiveOpacity
                     interactive: _editingLayer == _layerMission
                     vehicle:     _planMasterController.controllerVehicle
