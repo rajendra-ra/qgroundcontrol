@@ -23,6 +23,7 @@ MapQuickItem {
     property int sequenceNumber
 
     signal clicked
+    signal doubleClicked
 
     anchorPoint.x:  sourceItem.anchorPointX
     anchorPoint.y:  sourceItem.anchorPointY
@@ -38,6 +39,7 @@ MapQuickItem {
             showGimbalYaw:      !isNaN(missionItem.missionGimbalYaw)
             highlightSelected:  true
             onClicked:          _item.clicked()
+            onDoubleClicked:    _item.doubleClicked()
             opacity:            _item.opacity
 
             property bool _isCurrentItem:   missionItem ? missionItem.isCurrentItem || missionItem.hasCurrentChildItem : false
