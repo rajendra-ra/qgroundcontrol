@@ -288,6 +288,7 @@
         <file alias="TestModel.qml">src/QmlControls/TestModel.qml</file>
         <file alias="PresetListModel.qml">src/QmlControls/PresetListModel.qml</file>
         <file alias="TitleBoxContainer.qml">src/QmlControls/TitleBoxContainer.qml</file>
+        <file alias="RoundedCorner.qml">src/QmlControls/RoundedCorner.qml</file>
     </qresource>
     <qresource prefix="/FirstRunPromptDialogs">
         <file alias="UnitsFirstRunPrompt.qml">src/FirstRunPromptDialogs/UnitsFirstRunPrompt.qml</file>
