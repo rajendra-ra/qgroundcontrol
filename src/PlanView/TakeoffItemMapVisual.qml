@@ -31,6 +31,7 @@ Item {
     property var    _launchIndicatorItem
 
     signal clicked(int sequenceNumber)
+    signal doubleClicked(int sequenceNumber)
 
     function addCommonVisuals() {
         if (_objMgrCommonVisuals.empty) {
@@ -113,6 +114,7 @@ Item {
             missionItem:    _missionItem
             sequenceNumber: _missionItem.sequenceNumber
             onClicked:      _root.clicked(_missionItem.sequenceNumber)
+            onDoublelicked: _root.doubleclicked(_missionItem.sequenceNumber)
             opacity:        _root.opacity
         }
     }
@@ -132,6 +134,7 @@ Item {
                     label:              qsTr("Launch")
                     highlightSelected:  true
                     onClicked:          _root.clicked(_missionItem.sequenceNumber)
+                    onDoubleClicked:    _root.doubleClicked(_missionItem.sequenceNumber)
                     visible:            _root.interactive
                 }
         }

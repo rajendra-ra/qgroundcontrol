@@ -23,9 +23,11 @@ Item {
 
     property var map        ///< Map control to place item in
     property var vehicle    ///< Vehicle associated with this item
-    property var interactive: true    ///< Vehicle associated with this item
+    property bool interactive: true    ///< Vehicle associated with this item
 
     signal clicked(int sequenceNumber)
+    signal doubleClicked(int sequenceNumber)
+
 
     property var _visualItem
 
@@ -37,6 +39,7 @@ Item {
             }
             _visualItem = component.createObject(map, { "map": _root.map, vehicle: _root.vehicle, 'opacity': Qt.binding(function() { return _root.opacity }), 'interactive': Qt.binding(function() { return _root.interactive }) })
             _visualItem.clicked.connect(_root.clicked)
+            _visualItem.doubleClicked.connect(_root.doubleClicked)
         }
     }
 
