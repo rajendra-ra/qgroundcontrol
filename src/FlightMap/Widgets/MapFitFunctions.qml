@@ -99,7 +99,7 @@ Item {
     function addMissionItemCoordsForFit(coordList) {
         for (var i = 1; i < _missionController.visualItems.count; i++) {
             var missionItem = _missionController.visualItems.get(i)
-            if (missionItem.specifiesCoordinate && !missionItem.isStandaloneCoordinate) {
+            if (missionItem.specifiesCoordinate && !missionItem.isStandaloneCoordinate || missionItem.isTakeoffItem) {
                 if(missionItem.boundingCube.isValid()) {
                     coordList.push(missionItem.boundingCube.pointNW)
                     coordList.push(missionItem.boundingCube.pointSE)
