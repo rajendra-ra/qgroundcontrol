@@ -84,10 +84,16 @@ Item {
     property bool _firstFenceLoadComplete:      false
     property bool _firstRallyLoadComplete:      false
     property bool _firstLoadComplete:           false
-    property var presetModel :[
+    property var presetModelDefault :[
+        { text: qsTr("Current Location"),coordinate: globals.activeVehicle?QtPositioning.coordinate(globals.activeVehicle.coordinate.latitude,globals.activeVehicle.coordinate.longitude,20):QtPositioning.coordinate() },
         { text: qsTr("RangeAero Office"), coordinate: QtPositioning.coordinate(13.0436028,77.5773236,20) },
         { text: qsTr("Peacock layout"), coordinate: QtPositioning.coordinate(13.0472723,77.4711951,25) },
     ]
+    property var presetModelSession :{
+        "active":false,
+        "A":null,
+        "B":null
+    }
 
     MapFitFunctions {
         id:                         mapFitFunctions  // The name for this id cannot be changed without breaking references outside of this code. Beware!
