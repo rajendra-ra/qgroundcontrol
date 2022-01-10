@@ -211,9 +211,9 @@ QVariantList& QGCCorePlugin::postFlightPages()
 //        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("GeoTag Images"),    QUrl::fromUserInput("qrc:/qml/GeoTagPage.qml"),             QUrl::fromUserInput("qrc:/qmlimages/GeoTagIcon"))));
 //#endif
 //        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("MAVLink Console"),  QUrl::fromUserInput("qrc:/qml/MavlinkConsolePage.qml"),     QUrl::fromUserInput("qrc:/qmlimages/MavlinkConsoleIcon"))));
-//#if !defined(QGC_DISABLE_MAVLINK_INSPECTOR)
-//        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("MAVLink Inspector"),QUrl::fromUserInput("qrc:/qml/MAVLinkInspectorPage.qml"),   QUrl::fromUserInput("qrc:/qmlimages/MAVLinkInspector"))));
-//#endif
+#if !defined(QGC_DISABLE_MAVLINK_INSPECTOR)
+        _p->postFlightList.append(QVariant::fromValue(new QmlComponentInfo(tr("MAVLink Inspector"),QUrl::fromUserInput("qrc:/qml/MAVLinkInspectorPage.qml"),   QUrl::fromUserInput("qrc:/qmlimages/MAVLinkInspector"))));
+#endif
 //        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("Vibration"),        QUrl::fromUserInput("qrc:/qml/VibrationPage.qml"),          QUrl::fromUserInput("qrc:/qmlimages/VibrationPageIcon"))));
     }
     return _p->postFlightList;
