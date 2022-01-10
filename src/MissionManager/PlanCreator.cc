@@ -17,5 +17,4 @@ PlanCreator::PlanCreator(PlanMasterController* planMasterController, QString nam
     , _name                 (name)
     , _imageResource        (imageResource)
 {
-
 }

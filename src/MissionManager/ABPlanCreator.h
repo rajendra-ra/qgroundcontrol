@@ -19,4 +19,6 @@ public:
     ABPlanCreator(PlanMasterController* planMasterController, QObject* parent = nullptr);
 
     Q_INVOKABLE void createPlan(const QGeoCoordinate& mapCenterCoord) final;
+private:
+
 };
