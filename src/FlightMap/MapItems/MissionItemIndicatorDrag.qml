@@ -77,6 +77,12 @@ Rectangle {
             focus = true
             itemDragger.clicked()
         }
+        onDoubleClicked: {
+            if(itemIndicator){
+                focus = true
+                itemIndicator.doubleClicked()
+            }
+        }
 
         property bool dragActive: drag.active
         onDragActiveChanged: {

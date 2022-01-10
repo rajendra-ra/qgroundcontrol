@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.2
 import QtPositioning    5.3
 
 Rectangle {
-    id: rectangle
+    id: _root
     radius: 5
     color: "#00ffffff"
     property string titleColor: qgcPal.buttonHighlight
@@ -102,7 +102,7 @@ Rectangle {
                             verticalAlignment: Qt.AlignVCenter
                             antialiasing: false
                             horizontalAlignment: Qt.AlignLeft
-                            text: location.latitude + ", " + location.longitude
+                            text: focus?text:location.latitude + ", " + location.longitude
                             color: textEditColor
                             padding: textPadding
                             background: Rectangle {
@@ -110,34 +110,59 @@ Rectangle {
                                 border.color: "transparent"
                                 border.width: 1
                             }
+                            Binding {
+                                target: _root
+                                property: "location"
+                                value: getValue()
+                                function getValue(){
+                                    let locationT = QtPositioning.coordinate();
+
+                                    _locationField.text.split(',').forEach(function(item, index, array) {
+                                        var lat,lon;
+                                        if(index===0){
+                                            locationT.latitude = item.trim()*1.0;
+                                        } else if (index === 1){
+                                            locationT.longitude = item.trim()*1.0;
+                                        }
+                                    })
+                                    if(locationT.isValid){
+                                        return locationT
+    //                                    location = locationT
+                                    } else {
+                                        return location
+                                    }
+
+                                }
+                            }
+                            onTextChanged: {
+                                //valueChanged()
+                            }
+
                             onActiveFocusChanged: {
                                 if(focus){
                                     background.border.color = "#21be2b"
-//                                    console.log("TextField focus")
                                     ma.clicked(ma.mouseX,ma.mouseY)
                                 } else {
                                     background.border.color = "transparent"
-                                    valueChanged()
+                                    enabled = false
                                 }
                             }
                             onAccepted: {focus = false}
-                            function valueChanged(){
-                                enabled = false;
+                            /*function valueChanged(){
                                 var locationT = QtPositioning.coordinate();
+
                                 text.split(',').forEach(function(item, index, array) {
-                                  if(index===0){
-                                    locationT.latitide = item.trim();
-                                  } else if (index === 1){
-                                    locationT.longitude = item.trim();
-                                  }
+                                    var lat,lon;
+                                    if(index===0){
+                                        locationT.latitude = item.trim()*1.0;
+                                    } else if (index === 1){
+                                        locationT.longitude = item.trim()*1.0;
+                                    }
                                 })
                                 if(locationT.isValid){
-                                    console.log("valid location");
                                     location = locationT
                                 }
-
-                                console.log("location changed",text);
-                            }
+                            }*/
                         }
                         Button {
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
@@ -183,21 +208,31 @@ Rectangle {
                                 border.color: "transparent"
                                 border.width: 1
                             }
+                            Binding {
+                                target: _root
+                                property: "altitude"
+                                value: getValue()
+                                function getValue(){
+                                    let _altitude=_altitudeField.text.trim()*1.0
+                                    return _altitude
+                                }
+                            }
+                            onTextChanged: {
+                                //valueChanged()
+                            }
                             onActiveFocusChanged: {
                                 if(focus){
                                     background.border.color = "#21be2b"
-                                    console.log("TextField focus")
                                     ma.clicked(ma.mouseX,ma.mouseY)
                                 } else {
                                     background.border.color = "transparent"
-                                    valueChanged()
+                                    enabled = false
                                 }
                             }
                             onAccepted: {focus = false}
-                            function valueChanged(){
-                                enabled = false;
+                            /*function valueChanged(){
                                 altitude=text.trim()*1.0
-                            }
+                            }*/
                         }
                         Button {
                             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter

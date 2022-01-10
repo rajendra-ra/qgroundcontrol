@@ -403,10 +403,10 @@ ApplicationWindow {
                         imageColor:         qgcPal.text
                         imageResource:      "/qmlimages/Gears.svg"
                         onClicked: {
-                            if (!mainWindow.preventViewSwitch()) {
+//                            if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
                                 mainWindow.showSetupTool()
-                            }
+//                            }
                         }
                     }
 
@@ -420,11 +420,11 @@ ApplicationWindow {
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI// && !planView.visible && !flightView.visible
                         onClicked: {
-                            if (!mainWindow.preventViewSwitch()) {
+//                            if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
 //                                mainWindow.showAnalyzeTool()
                                 mainWindow.showPlanView()
-                            }
+//                            }
                         }
                     }
                     SubMenuButtonV {
@@ -437,11 +437,11 @@ ApplicationWindow {
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI
                         onClicked: {
-                            if (!mainWindow.preventViewSwitch()) {
+//                            if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
 //                                mainWindow.showAnalyzeTool()
                                 mainWindow.showFlyView()
-                            }
+//                            }
                         }
                     }
                     SubMenuButtonV {
@@ -454,10 +454,10 @@ ApplicationWindow {
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI
                         onClicked: {
-                            if (!mainWindow.preventViewSwitch()) {
+//                            if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
                                 mainWindow.showPostFlightTool()
-                            }
+//                            }
                         }
                     }
                     SubMenuButtonV {

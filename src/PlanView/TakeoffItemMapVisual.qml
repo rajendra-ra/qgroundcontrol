@@ -83,7 +83,9 @@ Item {
             visible:        _root.interactive
 
             onItemCoordinateChanged: {
+                console.log('takeoffDragComponent',itemCoordinate.latitude)
                 if (_missionItem.specifiesCoordinate) {
+                    console.log("specifiesCoordinate")
                     _missionItem.coordinate = itemCoordinate
                 } else {
                     _missionItem.launchCoordinate = itemCoordinate
@@ -101,7 +103,10 @@ Item {
             itemCoordinate: _missionItem.launchCoordinate
             visible:        !_missionItem.launchTakeoffAtSameLocation && _root.interactive
 
-            onItemCoordinateChanged: _missionItem.launchCoordinate = itemCoordinate
+            onItemCoordinateChanged: {
+                console.log('launchDragComponent',itemCoordinate.latitude);
+                _missionItem.launchCoordinate = itemCoordinate
+            }
         }
     }
 
@@ -114,7 +119,7 @@ Item {
             missionItem:    _missionItem
             sequenceNumber: _missionItem.sequenceNumber
             onClicked:      _root.clicked(_missionItem.sequenceNumber)
-            onDoublelicked: _root.doubleclicked(_missionItem.sequenceNumber)
+            onDoubleClicked: _root.doubleClicked(_missionItem.sequenceNumber)
             opacity:        _root.opacity
         }
     }

@@ -90,9 +90,28 @@ Item {
         { text: qsTr("Peacock layout"), coordinate: QtPositioning.coordinate(13.0472723,77.4711951,25) },
     ]
     property var presetModelSession :{
-        "active":false,
         "A":null,
         "B":null
+    }
+    property var presetABType: [
+        {"index":1,"preset":null},
+        {"index":2,"preset":null}
+    ]
+    property var presetModels: [
+        null,
+        presetABType,
+    ]
+
+    enum PresetType {
+        TypeNone,
+        TypeAB,
+        TypeABA,
+        TypeABC,
+        TypeAZ
+    }
+
+    property var session: {
+        "model":presetABType
     }
 
     MapFitFunctions {
@@ -432,7 +451,7 @@ Item {
             mapName:                    "MissionEditor"
             allowGCSLocationCenter:     true
             allowVehicleLocationCenter: true
-            planView:                   true && !globals.toolSelectMode
+            planView:                   true //&& !globals.toolSelectMode
 
             zoomLevel:                  QGroundControl.flightMapZoom
             center:                     QGroundControl.flightMapPosition
@@ -997,7 +1016,8 @@ Item {
             function accept() {
                 createPlanRemoveAllPromptDialogPlanCreator.createPlan(createPlanRemoveAllPromptDialogMapCenter)
                 hideDialog()
-                showPresetEditDialog()
+//                toolSelectDialog.hideDialog()
+//                showPresetEditDialog(1)
             }
             function reject() {
                 hideDialog()
@@ -1299,128 +1319,200 @@ Item {
         }
     }
     function showPresetSelectDialog(){
-        showPopupDialogFromComponent(presetDropPanel)
+//        toolSelectDialog.hideDialog()
+        showPopupDialogFromComponent(presetSelectDialogComponent)
+        preventViewSwitch()
     }
 
     Component {
-        id: presetDropPanel
+        id: presetSelectDialogComponent
         QGCPopupDialog {
             id:         presetSelectDialog
-            title:      qsTr("")//qsTr("Select Preset")
-            buttons:    StandardButton.NoButton//StandardButton.Close
-            titleBarEnabled: false
+            title:      qsTr("Select Preset")
+            buttons:    /*StandardButton.NoButton*/StandardButton.Close
+            titleBarEnabled: true
 
-        ColumnLayout {
-            id:         columnHolder
-            width: innerLayout.width
-            height: innerLayout.height + _margin
+            ColumnLayout {
+                id:         columnHolder
+                width: innerLayout.width
+                height: innerLayout.height + _margin
 
-            property string _overwriteText: (_editingLayer == _layerMission) ? qsTr("Mission overwrite") : ((_editingLayer == _layerGeoFence) ? qsTr("GeoFence overwrite") : qsTr("Rally Points overwrite"))
+                property string _overwriteText: (_editingLayer == _layerMission) ? qsTr("Mission overwrite") : ((_editingLayer == _layerGeoFence) ? qsTr("GeoFence overwrite") : qsTr("Rally Points overwrite"))
+//                Rectangle {
+//                    Layout.alignment: Qt.AlignLeft
+//                    Layout.preferredHeight:45
+//                    Layout.preferredWidth:80
+//                    Button {
+//                        anchors.fill: parent
+//                        text: "back"
+//                        onClicked: {
+//                            hideDialog()
+//                            showToolSelectDialog()
+//                            //                                mapFitFunctions.fitMapViewportToMissionItems()
+//                            //                                loaded = false
+//                            //                                _planMasterController.upload()
+//                        }
+//                    }
+//                }
 
-            GridLayout {
-                id: innerLayout
-                columns:            2
-                Layout.topMargin: ScreenTools.defaultFontPixelWidth
-                Layout.alignment: Qt.AlignCenter
-                visible:            true//createSection.visible
+                GridLayout {
+                    id: innerLayout
+                    columns:            2
+                    Layout.topMargin: ScreenTools.defaultFontPixelWidth
+                    Layout.alignment: Qt.AlignCenter
+                    visible:            true//createSection.visible
 
-                Repeater {
-                    model: _planMasterController.planCreatorsPreset
+                    Repeater {
+                        model: _planMasterController.planCreatorsPreset
 
-                    Rectangle {
-                        id:     button
-                        Layout.rowSpan: 1
-                        Layout.columnSpan: 1
+                        Rectangle {
+                            id:     button
+                            Layout.rowSpan: 1
+                            Layout.columnSpan: 1
 
-                        width:  ScreenTools.defaultFontPixelHeight * 15
-                        height: planCreatorNameLabel.y + planCreatorNameLabel.height
-                        color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
+                            width:  ScreenTools.defaultFontPixelHeight * 15
+                            height: planCreatorNameLabel.y + planCreatorNameLabel.height
+                            color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
 
-                        property bool highlighted: mouseArea.containsMouse
-                        property bool pressed:     mouseArea.pressed
+                            property bool highlighted: mouseArea.containsMouse
+                            property bool pressed:     mouseArea.pressed
 
-                        Image {
-                            id:                 planCreatorImage
-                            anchors.left:       parent.left
-                            anchors.right:      parent.right
-                            source:             object.imageResource
-                            sourceSize.width:   width
-                            fillMode:           Image.PreserveAspectFit
-                            mipmap:             true
-                        }
-
-                        QGCLabel {
-                            id:                     planCreatorNameLabel
-                            anchors.top:            planCreatorImage.bottom
-                            anchors.left:           parent.left
-                            anchors.right:          parent.right
-                            height:                 ScreenTools.defaultFontPixelHeight*2
-                            horizontalAlignment:    Text.AlignHCenter
-                            verticalAlignment:      Text.AlignVCenter
-                            font.pixelSize:         height*0.5
-                            text:                   ""//object.name
-                            color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
-                        }
-
-                        QGCMouseArea {
-                            id:                 mouseArea
-                            anchors.fill:       parent
-                            hoverEnabled:       true
-                            preventStealing:    true
-                            onClicked:{
-                                presetSelectDialog.hideDialog()
-                                globals.toolSelectMode = true
-                                if (_planMasterController.containsItems) {
-                                    createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
-                                    createPlanRemoveAllPromptDialogPlanCreator = object
-                                    mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
-
-                                } else {
-                                    object.createPlan(_mapCenter())
-                                    showPresetEditDialog()
-                                }
+                            Image {
+                                id:                 planCreatorImage
+                                anchors.left:       parent.left
+                                anchors.right:      parent.right
+                                source:             object.imageResource
+                                sourceSize.width:   width
+                                fillMode:           Image.PreserveAspectFit
+                                mipmap:             true
                             }
 
-                            function _mapCenter() {
-                                var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
-                                return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
+                            QGCLabel {
+                                id:                     planCreatorNameLabel
+                                anchors.top:            planCreatorImage.bottom
+                                anchors.left:           parent.left
+                                anchors.right:          parent.right
+                                height:                 ScreenTools.defaultFontPixelHeight*2
+                                horizontalAlignment:    Text.AlignHCenter
+                                verticalAlignment:      Text.AlignVCenter
+                                font.pixelSize:         height*0.5
+                                text:                   ""//object.name
+                                color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
+                            }
+
+                            QGCMouseArea {
+                                id:                 mouseArea
+                                anchors.fill:       parent
+                                hoverEnabled:       true
+                                preventStealing:    true
+                                onClicked:{
+                                    presetSelectDialog.hideDialog()
+                                    globals.toolSelectMode = true
+                                    if (_planMasterController.containsItems) {
+                                        createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
+                                        createPlanRemoveAllPromptDialogPlanCreator = object
+                                        mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+                                    } else {
+                                        object.createPlan(_mapCenter())
+                                        showPresetEditDialog(object.presetType)
+                                    }
+                                }
+
+                                function _mapCenter() {
+                                    var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
+                                    return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
+                                }
                             }
                         }
                     }
-
                 }
             }
-
-
-
-
-
-
-
-
-
-        }
         }
     }
-    function showPresetEditDialog(){
-        showPopupDialogFromComponent(presetEditDialog)
+    function showPresetEditDialog(type){
+
+        switch(type){
+            case PlanView.PresetType.TypeNone:{
+                break;
+            }
+            case PlanView.PresetType.TypeAB:{
+                console.log("typeAB")
+                session.model = presetModels[1]
+                break;
+            }
+            case PlanView.PresetType.TypeABA:{
+                break;
+            }
+            case PlanView.PresetType.TypeABC:{
+                break;
+            }
+            case PlanView.PresetType.TypeAZ:{
+                break;
+            }
+        }
+
+        showPopupDialogFromComponent(presetEditDialogComponent)
+    }
+    function showAltitudeProfile(show){
+        altitudeProfile.visible = show
     }
     Component {
-        id: presetEditDialog
+        id: presetDelegate
+        Rectangle {
+            id:_rootListDelegate
+            width: parent.width
+            height: childrenRect.height
+            color: "white"
+            border.color: "gray"
+            RowLayout {
+                Text {
+                    Layout.margins: 5
+                    text: modelData.text
+                    horizontalAlignment: TextField.AlignLeft
+                    verticalAlignment: TextField.AlignVCenter
+                }
+                Text {
+                    Layout.margins: 5
+                    text: "("+modelData.coordinate.latitude+","+modelData.coordinate.longitude+")"
+                    horizontalAlignment: TextField.AlignRight
+                    verticalAlignment: TextField.AlignVCenter
+                }
+            }
+            MouseArea {
+                hoverEnabled: true
+                anchors.fill: parent
+                onEntered: {
+                    _rootListDelegate.color = "lightblue"
+                }
+                onExited: {
+                    _rootListDelegate.color = "white"
+                }
+                onClicked: {
+                    _rootListDelegate.ListView.view.currentIndex = index
+                    _rootListDelegate.ListView.view.presetIndexChanged(index);
+//                            console
+                }
+            }
+        }
+    }
+    Component {
+        id: presetEditDialogComponent
         QGCPopupDialog {
-            id:         presetSelectDialog
+            id:         presetEditDialog
             title:      qsTr("")//qsTr("Select Preset")
             buttons:    StandardButton.NoButton//StandardButton.Close
             titleBarEnabled: false
             height: 480//mainWindow.width
             width: 640//mainWindow.width
             property bool checked: false
+            property bool loaded: false
+            Component.onCompleted: {
+                loaded = true
+                console.log("onCompleted:activeVehicle",globals.activeVehicle?globals.activeVehicle.coordinate:"")
+            }
 
             //0:Not Set, 1:A->B, 2:A->B->A, 3:A->B->C, 4:A->...->Z
 //            property int presetType: 0
-
-
-//**************************************************//
             ColumnLayout {
                 anchors.fill: parent
                 GridLayout {
@@ -1431,53 +1523,85 @@ Item {
 
                     Rectangle {
                         antialiasing: true
-                        Layout.preferredHeight:100
+                        Layout.preferredHeight:120
 //                        Layout.preferredWidth:50
                         Layout.fillWidth: true
                         color: "#00ffffff"
-                        TitleBoxContainer {
-                            id:titleA
-                            anchors.fill:parent
-                            title:"Start"
-                            titleColor:!checked?qgcPal.buttonHighlight:"gray"
-                            textColor:"white"
-                            titleTextColor:!checked?qgcPal.windowShade:"white"
-                            foregroundColor:qgcPal.windowShade
-                            unit:"m"
-                            altitude:0
-                            name:""
-                        }
                         MouseArea {
+                            propagateComposedEvents: true
                             anchors.fill: parent
                             hoverEnabled: true
                             onClicked: {
                                 checked = false
                             }
+                            TitleBoxContainer {
+                                id:titleA
+                                ma:parent
+                                anchors.fill:parent
+                                title:"Start"
+                                titleColor:!checked?qgcPal.buttonHighlight:"gray"
+                                textColor:"white"
+                                textEditColor:"white"
+                                titleTextColor:!checked?qgcPal.windowShade:"white"
+                                foregroundColor:qgcPal.windowShade
+                                unit:"m"
+                                index:session.model[0].index
+                                location:session.model[0].preset===null?QtPositioning.coordinate():QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
+                                altitude:session.model[0].preset===null?0:session.model[0].preset.coordinate.altitude
+                                name:session.model[0].preset===null?"":session.model[0].preset.text
+                                onLocationChanged: {
+                                    if(!session.model[0].preset){return;}
+                                    _visualItems.get(index).coordinate = location
+                                    session.model[0].preset.coordinate.latitude = location.latitude
+                                    session.model[0].preset.coordinate.longitude = location.longitude
+                                }
+                                onAltitudeChanged: {
+                                    if(!session.model[0].preset){return;}
+                                    _visualItems.get(index).altitude.value = altitude
+                                    session.model[0].preset.coordinate.altitude = altitude
+                                }
+                            }
                         }
                     }
                     Rectangle {
                         antialiasing: true
-                        Layout.preferredHeight:100
+                        Layout.preferredHeight:120
         //                Layout.preferredWidth:50
                         Layout.fillWidth: true
                         color: "#00ffffff"
-                        TitleBoxContainer {
-                            id:titleB
-                            anchors.fill:parent
-                            title:"Destination"
-                            titleColor:checked?qgcPal.buttonHighlight:"gray"
-                            textColor:"white"
-                            titleTextColor:checked?qgcPal.windowShade:"white"
-                            foregroundColor:qgcPal.windowShade
-                            unit:"m"
-                            altitude:0
-                            name:""
-                        }
                         MouseArea {
+                            propagateComposedEvents: true
                             anchors.fill: parent
                             hoverEnabled: true
                             onClicked: {
                                 checked = true
+                            }
+                            TitleBoxContainer {
+                                id:titleB
+                                ma:parent
+                                anchors.fill:parent
+                                title:"Destination"
+                                titleColor:checked?qgcPal.buttonHighlight:"gray"
+                                textColor:"white"
+                                textEditColor:"white"
+                                titleTextColor:checked?qgcPal.windowShade:"white"
+                                foregroundColor:qgcPal.windowShade
+                                unit:"m"
+                                index:session.model[1].index
+                                location:session.model===null?QtPositioning.coordinate():QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
+                                altitude:session.model===null?0:session.model[1].preset.coordinate.altitude
+                                name:session.model[1].preset===null?"":session.model[1].preset.text
+                                onLocationChanged: {
+                                    if(!session.model[1].preset){return;}
+                                    _visualItems.get(index).coordinate = location
+                                    session.model[1].preset.coordinate.latitude = location.latitude
+                                    session.model[1].preset.coordinate.longitude = location.longitude
+                                }
+                                onAltitudeChanged: {
+                                    if(!session.model[1].preset){return;}
+                                    _visualItems.get(index).altitude.value = altitude
+                                    session.model[1].preset.coordinate.altitude = altitude
+                                }
                             }
                         }
                     }
@@ -1488,40 +1612,59 @@ Item {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         ListView {
-                            model:presetModel
+                            model:presetModelDefault
                             anchors.fill: parent
                             delegate: presetDelegate
-                            onCurrentIndexChanged: {
-//                                console.log(titleB.name,titleA.name)
-                                if(checked){
-                                    titleB.name = model[currentIndex].text
-                                    titleB.altitude = model[currentIndex].coordinate.altitude
-//                                    console.log("Count:",_visualItems.count)
-//                                    console.log(_visualItems.get(2).coordinate)
-//                                    console.log(model.get(currentIndex).coordinate)
-                                    _visualItems.get(2).coordinate = model[currentIndex].coordinate
-                                    _visualItems.get(2).altitude.value = model[currentIndex].coordinate.altitude
-                                } else {
-                                    titleA.name = model[currentIndex].text
-                                    titleA.altitude = model[currentIndex].coordinate.altitude
-//                                    console.log(_visualItems.count)
-//                                    console.log(_visualItems.get(1).coordinate)
-//                                    console.log(model.get(currentIndex).coordinate)
-                                   _visualItems.get(1).coordinate = model[currentIndex].coordinate
-                                   _visualItems.get(1).altitude.value = model[currentIndex].coordinate.altitude
-                                }
+                            signal presetIndexChanged(int presetIndex);
 
-//                                presetWaypointName.text = model.get(currentIndex).name
-//                                presetWaypointLat.text = model.get(currentIndex).coordinate.latitude
-//                                presetWaypointLon.text = model.get(currentIndex).coordinate.longitude
-//                                presetWaypointAlt.text = model.get(currentIndex).coordinate.altitude
+                            onPresetIndexChanged: {
+//                                if(presetModelSession.active)
+                                if(!loaded){presetIndex = -1;return;}
+                                if(session.model===null){return;}
+                                if(checked){
+                                    session.model[1].preset = model[presetIndex]
+                                    titleB.name = session.model[1].preset.text
+                                    titleB.location = QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
+                                    titleB.altitude = session.model[1].preset.coordinate.altitude
+//                                    _visualItems.get(2).coordinate = model[currentIndex].coordinate
+//                                    _visualItems.get(2).altitude.value = model[currentIndex].coordinate.altitude
+                                } else {
+                                    session.model[0].preset = model[presetIndex]
+                                    titleA.name = session.model[0].preset.text
+                                    titleA.location = QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
+                                    titleA.altitude = session.model[0].preset.coordinate.altitude
+//                                   _visualItems.get(1).coordinate = model[currentIndex].coordinate
+                                    _visualItems.get(0).coordinate.altitude = globals.activeVehicle?globals.activeVehicle.altitudeAMSL:0
+//                                   _visualItems.get(1).altitude.value = model[currentIndex].coordinate.altitude
+                                }
                             }
                         }
                     }
                 }
                 RowLayout {
-                    Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignBottom
                     Layout.margins: 8
+                    Rectangle {
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+                        Layout.preferredHeight:45
+                        Layout.preferredWidth:80
+                        Button {
+                            anchors.fill: parent
+                            text: "back"
+                            onClicked: {
+                                hideDialog()
+                                showPresetSelectDialog()
+//                                mapFitFunctions.fitMapViewportToMissionItems()
+                                loaded = false
+//                                _planMasterController.upload()
+                            }
+                        }
+                    }
+                    Item{
+                        Layout.fillWidth: true
+                    }
+
                     Rectangle {
                         Layout.alignment: Qt.AlignRight | Qt.AlignBottom
                         Layout.preferredHeight:45
@@ -1529,56 +1672,130 @@ Item {
                         Button {
                             anchors.fill: parent
                             text: "confirm"
-
-                        }
-                    }
-                }
-
-            }
-//            PresetListModel {
-//                id: presetModel
-//            }
-            Component {
-                id: presetDelegate
-                Rectangle {
-                    id:_rootListDelegate
-                    width: parent.width
-                    height: childrenRect.height
-                    color: "white"
-                    border.color: "gray"
-                    RowLayout {
-                        Text {
-                            Layout.margins: 5
-                            text: modelData.text
-                            horizontalAlignment: TextField.AlignLeft
-                            verticalAlignment: TextField.AlignVCenter
-                        }
-                        Text {
-                            Layout.margins: 5
-                            text: "("+modelData.coordinate.latitude+","+modelData.coordinate.longitude+")"
-                            horizontalAlignment: TextField.AlignRight
-                            verticalAlignment: TextField.AlignVCenter
-                        }
-                    }
-                    MouseArea {
-                        hoverEnabled: true
-                        anchors.fill: parent
-                        onEntered: {
-                            _rootListDelegate.color = "lightblue"
-                        }
-                        onExited: {
-                            _rootListDelegate.color = "white"
-                        }
-                        onClicked: {
-                            _rootListDelegate.ListView.view.currentIndex = index
-                            console
+                            onClicked: {
+                                hideDialog()
+                                showAltitudeProfile(true)
+                                mapFitFunctions.fitMapViewportToMissionItems()
+                                loaded = false
+//                                _planMasterController.upload()
+                            }
                         }
                     }
                 }
             }
         }
     }
+    Connections{
+        target:_missionController
+        function updateSession(item,index){
+            let x = _visualItems.get(item.index)
+//            console.log("session",item.preset,x.coordinate)
+            if(item.preset){
+                item.preset.coordinate.latitude = x.coordinate.latitude.toFixed(_decimalPlaces-1)
+                item.preset.coordinate.longitude = x.coordinate.longitude.toFixed(_decimalPlaces-1)
+//                item.preset.coordinate.altitude = x.altitude.value
+            }
+        }
+        function onRecalcTerrainProfile(){
+            console.log("***update***")
+            for(let i=0;i<_visualItems.count;i++){
+                let item = _visualItems.get(i)
+                console.log("index:",i,"lat:",item.coordinate.latitude,"lon:",item.coordinate.longitude)
+                if(i===1){
+                    console.log("launchCoordinateAtSamePosition",item.launchCoordinate.latitude,item.launchCoordinate.longitude)
+                    item.coordinate.latitude = item.launchCoordinate.latitude
+                    item.coordinate.longitude = item.launchCoordinate.longitude
 
+                }
+            }
+
+            altitudeProfile.update()
+            if(session.model){
+                session.model.forEach(updateSession)
+            }
+        }
+    }
+
+    AltitudeGraph {
+        id:altitudeProfile
+        height:200
+        width:600
+        anchors.margins:    _toolsMargin
+//        anchors.leftMargin: 0
+//        anchors.left: parent.left
+        anchors.right:      parent.right
+        anchors.top:     parent.top
+        anchors.topMargin: 50
+        lineseries.name: "Altitude"
+        lineseries.color: "#e39414"
+        lineseries.width: 3
+        labelColor:"#fff"
+        missionController: _missionController
+    }
+    Rectangle {
+        id:presetNav
+        height:60
+        width:300
+        color: qgcPal.windowShadeDark
+        visible: altitudeProfile.visible && globals.toolSelectMode
+        radius: 10
+        anchors.margins:    _toolsMargin
+//        anchors.leftMargin: 0
+//        anchors.left: parent.left
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom:     parent.bottom
+        RowLayout {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            Rectangle {
+                Layout.alignment: Qt.AlignCenter
+                Layout.preferredHeight:45
+                Layout.preferredWidth:80
+                Button {
+                    anchors.fill: parent
+                    text: "Back"
+                    onClicked: {
+                        showPresetEditDialog();
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.alignment: Qt.AlignCenter
+                Layout.preferredHeight:45
+                Layout.preferredWidth:80
+                Button {
+                    anchors.fill: parent
+                    text: "Upload"
+                    onClicked: {
+                        _planMasterController.upload()
+                    }
+                }
+            }
+        }
+    }
+    TerrainStatus {
+        id:                 _altitudeProfile
+        anchors.margins:    _toolsMargin
+        anchors.left:       parent.left
+//        anchors.top:        parent.top
+        z:                  QGroundControl.zOrderWidgets
+        anchors.leftMargin: 0
+        anchors.right:      parent.right
+        anchors.bottom:     parent.bottom
+        height:             ScreenTools.defaultFontPixelHeight * 7
+        missionController:  _missionController
+        visible:            false//_internalVisible && _editingLayer === _layerMission && QGroundControl.corePlugin.options.showMissionStatus && !globals.toolSelectMode
+
+        onSetCurrentSeqNum: _missionController.setCurrentPlanViewSeqNum(seqNum, true)
+
+//        property bool _internalVisible: _planViewSettings.showMissionItemStatus.rawValue
+
+        function toggleVisible() {
+            _internalVisible = !_internalVisible
+            _planViewSettings.showMissionItemStatus.rawValue = _internalVisible
+        }
+    }
 }
 
 /*##^##
