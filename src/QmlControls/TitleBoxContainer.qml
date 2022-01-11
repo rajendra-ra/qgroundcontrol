@@ -102,7 +102,7 @@ Rectangle {
                             verticalAlignment: Qt.AlignVCenter
                             antialiasing: false
                             horizontalAlignment: Qt.AlignLeft
-                            text: focus?text:location.latitude + ", " + location.longitude
+                            text: focus?text:(location?location.latitude + ", " + location.longitude:"0,0")
                             color: textEditColor
                             padding: textPadding
                             background: Rectangle {
