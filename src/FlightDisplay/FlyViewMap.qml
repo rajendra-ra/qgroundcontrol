@@ -245,8 +245,8 @@ FlightMap {
 
         Connections {
             target:                 _activeVehicle ? _activeVehicle.trajectoryPoints : null
-            function onPointAdded(){           trajectoryPolyline.addCoordinate(coordinate)}
-            function onUpdateLastPoint(){      trajectoryPolyline.replaceCoordinate(trajectoryPolyline.pathLength() - 1, coordinate)}
+            function onPointAdded(coordinate){           trajectoryPolyline.addCoordinate(coordinate)}
+            function onUpdateLastPoint(coordinate){      trajectoryPolyline.replaceCoordinate(trajectoryPolyline.pathLength() - 1, coordinate)}
             function onPointsCleared(){        trajectoryPolyline.path = []}
         }
     }

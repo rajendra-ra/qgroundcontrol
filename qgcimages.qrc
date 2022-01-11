@@ -202,5 +202,8 @@
         <file alias="ZoomMinus.svg">src/FlightMap/Images/ZoomMinus.svg</file>
         <file alias="ZoomPlus.svg">src/FlightMap/Images/ZoomPlus.svg</file>
         <file alias="Radar.svg">resources/radar.svg</file>
+        <file alias="height.svg">resources/height.svg</file>
+        <file alias="location.svg">resources/location.svg</file>
+        <file alias="edit.svg">resources/edit.svg</file>
     </qresource>
 </RCC>

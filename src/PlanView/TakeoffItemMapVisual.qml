@@ -31,6 +31,7 @@ Item {
     property var    _launchIndicatorItem
 
     signal clicked(int sequenceNumber)
+    signal doubleClicked(int sequenceNumber)
 
     function addCommonVisuals() {
         if (_objMgrCommonVisuals.empty) {
@@ -82,7 +83,9 @@ Item {
             visible:        _root.interactive
 
             onItemCoordinateChanged: {
+                console.log('takeoffDragComponent',itemCoordinate.latitude)
                 if (_missionItem.specifiesCoordinate) {
+                    console.log("specifiesCoordinate")
                     _missionItem.coordinate = itemCoordinate
                 } else {
                     _missionItem.launchCoordinate = itemCoordinate
@@ -100,7 +103,10 @@ Item {
             itemCoordinate: _missionItem.launchCoordinate
             visible:        !_missionItem.launchTakeoffAtSameLocation && _root.interactive
 
-            onItemCoordinateChanged: _missionItem.launchCoordinate = itemCoordinate
+            onItemCoordinateChanged: {
+                console.log('launchDragComponent',itemCoordinate.latitude);
+                _missionItem.launchCoordinate = itemCoordinate
+            }
         }
     }
 
@@ -113,6 +119,7 @@ Item {
             missionItem:    _missionItem
             sequenceNumber: _missionItem.sequenceNumber
             onClicked:      _root.clicked(_missionItem.sequenceNumber)
+            onDoubleClicked: _root.doubleClicked(_missionItem.sequenceNumber)
             opacity:        _root.opacity
         }
     }
@@ -132,6 +139,7 @@ Item {
                     label:              qsTr("Launch")
                     highlightSelected:  true
                     onClicked:          _root.clicked(_missionItem.sequenceNumber)
+                    onDoubleClicked:    _root.doubleClicked(_missionItem.sequenceNumber)
                     visible:            _root.interactive
                 }
         }

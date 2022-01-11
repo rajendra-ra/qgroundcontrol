@@ -87,7 +87,9 @@ ApplicationWindow {
 
         property var                planMasterControllerPlanView:   null
         property var                currentPlanMissionItem:         planMasterControllerPlanView ? planMasterControllerPlanView.missionController.currentPlanViewItem : null
-        property bool toolSelectMode: false
+        property bool               toolSelectMode: false
+//        property bool               hideToolStrip:false|toolSelectMode
+//        property type name: value
     }
 
     /// Default color palette used throughout the UI
@@ -401,10 +403,10 @@ ApplicationWindow {
                         imageColor:         qgcPal.text
                         imageResource:      "/qmlimages/Gears.svg"
                         onClicked: {
-                            if (!mainWindow.preventViewSwitch()) {
+//                            if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
                                 mainWindow.showSetupTool()
-                            }
+//                            }
                         }
                     }
 
@@ -418,11 +420,11 @@ ApplicationWindow {
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI// && !planView.visible && !flightView.visible
                         onClicked: {
-                            if (!mainWindow.preventViewSwitch()) {
+//                            if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
 //                                mainWindow.showAnalyzeTool()
                                 mainWindow.showPlanView()
-                            }
+//                            }
                         }
                     }
                     SubMenuButtonV {
@@ -435,11 +437,11 @@ ApplicationWindow {
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI
                         onClicked: {
-                            if (!mainWindow.preventViewSwitch()) {
+//                            if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
 //                                mainWindow.showAnalyzeTool()
                                 mainWindow.showFlyView()
-                            }
+//                            }
                         }
                     }
                     SubMenuButtonV {
@@ -452,10 +454,10 @@ ApplicationWindow {
                         imageColor:         qgcPal.text
                         visible:            QGroundControl.corePlugin.showAdvancedUI
                         onClicked: {
-                            if (!mainWindow.preventViewSwitch()) {
+//                            if (!mainWindow.preventViewSwitch()) {
                                 toolSelectDialog.hideDialog()
                                 mainWindow.showPostFlightTool()
-                            }
+//                            }
                         }
                     }
                     SubMenuButtonV {

@@ -146,8 +146,8 @@ Rectangle {
                             currentIndex: 0
 
                             model:  [
-                                { text: qsTr("RangeAero Office"), coordinate: QtPositioning.coordinate(13.0436028,77.5773236) },
-                                { text: qsTr("Peacock layout"), coordinate: QtPositioning.coordinate(13.0472723,77.4711951) },
+                                { text: qsTr("RangeAero Office"), coordinate: QtPositioning.coordinate(13.0436028,77.5773236,20) },
+                                { text: qsTr("Peacock layout"), coordinate: QtPositioning.coordinate(13.0472723,77.4711951,20) },
                             ]
 //                            fact:               object
                             Component.onCompleted: {/*console.debug(currentIndex,currentText,currentValue);*/missionItem.coordinate = currentValue}

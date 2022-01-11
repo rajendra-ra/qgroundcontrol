@@ -67,7 +67,7 @@ Rectangle {
         QGCToolBarButton {
             id:                     currentButton
             Layout.preferredHeight: viewButtonRow.height
-            icon.source:            "/res/QGCLogoFull"
+            icon.source:            "/res/resources/icons/rangeaero.ico"
             logo:                   true
             onClicked:              mainWindow.showToolSelectDialog()
         }
@@ -120,7 +120,7 @@ Rectangle {
         mipmap:                 true
 
         property bool   _outdoorPalette:        qgcPal.globalTheme === QGCPalette.Light
-        property bool   _corePluginBranding:    QGroundControl.corePlugin.brandImageIndoor.length != 0
+        property bool   _corePluginBranding:    QGroundControl.corePlugin.brandImageIndoor.length !== 0
         property string _userBrandImageIndoor:  QGroundControl.settingsManager.brandImageSettings.userBrandImageIndoor.value
         property string _userBrandImageOutdoor: QGroundControl.settingsManager.brandImageSettings.userBrandImageOutdoor.value
         property bool   _userBrandingIndoor:    _userBrandImageIndoor.length != 0

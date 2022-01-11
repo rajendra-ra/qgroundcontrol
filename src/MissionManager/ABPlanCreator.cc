@@ -15,7 +15,7 @@
 ABPlanCreator::ABPlanCreator(PlanMasterController* planMasterController, QObject* parent)
     : PlanCreator(planMasterController, tr("A to B"), QStringLiteral("/qmlimages/PlanCreator/ABPlanCreator.svg"), parent)
 {
-
+    _presetType = PresetType::TypeAB;
 }
 
 void ABPlanCreator::createPlan(const QGeoCoordinate& mapCenterCoord)

@@ -34,6 +34,7 @@ Item {
     property bool   _dragAreaShowing:   false
 
     signal clicked(int sequenceNumber)
+    signal doubleClicked(int sequenceNumber)
 
     function hideItemVisuals() {
         if (_itemVisualShowing) {
@@ -131,6 +132,7 @@ Item {
             missionItem:    _missionItem
             sequenceNumber: _missionItem.sequenceNumber
             onClicked:      if(_root.interactive)  _root.clicked(_missionItem.sequenceNumber)
+            onDoubleClicked:      if(_root.interactive)  _root.doubleClicked(_missionItem.sequenceNumber)
             opacity:        _root.opacity
         }
     }
