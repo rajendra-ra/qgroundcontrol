@@ -101,6 +101,10 @@ Item {
         null,
         presetABType,
     ]
+    property var presetContainers: [
+
+    ]
+    property var selectedContainer:null
 
     enum PresetType {
         TypeNone,
@@ -1017,7 +1021,7 @@ Item {
                 createPlanRemoveAllPromptDialogPlanCreator.createPlan(createPlanRemoveAllPromptDialogMapCenter)
                 hideDialog()
 //                toolSelectDialog.hideDialog()
-//                showPresetEditDialog(1)
+                showPresetEditDialog()
             }
             function reject() {
                 hideDialog()
@@ -1309,126 +1313,119 @@ Item {
             }
         }
     }
-    Timer {
-        id:             switchToMonitorTimer
-        interval:       1000
-        onTriggered: {
-           showFlyView()
-            //missionStats.visible = true
-            //uploadCompleteText.visible = false
-        }
-    }
     function showPresetSelectDialog(){
+        presetPopup.open()
+        pageIndicator.currentIndex = 0
 //        toolSelectDialog.hideDialog()
-        showPopupDialogFromComponent(presetSelectDialogComponent)
+//        showPopupDialogFromComponent(presetSelectDialogComponent)
         preventViewSwitch()
     }
 
-    Component {
-        id: presetSelectDialogComponent
-        QGCPopupDialog {
-            id:         presetSelectDialog
-            title:      qsTr("Select Preset")
-            buttons:    /*StandardButton.NoButton*/StandardButton.Close
-            titleBarEnabled: true
+//    Component {
+//        id: presetSelectDialogComponent
+//        QGCPopupDialog {
+//            id:         presetSelectDialog
+//            title:      qsTr("Select Preset")
+//            buttons:    /*StandardButton.NoButton*/StandardButton.Close
+//            titleBarEnabled: true
 
-            ColumnLayout {
-                id:         columnHolder
-                width: innerLayout.width
-                height: innerLayout.height + _margin
+//            ColumnLayout {
+//                id:         columnHolder
+//                width: innerLayout.width
+//                height: innerLayout.height + _margin
 
-                property string _overwriteText: (_editingLayer == _layerMission) ? qsTr("Mission overwrite") : ((_editingLayer == _layerGeoFence) ? qsTr("GeoFence overwrite") : qsTr("Rally Points overwrite"))
-//                Rectangle {
-//                    Layout.alignment: Qt.AlignLeft
-//                    Layout.preferredHeight:45
-//                    Layout.preferredWidth:80
-//                    Button {
-//                        anchors.fill: parent
-//                        text: "back"
-//                        onClicked: {
-//                            hideDialog()
-//                            showToolSelectDialog()
-//                            //                                mapFitFunctions.fitMapViewportToMissionItems()
-//                            //                                loaded = false
-//                            //                                _planMasterController.upload()
+//                property string _overwriteText: (_editingLayer == _layerMission) ? qsTr("Mission overwrite") : ((_editingLayer == _layerGeoFence) ? qsTr("GeoFence overwrite") : qsTr("Rally Points overwrite"))
+////                Rectangle {
+////                    Layout.alignment: Qt.AlignLeft
+////                    Layout.preferredHeight:45
+////                    Layout.preferredWidth:80
+////                    Button {
+////                        anchors.fill: parent
+////                        text: "back"
+////                        onClicked: {
+////                            hideDialog()
+////                            showToolSelectDialog()
+////                            //                                mapFitFunctions.fitMapViewportToMissionItems()
+////                            //                                loaded = false
+////                            //                                _planMasterController.upload()
+////                        }
+////                    }
+////                }
+
+//                GridLayout {
+//                    id: innerLayout
+//                    columns:            2
+//                    Layout.topMargin: ScreenTools.defaultFontPixelWidth
+//                    Layout.alignment: Qt.AlignCenter
+//                    visible:            true//createSection.visible
+
+//                    Repeater {
+//                        model: _planMasterController.planCreatorsPreset
+
+//                        Rectangle {
+//                            id:     button
+//                            Layout.rowSpan: 1
+//                            Layout.columnSpan: 1
+
+//                            width:  ScreenTools.defaultFontPixelHeight * 15
+//                            height: planCreatorNameLabel.y + planCreatorNameLabel.height
+//                            color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
+
+//                            property bool highlighted: mouseArea.containsMouse
+//                            property bool pressed:     mouseArea.pressed
+
+//                            Image {
+//                                id:                 planCreatorImage
+//                                anchors.left:       parent.left
+//                                anchors.right:      parent.right
+//                                source:             object.imageResource
+//                                sourceSize.width:   width
+//                                fillMode:           Image.PreserveAspectFit
+//                                mipmap:             true
+//                            }
+
+//                            QGCLabel {
+//                                id:                     planCreatorNameLabel
+//                                anchors.top:            planCreatorImage.bottom
+//                                anchors.left:           parent.left
+//                                anchors.right:          parent.right
+//                                height:                 ScreenTools.defaultFontPixelHeight*2
+//                                horizontalAlignment:    Text.AlignHCenter
+//                                verticalAlignment:      Text.AlignVCenter
+//                                font.pixelSize:         height*0.5
+//                                text:                   ""//object.name
+//                                color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
+//                            }
+
+//                            QGCMouseArea {
+//                                id:                 mouseArea
+//                                anchors.fill:       parent
+//                                hoverEnabled:       true
+//                                preventStealing:    true
+//                                onClicked:{
+//                                    presetSelectDialog.hideDialog()
+//                                    globals.toolSelectMode = true
+//                                    if (_planMasterController.containsItems) {
+//                                        createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
+//                                        createPlanRemoveAllPromptDialogPlanCreator = object
+//                                        mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+//                                    } else {
+//                                        object.createPlan(_mapCenter())
+//                                        showPresetEditDialog(object.presetType)
+//                                    }
+//                                }
+
+//                                function _mapCenter() {
+//                                    var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
+//                                    return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
+//                                }
+//                            }
 //                        }
 //                    }
 //                }
-
-                GridLayout {
-                    id: innerLayout
-                    columns:            2
-                    Layout.topMargin: ScreenTools.defaultFontPixelWidth
-                    Layout.alignment: Qt.AlignCenter
-                    visible:            true//createSection.visible
-
-                    Repeater {
-                        model: _planMasterController.planCreatorsPreset
-
-                        Rectangle {
-                            id:     button
-                            Layout.rowSpan: 1
-                            Layout.columnSpan: 1
-
-                            width:  ScreenTools.defaultFontPixelHeight * 15
-                            height: planCreatorNameLabel.y + planCreatorNameLabel.height
-                            color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
-
-                            property bool highlighted: mouseArea.containsMouse
-                            property bool pressed:     mouseArea.pressed
-
-                            Image {
-                                id:                 planCreatorImage
-                                anchors.left:       parent.left
-                                anchors.right:      parent.right
-                                source:             object.imageResource
-                                sourceSize.width:   width
-                                fillMode:           Image.PreserveAspectFit
-                                mipmap:             true
-                            }
-
-                            QGCLabel {
-                                id:                     planCreatorNameLabel
-                                anchors.top:            planCreatorImage.bottom
-                                anchors.left:           parent.left
-                                anchors.right:          parent.right
-                                height:                 ScreenTools.defaultFontPixelHeight*2
-                                horizontalAlignment:    Text.AlignHCenter
-                                verticalAlignment:      Text.AlignVCenter
-                                font.pixelSize:         height*0.5
-                                text:                   ""//object.name
-                                color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
-                            }
-
-                            QGCMouseArea {
-                                id:                 mouseArea
-                                anchors.fill:       parent
-                                hoverEnabled:       true
-                                preventStealing:    true
-                                onClicked:{
-                                    presetSelectDialog.hideDialog()
-                                    globals.toolSelectMode = true
-                                    if (_planMasterController.containsItems) {
-                                        createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
-                                        createPlanRemoveAllPromptDialogPlanCreator = object
-                                        mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
-                                    } else {
-                                        object.createPlan(_mapCenter())
-                                        showPresetEditDialog(object.presetType)
-                                    }
-                                }
-
-                                function _mapCenter() {
-                                    var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
-                                    return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+//            }
+//        }
+//    }
     function showPresetEditDialog(type){
 
         switch(type){
@@ -1450,12 +1447,15 @@ Item {
                 break;
             }
         }
-
-        showPopupDialogFromComponent(presetEditDialogComponent)
+        presetPopup.open()
+        pageIndicator.currentIndex = 1
+//        showPopupDialogFromComponent(presetEditDialogComponent)
     }
     function showAltitudeProfile(show){
         altitudeProfile.visible = show
+        _altitudeProfiletimer.start()
     }
+
     Component {
         id: presetDelegate
         Rectangle {
@@ -1490,229 +1490,596 @@ Item {
                 onClicked: {
                     _rootListDelegate.ListView.view.currentIndex = index
                     _rootListDelegate.ListView.view.presetIndexChanged(index);
-//                            console
+                    console.log("selected index",_rootListDelegate.ListView.view)
                 }
             }
         }
     }
-    Component {
-        id: presetEditDialogComponent
-        QGCPopupDialog {
-            id:         presetEditDialog
-            title:      qsTr("")//qsTr("Select Preset")
-            buttons:    StandardButton.NoButton//StandardButton.Close
-            titleBarEnabled: false
-            height: 480//mainWindow.width
-            width: 640//mainWindow.width
-            property bool checked: false
-            property bool loaded: false
-            Component.onCompleted: {
-                loaded = true
-                console.log("onCompleted:activeVehicle",globals.activeVehicle?globals.activeVehicle.coordinate:"")
+    /********************************************************************************/
+
+    Popup {
+        id:presetPopup
+        width: 750
+        height: 600
+        padding: 5
+        modal: true
+        closePolicy: Popup.NoAutoClose
+        anchors.centerIn: parent
+        clip:true
+        background: Rectangle {
+            color:qgcPal.windowShadeDark
+        }
+        onOpened: {
+            if(presetEditPage.loaded && session.model[0].preset){
+
+                titleA.location = QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
+                titleB.location = QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
+                titleA.altitude = session.model[0].preset.coordinate.altitude.toFixed(2)
+                titleB.altitude = session.model[1].preset.coordinate.altitude.toFixed(2)
             }
 
-            //0:Not Set, 1:A->B, 2:A->B->A, 3:A->B->C, 4:A->...->Z
-//            property int presetType: 0
-            ColumnLayout {
-                anchors.fill: parent
-                GridLayout {
-                    Layout.fillWidth: true
-                    columnSpacing: 10
-                    Layout.margins: 8
-                    columns: 2
 
-                    Rectangle {
-                        antialiasing: true
-                        Layout.preferredHeight:120
-//                        Layout.preferredWidth:50
-                        Layout.fillWidth: true
-                        color: "#00ffffff"
-                        MouseArea {
-                            propagateComposedEvents: true
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                checked = false
-                            }
-                            TitleBoxContainer {
-                                id:titleA
-                                ma:parent
-                                anchors.fill:parent
-                                title:"Start"
-                                titleColor:!checked?qgcPal.buttonHighlight:"gray"
-                                textColor:"white"
-                                textEditColor:"white"
-                                titleTextColor:!checked?qgcPal.windowShade:"white"
-                                foregroundColor:qgcPal.windowShade
-                                unit:"m"
-                                index:session.model[0].index
-                                location:session.model[0].preset===null?QtPositioning.coordinate():QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
-                                altitude:session.model[0].preset===null?0:session.model[0].preset.coordinate.altitude
-                                name:session.model[0].preset===null?"":session.model[0].preset.text
-                                onLocationChanged: {
-                                    if(!session.model[0].preset){return;}
-                                    _visualItems.get(index).coordinate = location
-                                    session.model[0].preset.coordinate.latitude = location.latitude
-                                    session.model[0].preset.coordinate.longitude = location.longitude
-                                }
-                                onAltitudeChanged: {
-                                    if(!session.model[0].preset){return;}
-                                    _visualItems.get(index).altitude.value = altitude
-                                    session.model[0].preset.coordinate.altitude = altitude
-                                }
-                            }
+        }
+
+        ColumnLayout {
+            id: column
+            anchors.fill: parent
+            RowLayout {
+                id: row
+                Layout.fillWidth: true
+                implicitHeight: ScreenTools.defaultFontPixelHeight*3
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                Button {
+                    id: _button1
+                    text: qsTr("Back")
+                    contentItem: Text {
+                        text: _button1.text
+                        font: _button1.font
+                        color: qgcPal.buttonText
+                    }
+//                    style: e {
+//                        text: qsTr("Back")
+//                        color: qgcPal.buttonText
+//                    }
+                    visible: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    onClicked: {
+                        if(pageIndicator.currentIndex == 0){
+                            presetPopup.close()
+                            showToolSelectDialog()
+                        } else if(pageIndicator.currentIndex > 0){
+                            pageIndicator.currentIndex--;
                         }
                     }
-                    Rectangle {
-                        antialiasing: true
-                        Layout.preferredHeight:120
-        //                Layout.preferredWidth:50
-                        Layout.fillWidth: true
-                        color: "#00ffffff"
-                        MouseArea {
-                            propagateComposedEvents: true
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            onClicked: {
-                                checked = true
-                            }
-                            TitleBoxContainer {
-                                id:titleB
-                                ma:parent
-                                anchors.fill:parent
-                                title:"Destination"
-                                titleColor:checked?qgcPal.buttonHighlight:"gray"
-                                textColor:"white"
-                                textEditColor:"white"
-                                titleTextColor:checked?qgcPal.windowShade:"white"
-                                foregroundColor:qgcPal.windowShade
-                                unit:"m"
-                                index:session.model[1].index
-                                location:session.model===null?QtPositioning.coordinate():QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
-                                altitude:session.model===null?0:session.model[1].preset.coordinate.altitude
-                                name:session.model[1].preset===null?"":session.model[1].preset.text
-                                onLocationChanged: {
-                                    if(!session.model[1].preset){return;}
-                                    _visualItems.get(index).coordinate = location
-                                    session.model[1].preset.coordinate.latitude = location.latitude
-                                    session.model[1].preset.coordinate.longitude = location.longitude
+                    background: Rectangle {
+                        color: qgcPal.windowShade
+                    }
+                }
+                Item {
+                    id: spacer0
+                    Layout.fillWidth: true
+                }
+
+                PageIndicator {
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                    id: pageIndicator
+                    interactive: true
+                    count: view.count
+                    currentIndex: view.currentIndex
+                }
+                Item {
+                    id: spacer1
+                    Layout.fillWidth: true
+                }
+
+//                Button {
+//                    id: _button
+//                    Layout.alignment: Qt.AlignRight | Qt.AlignTop
+//                    visible: true
+//                    text: qsTr("Next")
+//                    autoExclusive: true
+//                    checkable: true
+//                }
+            }
+            SwipeView {
+                id:view
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                currentIndex: pageIndicator.currentIndex
+                clip:true
+                Item {
+                    id: presetSelectPage
+                    GridLayout {
+                        id: innerLayout
+                        anchors.fill: parent
+                        rows: 2
+                        columns: 2
+                        Repeater {
+                            model: _planMasterController.planCreatorsPreset
+                            Rectangle {
+                                id:button
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
+
+                                property bool highlighted: mouseArea.containsMouse
+                                property bool pressed:     mouseArea.pressed
+                                ColumnLayout {
+                                    id: buttonLayout
+                                    anchors.fill: parent
+                                    spacing: 5
+                                    Image {
+//                                        id:                 planCreatorImage
+                                        source:             object.imageResource
+//                                        Layout.minimumHeight: 50
+//                                        Layout.minimumWidth: 50
+//                                        Layout.maximumHeight: 100
+//                                        Layout.maximumWidth: 100
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        fillMode: Image.PreserveAspectFit
+                                    }
+                                    Text {
+//                                        id:                     planCreatorNameLabel
+                                        horizontalAlignment:    Text.AlignHCenter
+                                        verticalAlignment:      Text.AlignVCenter
+                                        font.pixelSize:         ScreenTools.defaultFontPixelHeight
+                                        text:                   ""//object.name
+                                        color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
+                                    }
                                 }
-                                onAltitudeChanged: {
-                                    if(!session.model[1].preset){return;}
-                                    _visualItems.get(index).altitude.value = altitude
-                                    session.model[1].preset.coordinate.altitude = altitude
+                                MouseArea {
+                                    id:                 mouseArea
+                                    anchors.fill:       parent
+                                    hoverEnabled:       true
+//                                    preventStealing:    true
+                                    onClicked:{
+                                        console.log("size:",button.width,button.height)
+//                                        presetSelectDialog.hideDialog()
+                                        globals.toolSelectMode = true
+                                        if (_planMasterController.containsItems) {
+                                            createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
+                                            createPlanRemoveAllPromptDialogPlanCreator = object
+                                            mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+                                        } else {
+                                            object.createPlan(_mapCenter())
+                                            showPresetEditDialog(object.presetType)
+                                        }
+                                    }
+
+                                    function _mapCenter() {
+                                        var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
+                                        return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                RowLayout {
-                    Layout.margins: 8
-                    Flickable {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        ListView {
-                            model:presetModelDefault
-                            anchors.fill: parent
-                            delegate: presetDelegate
-                            signal presetIndexChanged(int presetIndex);
 
-                            onPresetIndexChanged: {
-//                                if(presetModelSession.active)
-                                if(!loaded){presetIndex = -1;return;}
-                                if(session.model===null){return;}
-                                if(checked){
-                                    session.model[1].preset = model[presetIndex]
-                                    titleB.name = session.model[1].preset.text
-                                    titleB.location = QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
-                                    titleB.altitude = session.model[1].preset.coordinate.altitude
-//                                    _visualItems.get(2).coordinate = model[currentIndex].coordinate
-//                                    _visualItems.get(2).altitude.value = model[currentIndex].coordinate.altitude
-                                } else {
-                                    session.model[0].preset = model[presetIndex]
-                                    titleA.name = session.model[0].preset.text
-                                    titleA.location = QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
-                                    titleA.altitude = session.model[0].preset.coordinate.altitude
-//                                   _visualItems.get(1).coordinate = model[currentIndex].coordinate
-                                    _visualItems.get(0).coordinate.altitude = globals.activeVehicle?globals.activeVehicle.altitudeAMSL:0
-//                                   _visualItems.get(1).altitude.value = model[currentIndex].coordinate.altitude
+
+                Item {
+                    id:presetEditPage
+                    property bool checked: false
+                    property bool loaded: false
+                    Component.onCompleted: {
+                        loaded = true
+                        console.log("onCompleted:activeVehicle",globals.activeVehicle?globals.activeVehicle.coordinate:"")
+                    }
+                    ColumnLayout {
+                        anchors.fill: parent
+                        GridLayout {
+                            Layout.fillWidth: true
+                            columnSpacing: 10
+                            Layout.margins: 8
+                            columns: 2
+                            Rectangle {
+                                antialiasing: true
+                                Layout.preferredHeight: 120
+                                Layout.fillWidth: true
+                                color: "#00ffffff"
+                                MouseArea {
+                                    propagateComposedEvents: true
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onClicked: {
+                                        presetEditPage.checked = false
+                                    }
+                                    TitleBoxContainer {
+                                        id:titleA
+                                        ma:parent
+                                        anchors.fill:parent
+                                        title:"Start"
+                                        titleColor:!presetEditPage.checked?qgcPal.buttonHighlight:"gray"
+                                        textColor:"white"
+                                        textEditColor:"white"
+                                        titleTextColor:!presetEditPage.checked?qgcPal.windowShade:"white"
+                                        foregroundColor:qgcPal.windowShade
+                                        unit:"m"
+                                        index:session.model[0].index
+                                        location:session.model[0].preset===null?QtPositioning.coordinate():QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
+                                        altitude:session.model[0].preset===null?0:session.model[0].preset.coordinate.altitude
+                                        name:session.model[0].preset===null?"":session.model[0].preset.text
+                                        onLocationChanged: {
+                                            if(!session.model[0].preset){return;}
+                                            _visualItems.get(index).coordinate = location
+                                            session.model[0].preset.coordinate.latitude = location.latitude
+                                            session.model[0].preset.coordinate.longitude = location.longitude
+                                        }
+                                        onAltitudeChanged: {
+                                            if(!session.model[0].preset){return;}
+                                            _visualItems.get(index).altitude.value = altitude
+                                            session.model[0].preset.coordinate.altitude = altitude
+                                        }
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                antialiasing: true
+                                Layout.preferredHeight:120
+                                Layout.fillWidth: true
+                                color: "#00ffffff"
+                                MouseArea {
+                                    propagateComposedEvents: true
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    onClicked: {
+                                        presetEditPage.checked = true
+                                    }
+                                    TitleBoxContainer {
+                                        id:titleB
+                                        ma:parent
+                                        anchors.fill:parent
+                                        title:"Destination"
+                                        titleColor:presetEditPage.checked?qgcPal.buttonHighlight:"gray"
+                                        textColor:"white"
+                                        textEditColor:"white"
+                                        titleTextColor:presetEditPage.checked?qgcPal.windowShade:"white"
+                                        foregroundColor:qgcPal.windowShade
+                                        unit:"m"
+                                        index:session.model[1].index
+                                        location:session.model===null?QtPositioning.coordinate():QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
+                                        altitude:session.model===null?0:session.model[1].preset.coordinate.altitude
+                                        name:session.model[1].preset===null?"":session.model[1].preset.text
+                                        onLocationChanged: {
+                                            if(!session.model[1].preset){return;}
+                                            _visualItems.get(index).coordinate = location
+                                            session.model[1].preset.coordinate.latitude = location.latitude
+                                            session.model[1].preset.coordinate.longitude = location.longitude
+                                        }
+                                        onAltitudeChanged: {
+                                            if(!session.model[1].preset){return;}
+                                            _visualItems.get(index).altitude.value = altitude
+                                            session.model[1].preset.coordinate.altitude = altitude
+                                        }
+                                        Component.onCompleted: {
+                                            let x = {};
+                                            x.index = this.index
+                                            x.id = this
+                                            presetContainers.push(x)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        RowLayout {
+                            Layout.margins: 8
+                            Flickable {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                ListView {
+                                    model:presetModelDefault
+                                    anchors.fill: parent
+                                    delegate: presetDelegate
+                                    signal presetIndexChanged(int presetIndex);
+
+                                    onPresetIndexChanged: {
+        //                                if(presetModelSession.active)
+                                        if(!presetEditPage.loaded){presetIndex = -1;return;}
+                                        if(session.model===null){return;}
+                                        if(presetEditPage.checked){
+                                            session.model[1].preset = model[presetIndex]
+                                            titleB.name = session.model[1].preset.text
+                                            titleB.location = QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
+                                            titleB.altitude = session.model[1].preset.coordinate.altitude
+        //                                    _visualItems.get(2).coordinate = model[currentIndex].coordinate
+        //                                    _visualItems.get(2).altitude.value = model[currentIndex].coordinate.altitude
+                                        } else {
+                                            session.model[0].preset = model[presetIndex]
+                                            titleA.name = session.model[0].preset.text
+                                            titleA.location = QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
+                                            titleA.altitude = session.model[0].preset.coordinate.altitude
+        //                                   _visualItems.get(1).coordinate = model[currentIndex].coordinate
+                                            _visualItems.get(0).coordinate.altitude = globals.activeVehicle?globals.activeVehicle.altitudeAMSL:0
+        //                                   _visualItems.get(1).altitude.value = model[currentIndex].coordinate.altitude
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignBottom
+                            Layout.margins: 8
+                            Item{
+                                Layout.fillWidth: true
+                            }
+
+                            Rectangle {
+                                Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+                                Layout.preferredHeight:45
+                                Layout.preferredWidth:80
+                                Button {
+                                    anchors.fill: parent
+                                    text: "confirm"
+                                    onClicked: {
+                                        presetPopup.close()
+//                                        hideDialog()
+                                        showAltitudeProfile(true)
+                                        mapFitFunctions.fitMapViewportToMissionItems()
+//                                        presetEditPage.loaded = false
+                                        altitudeProfile.update()
+        //                                _planMasterController.upload()
+                                    }
                                 }
                             }
                         }
                     }
+
+//                    Grid {
+//                        id: grid
+//                        width: 400
+//                        height: 400
+//                    }
                 }
-                RowLayout {
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignBottom
-                    Layout.margins: 8
-                    Rectangle {
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-                        Layout.preferredHeight:45
-                        Layout.preferredWidth:80
-                        Button {
-                            anchors.fill: parent
-                            text: "back"
-                            onClicked: {
-                                hideDialog()
-                                showPresetSelectDialog()
+            }
+        }
+    }
+
+    /*##^##
+    Designer {
+        D{i:0;formeditorZoom:1.1}D{i:3}D{i:4}D{i:2}D{i:8}D{i:7}D{i:6}D{i:19}D{i:18}D{i:5}
+    D{i:1}
+    }
+    ##^##*/
+
+    /********************************************************************************/
+//    Component {
+//        id: presetEditDialogComponent
+//        QGCPopupDialog {
+//            id:         presetEditDialog
+//            title:      qsTr("")//qsTr("Select Preset")
+//            buttons:    StandardButton.NoButton//StandardButton.Close
+//            titleBarEnabled: false
+//            height: 480//mainWindow.width
+//            width: 640//mainWindow.width
+//            property bool checked: false
+//            property bool loaded: false
+//            Component.onCompleted: {
+//                loaded = true
+//                console.log("onCompleted:activeVehicle",globals.activeVehicle?globals.activeVehicle.coordinate:"")
+//            }
+
+//            //0:Not Set, 1:A->B, 2:A->B->A, 3:A->B->C, 4:A->...->Z
+////            property int presetType: 0
+//            ColumnLayout {
+//                anchors.fill: parent
+//                GridLayout {
+//                    Layout.fillWidth: true
+//                    columnSpacing: 10
+//                    Layout.margins: 8
+//                    columns: 2
+
+//                    Rectangle {
+//                        antialiasing: true
+//                        Layout.preferredHeight:120
+////                        Layout.preferredWidth:50
+//                        Layout.fillWidth: true
+//                        color: "#00ffffff"
+//                        MouseArea {
+//                            propagateComposedEvents: true
+//                            anchors.fill: parent
+//                            hoverEnabled: true
+//                            onClicked: {
+//                                checked = false
+//                            }
+//                            TitleBoxContainer {
+//                                id:titleA
+//                                ma:parent
+//                                anchors.fill:parent
+//                                title:"Start"
+//                                titleColor:!checked?qgcPal.buttonHighlight:"gray"
+//                                textColor:"white"
+//                                textEditColor:"white"
+//                                titleTextColor:!checked?qgcPal.windowShade:"white"
+//                                foregroundColor:qgcPal.windowShade
+//                                unit:"m"
+//                                index:session.model[0].index
+//                                location:session.model[0].preset===null?QtPositioning.coordinate():QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
+//                                altitude:session.model[0].preset===null?0:session.model[0].preset.coordinate.altitude
+//                                name:session.model[0].preset===null?"":session.model[0].preset.text
+//                                onLocationChanged: {
+//                                    if(!session.model[0].preset){return;}
+//                                    _visualItems.get(index).coordinate = location
+//                                    session.model[0].preset.coordinate.latitude = location.latitude
+//                                    session.model[0].preset.coordinate.longitude = location.longitude
+//                                }
+//                                onAltitudeChanged: {
+//                                    if(!session.model[0].preset){return;}
+//                                    _visualItems.get(index).altitude.value = altitude
+//                                    session.model[0].preset.coordinate.altitude = altitude
+//                                }
+//                            }
+//                        }
+//                    }
+//                    Rectangle {
+//                        antialiasing: true
+//                        Layout.preferredHeight:120
+//        //                Layout.preferredWidth:50
+//                        Layout.fillWidth: true
+//                        color: "#00ffffff"
+//                        MouseArea {
+//                            propagateComposedEvents: true
+//                            anchors.fill: parent
+//                            hoverEnabled: true
+//                            onClicked: {
+//                                checked = true
+//                            }
+//                            TitleBoxContainer {
+//                                id:titleB
+//                                ma:parent
+//                                anchors.fill:parent
+//                                title:"Destination"
+//                                titleColor:checked?qgcPal.buttonHighlight:"gray"
+//                                textColor:"white"
+//                                textEditColor:"white"
+//                                titleTextColor:checked?qgcPal.windowShade:"white"
+//                                foregroundColor:qgcPal.windowShade
+//                                unit:"m"
+//                                index:session.model[1].index
+//                                location:session.model===null?QtPositioning.coordinate():QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
+//                                altitude:session.model===null?0:session.model[1].preset.coordinate.altitude
+//                                name:session.model[1].preset===null?"":session.model[1].preset.text
+//                                onLocationChanged: {
+//                                    if(!session.model[1].preset){return;}
+//                                    _visualItems.get(index).coordinate = location
+//                                    session.model[1].preset.coordinate.latitude = location.latitude
+//                                    session.model[1].preset.coordinate.longitude = location.longitude
+//                                }
+//                                onAltitudeChanged: {
+//                                    if(!session.model[1].preset){return;}
+//                                    _visualItems.get(index).altitude.value = altitude
+//                                    session.model[1].preset.coordinate.altitude = altitude
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                RowLayout {
+//                    Layout.margins: 8
+//                    Flickable {
+//                        Layout.fillWidth: true
+//                        Layout.fillHeight: true
+//                        ListView {
+//                            model:presetModelDefault
+//                            anchors.fill: parent
+//                            delegate: presetDelegate
+//                            signal presetIndexChanged(int presetIndex);
+
+//                            onPresetIndexChanged: {
+////                                if(presetModelSession.active)
+//                                if(!loaded){presetIndex = -1;return;}
+//                                if(session.model===null){return;}
+//                                if(checked){
+//                                    session.model[1].preset = model[presetIndex]
+//                                    titleB.name = session.model[1].preset.text
+//                                    titleB.location = QtPositioning.coordinate(session.model[1].preset.coordinate.latitude,session.model[1].preset.coordinate.longitude)
+//                                    titleB.altitude = session.model[1].preset.coordinate.altitude
+////                                    _visualItems.get(2).coordinate = model[currentIndex].coordinate
+////                                    _visualItems.get(2).altitude.value = model[currentIndex].coordinate.altitude
+//                                } else {
+//                                    session.model[0].preset = model[presetIndex]
+//                                    titleA.name = session.model[0].preset.text
+//                                    titleA.location = QtPositioning.coordinate(session.model[0].preset.coordinate.latitude,session.model[0].preset.coordinate.longitude)
+//                                    titleA.altitude = session.model[0].preset.coordinate.altitude
+////                                   _visualItems.get(1).coordinate = model[currentIndex].coordinate
+//                                    _visualItems.get(0).coordinate.altitude = globals.activeVehicle?globals.activeVehicle.altitudeAMSL:0
+////                                   _visualItems.get(1).altitude.value = model[currentIndex].coordinate.altitude
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                RowLayout {
+//                    Layout.fillWidth: true
+//                    Layout.alignment: Qt.AlignBottom
+//                    Layout.margins: 8
+//                    Rectangle {
+//                        Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
+//                        Layout.preferredHeight:45
+//                        Layout.preferredWidth:80
+//                        Button {
+//                            anchors.fill: parent
+//                            text: "back"
+//                            onClicked: {
+//                                hideDialog()
+//                                showPresetSelectDialog()
+////                                mapFitFunctions.fitMapViewportToMissionItems()
+//                                loaded = false
+////                                _planMasterController.upload()
+//                            }
+//                        }
+//                    }
+//                    Item{
+//                        Layout.fillWidth: true
+//                    }
+
+//                    Rectangle {
+//                        Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+//                        Layout.preferredHeight:45
+//                        Layout.preferredWidth:80
+//                        Button {
+//                            anchors.fill: parent
+//                            text: "confirm"
+//                            onClicked: {
+//                                hideDialog()
+//                                showAltitudeProfile(true)
 //                                mapFitFunctions.fitMapViewportToMissionItems()
-                                loaded = false
-//                                _planMasterController.upload()
-                            }
-                        }
-                    }
-                    Item{
-                        Layout.fillWidth: true
-                    }
-
-                    Rectangle {
-                        Layout.alignment: Qt.AlignRight | Qt.AlignBottom
-                        Layout.preferredHeight:45
-                        Layout.preferredWidth:80
-                        Button {
-                            anchors.fill: parent
-                            text: "confirm"
-                            onClicked: {
-                                hideDialog()
-                                showAltitudeProfile(true)
-                                mapFitFunctions.fitMapViewportToMissionItems()
-                                loaded = false
-//                                _planMasterController.upload()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+//                                loaded = false
+//                                altitudeProfile.update()
+////                                _planMasterController.upload()
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     Connections{
         target:_missionController
         function updateSession(item,index){
             let x = _visualItems.get(item.index)
-//            console.log("session",item.preset,x.coordinate)
             if(item.preset){
+//                console.log("session",item.preset.coordinate,x.coordinate)
+                console.log("backend:",x.coordinate.latitude,x.coordinate.longitude)
+                console.log("preset:",item.preset.coordinate.latitude,item.preset.coordinate.longitude)
+                let preset = session.model[index].preset
+                console.log("session model:",preset.coordinate.latitude,preset.coordinate.longitude);
                 item.preset.coordinate.latitude = x.coordinate.latitude.toFixed(_decimalPlaces-1)
                 item.preset.coordinate.longitude = x.coordinate.longitude.toFixed(_decimalPlaces-1)
-//                item.preset.coordinate.altitude = x.altitude.value
+
+//                item.preset.coordinate.latitude = x.coordinate.latitude.toFixed(_decimalPlaces-1)
+//                item.preset.coordinate.longitude = x.coordinate.longitude.toFixed(_decimalPlaces-1)
+                item.preset.coordinate.altitude = x.altitude.value
             }
         }
         function onRecalcTerrainProfile(){
-            console.log("***update***")
             for(let i=0;i<_visualItems.count;i++){
                 let item = _visualItems.get(i)
-                console.log("index:",i,"lat:",item.coordinate.latitude,"lon:",item.coordinate.longitude)
                 if(i===1){
-                    console.log("launchCoordinateAtSamePosition",item.launchCoordinate.latitude,item.launchCoordinate.longitude)
                     item.coordinate.latitude = item.launchCoordinate.latitude
                     item.coordinate.longitude = item.launchCoordinate.longitude
 
                 }
             }
 
-            altitudeProfile.update()
+//            altitudeProfile.update()
             if(session.model){
                 session.model.forEach(updateSession)
             }
+        }
+    }
+    Timer {
+        id:             _altitudeProfiletimer
+        interval:       500
+        repeat: true
+        running: _altitudeProfile.visible
+        onTriggered: {
+            altitudeProfile.update()
+//           showFlyView()
+            //missionStats.visible = true
+            //uploadCompleteText.visible = false
         }
     }
 
