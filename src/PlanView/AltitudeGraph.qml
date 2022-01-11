@@ -24,6 +24,7 @@ Item {
     property real _missionDistance:     isNaN(missionController.missionDistance) ? 100 : missionController.missionDistance
     property var  _unitsConversion:     QGroundControl.unitsConversion
     property bool _updateToggle:         true
+    property var markers: []
     onUpdateSignal:_updateToggle = !_updateToggle
     implicitWidth: 800
     implicitHeight: 400
@@ -81,12 +82,15 @@ Item {
         }
 
         function adjustValue(item, index) {
+
             let m_item = _visualItems.get(index)
             let position = Qt.point(item.x + item.width / 2, item.y + item.height / 2)
             let point = chart.mapToValue(position, lineseries)
 
             if(m_item.isSimpleItem){
                 m_item.altitude.value = point.y
+                m_item.coordinateChanged(m_item.coordinate)
+                console.log("adjusting ",index,"to y:",point.y,"altitude: ",m_item.altitude.value)
 //                _root.updateSignal()
 //                _root.update()
             }
@@ -97,7 +101,7 @@ Item {
                                lineseries.at(index).x, point.y) */               // new
         }
         Repeater {
-            model:_visualItems
+            model:markers//_visualItems
             Rectangle {
                 id: indicator
                 radius: width
@@ -106,8 +110,10 @@ Item {
                 color: index ?((_visualItems.count-index-1)? "gray":"red") :"green"
                 property real parentWidth: chart.width
                 property real parentHeight: chart.height
-                property int index: object.sequenceNumber
-                property bool updateTriggered: _updateToggle
+                x:modelData.x-width/2
+                y:modelData.y-height/2
+//                property int index: object.sequenceNumber
+//                property bool updateTriggered: _updateToggle
 //                property var coordinate: object.coordinate
 //                property var altitude: object.isSimpleItem?object.altitude.value:(object.coordinate.altitude?object.coordinate.altitude:0)
 //                onCoordinateChanged: {
@@ -116,19 +122,76 @@ Item {
 //                    _root.update()
 //                }
 //                onAltitudeChanged: chart.adjustPosition(this, index)
-                onParentWidthChanged: chart.adjustPosition(this, object)
-                onParentHeightChanged: chart.adjustPosition(this, object)
+//                onParentWidthChanged: chart.adjustPosition(this, object)
+//                onParentHeightChanged: chart.adjustPosition(this, object)
+//                Binding on y {
+////                    target: this
+//                    value: getY(object)
+//                    function getY(object){
+//                        _root.update()
+//                        var _startAlt = isNaN(_visualItems.get(0).coordinate.altitude)?0:_visualItems.get(0).coordinate.altitude
+//                        var y;
+//                        if(object.isSimpleItem){
+//                            y = object.altitude.value+_startAlt
+//                        } else {
+//                            y= _startAlt
+//            //                if(isNaN(y)){
+//            //                  y = 0
+//            //                }
+//                        }
+
+//                        let point = Qt.point(0, y)
+//                        let position = chart.mapToPosition(point, lineseries)
+////                        item.x = position.x - item.width / 2/*/
+////                        item.y = position.y - item.height / 2*/
+//                        return position.y
+////                        if(object.isSimpleItem){
+////                            return position.y//yobject.altitude.value
+////                        }else {
+////                            return object.coordinate.altitude?object.coordinate.altitude:0
+////                        }
+//                    }
+//                }
+//                Binding on x {
+////                    target: this
+//                    value: getX(object)
+//                    function getX(object){
+//                        _root.update()
+//                        var _startX = _visualItems.get(0).coordinate.distanceTo(object.coordinate)
+////                        var y;
+////                        if(object.isSimpleItem){
+////                            y = object.altitude.value+_startAlt
+////                        } else {
+////                            y= _startAlt
+////            //                if(isNaN(y)){
+////            //                  y = 0
+////            //                }
+////                        }
+
+//                        let point = Qt.point(_startX, 0)
+//                        let position = chart.mapToPosition(point, lineseries)
+////                        item.x = position.x - item.width / 2/*/
+////                        item.y = position.y - item.height / 2*/
+//                        return position.x
+////                        if(object.isSimpleItem){
+////                            return position.y//yobject.altitude.value
+////                        }else {
+////                            return object.coordinate.altitude?object.coordinate.altitude:0
+////                        }
+//                    }
+//                }
+
                 onYChanged: {
                     if(mouseArea.drag.active) {
-                        console.log("Mouse Drag:")
+                        console.log("Mouse Drag:",y)
                         chart.adjustValue(this, index)
-                        _root.update()
+//                        _root.update()
 //                        chart.adjustPosition(this, index)
                     }
                 }
-                onUpdateTriggeredChanged: {
-                    chart.adjustPosition(this,object)
-                }
+//                onUpdateTriggeredChanged: {
+//                    chart.adjustPosition(this,object)
+//                }
 
                 Image {
                     id: waypoint
@@ -150,12 +213,13 @@ Item {
         }
     }
     function update() {
-        updateSignal();
+//        updateSignal();
         var min=0,max=0;
         var _startAlt= _visualItems.get(0).coordinate.altitude
         if(isNaN(_startAlt)){
           _startAlt = 0
         }
+        let t = new Array(0)
         for(var i=0;i<_visualItems.count;i++){
             var x,y;
             var item = _visualItems.get(i)
@@ -176,9 +240,16 @@ Item {
             } else {
                 lineseries.append(x,y);
             }
+            t.push(Qt.point(x,y))
         }
         yAxis.min = min
         yAxis.max = max*1.2
+        let tf = new Array(0)
+        for(var j=0;j<t.length;j++){
+            let p = chart.mapToPosition(t[j],lineseries)
+            tf.push(p)
+        }
+        markers = tf
 
     }
 }
