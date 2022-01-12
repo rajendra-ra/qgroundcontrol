@@ -290,6 +290,7 @@
         <file alias="TitleBoxContainer.qml">src/QmlControls/TitleBoxContainer.qml</file>
         <file alias="RoundedCorner.qml">src/QmlControls/RoundedCorner.qml</file>
         <file alias="AltitudeGraph.qml">src/PlanView/AltitudeGraph.qml</file>
+        <file alias="LogDownloadPageJetson.qml">src/AnalyzeView/LogDownloadPageJetson.qml</file>
     </qresource>
     <qresource prefix="/FirstRunPromptDialogs">
         <file alias="UnitsFirstRunPrompt.qml">src/FirstRunPromptDialogs/UnitsFirstRunPrompt.qml</file>
