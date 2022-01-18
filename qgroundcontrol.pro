@@ -428,6 +428,7 @@ contains (DEFINES, QGC_ENABLE_PAIRING) {
 #
 
 HEADERS += \
+    src/AnalyzeView/FileDownloader.h \
     src/MissionManager/ABAPlanCreator.h \
     src/MissionManager/ABCPlanCreator.h \
     src/MissionManager/ABPlanCreator.h \
@@ -447,6 +448,7 @@ contains (DEFINES, QGC_ENABLE_PAIRING) {
 }
 
 SOURCES += \
+    src/AnalyzeView/FileDownloader.cpp \
     src/MissionManager/ABAPlanCreator.cc \
     src/MissionManager/ABCPlanCreator.cc \
     src/MissionManager/ABPlanCreator.cc \
