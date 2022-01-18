@@ -43,6 +43,7 @@ Rectangle {
                     verticalAlignment: Qt.AlignVCenter
                     text: title
                     color: titleTextColor
+                    font.pointSize: 14
                     background: Rectangle {
                         color: titleColor
                         border.width: 0
@@ -66,6 +67,7 @@ Rectangle {
                             verticalAlignment: Qt.AlignVCenter
                             horizontalAlignment: Qt.AlignLeft
                             text:"Name"
+                            font.pointSize: 14
                             color: textColor
                             padding: textPadding
                         }
@@ -79,6 +81,7 @@ Rectangle {
                             horizontalAlignment: Qt.AlignLeft
                             text: name
                             color: textColor
+                            font.pointSize: 14
                             padding: textPadding
                         }
                         Label {
@@ -90,6 +93,7 @@ Rectangle {
                             horizontalAlignment: Qt.AlignLeft
                             text: "Location"
                             color: textColor
+                            font.pointSize: 14
                             padding: textPadding
                         }
                         TextField {
@@ -104,6 +108,7 @@ Rectangle {
                             horizontalAlignment: Qt.AlignLeft
                             text: focus?text:(location?location.latitude + ", " + location.longitude:"0,0")
                             color: textEditColor
+                            font.pointSize: 14
                             padding: textPadding
                             background: Rectangle {
                                 color: foregroundColor
@@ -170,6 +175,7 @@ Rectangle {
                             Layout.row: 1
                             Layout.fillHeight: true
                             display: AbstractButton.IconOnly
+//                            font.pointSize: 14
                             background: Image {
                                 source:"qrc:/qmlimages/edit.svg"
                             }
@@ -188,6 +194,7 @@ Rectangle {
                             verticalAlignment: Qt.AlignVCenter
                             horizontalAlignment: Qt.AlignLeft
                             text: "Altitude("+unit+")"
+                            font.pointSize: 14
                             color: textColor
                             padding: textPadding
                         }
@@ -201,6 +208,7 @@ Rectangle {
                             verticalAlignment: Qt.AlignVCenter
                             horizontalAlignment: Qt.AlignLeft
                             text: altitude
+                            font.pointSize: 14
                             color: textEditColor
                             padding: textPadding
                             background: Rectangle {

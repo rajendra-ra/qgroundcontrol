@@ -1462,30 +1462,32 @@ Item {
             id:_rootListDelegate
             width: parent.width
             height: childrenRect.height
-            color: "white"
-            border.color: "gray"
+            color: "#ddd"
+            border.color: "#eee"
             RowLayout {
                 Text {
                     Layout.margins: 5
                     text: modelData.text
                     horizontalAlignment: TextField.AlignLeft
                     verticalAlignment: TextField.AlignVCenter
+                    font.pointSize: 14
                 }
                 Text {
                     Layout.margins: 5
                     text: "("+modelData.coordinate.latitude+","+modelData.coordinate.longitude+")"
                     horizontalAlignment: TextField.AlignRight
                     verticalAlignment: TextField.AlignVCenter
+                    font.pointSize: 14
                 }
             }
             MouseArea {
                 hoverEnabled: true
                 anchors.fill: parent
                 onEntered: {
-                    _rootListDelegate.color = "lightblue"
+                    _rootListDelegate.color = "#bbb"
                 }
                 onExited: {
-                    _rootListDelegate.color = "white"
+                    _rootListDelegate.color = "#ddd"
                 }
                 onClicked: {
                     _rootListDelegate.ListView.view.currentIndex = index
@@ -1624,7 +1626,8 @@ Item {
 //                                        id:                     planCreatorNameLabel
                                         horizontalAlignment:    Text.AlignHCenter
                                         verticalAlignment:      Text.AlignVCenter
-                                        font.pixelSize:         ScreenTools.defaultFontPixelHeight
+//                                        font.pixelSize:         ScreenTools.defaultFontPixelHeight
+                                        font.pointSize: 14
                                         text:                   ""//object.name
                                         color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
                                     }
@@ -1676,7 +1679,7 @@ Item {
                             columns: 2
                             Rectangle {
                                 antialiasing: true
-                                Layout.preferredHeight: 120
+                                Layout.preferredHeight: 150
                                 Layout.fillWidth: true
                                 color: "#00ffffff"
                                 MouseArea {
@@ -1717,7 +1720,7 @@ Item {
                             }
                             Rectangle {
                                 antialiasing: true
-                                Layout.preferredHeight:120
+                                Layout.preferredHeight:150
                                 Layout.fillWidth: true
                                 color: "#00ffffff"
                                 MouseArea {
@@ -1809,10 +1812,11 @@ Item {
                             Rectangle {
                                 Layout.alignment: Qt.AlignRight | Qt.AlignBottom
                                 Layout.preferredHeight:45
-                                Layout.preferredWidth:80
+                                Layout.preferredWidth:100
                                 Button {
                                     anchors.fill: parent
-                                    text: "confirm"
+                                    text: "Confirm"
+                                    font.pointSize: 14
                                     onClicked: {
                                         presetPopup.close()
 //                                        hideDialog()

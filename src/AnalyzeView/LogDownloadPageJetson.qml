@@ -77,6 +77,7 @@ AnalyzePage {
                     placeholderText: "http://localhost:8000/"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    font.pointSize: 14
                     onAccepted: {fileDownloader.startDownloadIndex(text);}
                 }
                 Button {
@@ -90,7 +91,7 @@ AnalyzePage {
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
                             font.family: "Helvetica"
-                            font.pointSize: 15
+                            font.pointSize: 14
                             color: "white"
                             text: upFolder.text
                         }
@@ -125,6 +126,7 @@ AnalyzePage {
                     verticalAlignment: Qt.AlignVCenter
                     text: _isBusy?"Busy":"Ready"
                     color: _isBusy?"red":"green"
+                    font.pointSize: 14
                 }
                 ProgressBar {
                     Layout.preferredHeight: addressField.height
@@ -149,6 +151,7 @@ AnalyzePage {
                         horizontalAlignment: Text.AlignLeft
                         delegate : Text  {
                             horizontalAlignment: Text.AlignLeft
+                            font.pointSize: 13
                             text: {
                                 var o = modelData
                                 return o ? o : ""
@@ -179,6 +182,7 @@ AnalyzePage {
                         enabled:    !fileDownloader.isBusy//!logController.requestingList && !logController.downloadingLogs
                         text:       qsTr("Refresh")
                         width:      _butttonWidth
+                        font.pointSize: 14
                         onClicked: {
 //                            if (!QGroundControl.multiVehicleManager.activeVehicle || QGroundControl.multiVehicleManager.activeVehicle.isOfflineEditingVehicle) {
 //                                mainWindow.showMessageDialog(qsTr("Log Refresh"), qsTr("You must be connected to a vehicle in order to download logs."))
@@ -194,6 +198,7 @@ AnalyzePage {
                         enabled:   /* !logController.requestingList && !logController.downloadingLogs && */listView1.selection.count > 0 && !fileDownloader.isBusy
                         text:       qsTr("Download")
                         width:      _butttonWidth
+                        font.pointSize: 14
                         onClicked: {
                             //-- Clear selection
 //                            for(var i = 0; i < logController.model.count; i++) {
