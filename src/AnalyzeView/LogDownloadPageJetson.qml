@@ -26,23 +26,64 @@ AnalyzePage {
 
     property real _margin:          ScreenTools.defaultFontPixelWidth
     property real _butttonWidth:    ScreenTools.defaultFontPixelWidth * 10
+    property bool _isBusy: fileDownloader.isBusy
+    property real _progress: 0.0
 
     QGCPalette { id: palette; colorGroupEnabled: enabled }
 
+
     Component {
         id: pageComponent
+
         ColumnLayout {
+            width:  availableWidth
+            height:  availableHeight
+            Connections {
+                target: fileDownloader
+                onIndexingSuccessful:{
+                    console.log("indexing Successful");
+                    listView1.resizeColumnsToContents();
+//                    console.log(fileDownloader.indexList)
+//                    listView1.model = fileDownloader.indexList;
+                }
+                onGoingBusy:{
+                    console.log("Downloading in Progress");
+
+                }
+                onBackReady:{
+                    console.log("Downloading Successful");
+                }
+                onDownloadProgress:{
+                    if(bytesTotal){
+                        _progress = bytesReceived/bytesTotal;
+                    } else {
+                        _progress = 0.0
+                    }
+                }
+            }
             RowLayout {
+//                width:  availableWidth
+//                height: availableHeight
+                Layout.fillWidth: true
+                Layout.fillHeight: false
+                Layout.preferredHeight: ScreenTools.defaultFontPixelHeight*1.5
+                Layout.alignment: Qt.AlignTop
                 id:addressRow
+
                 TextField {
-                    placeholderText: "<"+"ip address>:<"+"port>"
+                    id:addressField
+                    property string rootUri: "http://localhost:8000/"
+                    text: "http://localhost:8000/"
+                    placeholderText: "http://localhost:8000/"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    onAccepted: {fileDownloader.startDownloadIndex(text);}
                 }
                 Button {
-                    id: cmdConnect
-                    text: qsTr("Connect")
-                    Layout.fillHeight: true
+                    id: upFolder
+                    text: qsTr("Back")
+                    Layout.preferredHeight: addressField.height
+                    width:height
                     style: ButtonStyle {
                         label: Text {
                             renderType: Text.NativeRendering
@@ -51,174 +92,149 @@ AnalyzePage {
                             font.family: "Helvetica"
                             font.pointSize: 15
                             color: "white"
-                            text: cmdConnect.text
+                            text: upFolder.text
                         }
                         background: Rectangle {
                             color: palette.windowShade
                         }
                     }
+                    onClicked: {
+                        let addr = addressField.text.trim()
+                        let a = addr.split("/")
+                        removeLast(a)
+                        addr = a.join("/")+"/"
+                        addressField.text = addr
+                        fileDownloader.startDownloadIndex(addr?addr:addressField.text);
+                    }
+                    function removeLast(a){
+                        let last = a.pop()
+                        if(last===""){
+                            removeLast(a)
+                        }
+                        if(a.length<3){
+                            a.push(last)
+                            return;
+                        }
+
+                    }
+                }
+
+                Label {
+                    id:progressLabel
+                    Layout.preferredHeight: addressField.height
+                    verticalAlignment: Qt.AlignVCenter
+                    text: _isBusy?"Busy":"Ready"
+                    color: _isBusy?"red":"green"
+                }
+                ProgressBar {
+                    Layout.preferredHeight: addressField.height
+                    id:downloadProgress
+                    value: _progress
                 }
             }
             RowLayout {
-                width:  availableWidth
-                height: availableHeight
-
-                Connections {
-                    target: logController
-                    onSelectionChanged: {
-                        tableView.selection.clear()
-                        for(var i = 0; i < logController.model.count; i++) {
-                            var o = logController.model.get(i)
-                            if (o && o.selected) {
-                                tableView.selection.select(i, i)
-                            }
-                        }
-                    }
-                }
-
+                id:indexListLayout
+//                width:  availableWidth
+//                height: availableHeight
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 TableView {
-                    id: tableView
+                    id: listView1
+                    Layout.fillWidth: true
                     Layout.fillHeight:  true
-                    model:              logController.model
-                    selectionMode:      SelectionMode.MultiSelection
-                    Layout.fillWidth:   true
-
-
+                    model: fileDownloader.indexList
                     TableViewColumn {
-                        title: qsTr("Id")
+                        title: qsTr("File")
                         width: ScreenTools.defaultFontPixelWidth * 6
-                        horizontalAlignment: Text.AlignHCenter
+                        horizontalAlignment: Text.AlignLeft
                         delegate : Text  {
-                            horizontalAlignment: Text.AlignHCenter
+                            horizontalAlignment: Text.AlignLeft
                             text: {
-                                var o = logController.model.get(styleData.row)
-                                return o ? o.id : ""
+                                var o = modelData
+                                return o ? o : ""
                             }
                         }
                     }
-
-                    TableViewColumn {
-                        title: qsTr("Date")
-                        width: ScreenTools.defaultFontPixelWidth * 34
-                        horizontalAlignment: Text.AlignHCenter
-                        delegate: Text  {
-                            text: {
-                                var o = logController.model.get(styleData.row)
-                                if (o) {
-                                    //-- Have we received this entry already?
-                                    if(logController.model.get(styleData.row).received) {
-                                        var d = logController.model.get(styleData.row).time
-                                        if(d.getUTCFullYear() < 2010)
-                                            return qsTr("Date Unknown")
-                                        else
-                                            return d.toLocaleString()
-                                    }
-                                }
-                                return ""
+                    onDoubleClicked: {
+                       let s = listView1.model[row]
+                        if(s.endsWith("/")){
+                            if(addressField.text.endsWith("/")){
+                                addressField.text = addressField.text+ s;
+                            } else {
+                                addressField.text = addressField.text+"/" + s;
                             }
-                        }
-                    }
 
-                    TableViewColumn {
-                        title: qsTr("Size")
-                        width: ScreenTools.defaultFontPixelWidth * 18
-                        horizontalAlignment: Text.AlignHCenter
-                        delegate : Text  {
-                            horizontalAlignment: Text.AlignRight
-                            text: {
-                                var o = logController.model.get(styleData.row)
-                                return o ? o.sizeStr : ""
-                            }
-                        }
-                    }
 
-                    TableViewColumn {
-                        title: qsTr("Status")
-                        width: ScreenTools.defaultFontPixelWidth * 22
-                        horizontalAlignment: Text.AlignHCenter
-                        delegate : Text  {
-                            horizontalAlignment: Text.AlignHCenter
-                            text: {
-                                var o = logController.model.get(styleData.row)
-                                return o ? o.status : ""
-                            }
+                            fileDownloader.startDownloadIndex(addressField.text);
                         }
+
+                        console.log("DoubleClicked:",row,listView1.model[row])
                     }
                 }
                 Column {
                     spacing:            _margin
                     Layout.alignment:   Qt.AlignTop | Qt.AlignLeft
                     QGCButton {
-                        enabled:    !logController.requestingList && !logController.downloadingLogs
+                        id: refreshBtn
+                        enabled:    !fileDownloader.isBusy//!logController.requestingList && !logController.downloadingLogs
                         text:       qsTr("Refresh")
                         width:      _butttonWidth
                         onClicked: {
-                            if (!QGroundControl.multiVehicleManager.activeVehicle || QGroundControl.multiVehicleManager.activeVehicle.isOfflineEditingVehicle) {
-                                mainWindow.showMessageDialog(qsTr("Log Refresh"), qsTr("You must be connected to a vehicle in order to download logs."))
-                            } else {
-                                logController.refresh()
-                            }
+//                            if (!QGroundControl.multiVehicleManager.activeVehicle || QGroundControl.multiVehicleManager.activeVehicle.isOfflineEditingVehicle) {
+//                                mainWindow.showMessageDialog(qsTr("Log Refresh"), qsTr("You must be connected to a vehicle in order to download logs."))
+//                            } else {
+//                                logController.refresh()
+//                            }
+//                            addressField.rootUri = addressField.text
+                            fileDownloader.startDownloadIndex(addressField.text);
                         }
                     }
                     QGCButton {
-                        enabled:    !logController.requestingList && !logController.downloadingLogs && tableView.selection.count > 0
+                        id: downloadBtn
+                        enabled:   /* !logController.requestingList && !logController.downloadingLogs && */listView1.selection.count > 0 && !fileDownloader.isBusy
                         text:       qsTr("Download")
                         width:      _butttonWidth
                         onClicked: {
                             //-- Clear selection
-                            for(var i = 0; i < logController.model.count; i++) {
-                                var o = logController.model.get(i)
-                                if (o) o.selected = false
-                            }
+//                            for(var i = 0; i < logController.model.count; i++) {
+//                                var o = logController.model.get(i)
+//                                if (o) o.selected = false
+//                            }
                             //-- Flag selected log files
-                            tableView.selection.forEach(function(rowIndex){
-                                var o = logController.model.get(rowIndex)
-                                if (o) o.selected = true
+                            listView1.selection.forEach(function(rowIndex){
+                                let s = listView1.model[rowIndex]
+                                let x = ""
+                                if(!s.endsWith("/") && !fileDownloader.isBusy){
+                                    if(addressField.text.endsWith("/")){
+                                        x= addressField.text+ s;
+                                    } else {
+                                        x = addressField.text+"/" + s;
+                                    }
+                                    fileDownloader.startDownload(x,QGroundControl.settingsManager.appSettings.logSavePath+"/"+s);
+                                }
+                                console.log("selected index:",rowIndex);
+//                                var o = logController.model.get(rowIndex)
+//                                if (o) o.selected = true
                             })
-                            if (ScreenTools.isMobile) {
-                                // You can't pick folders in mobile, only default location is used
-                                logController.download()
-                            } else {
-                                fileDialog.title =          qsTr("Select save directory")
-                                fileDialog.selectExisting = true
-                                fileDialog.folder =         QGroundControl.settingsManager.appSettings.logSavePath
-                                fileDialog.selectFolder =   true
-                                fileDialog.openForLoad()
-                            }
+//                            if (ScreenTools.isMobile) {
+//                                // You can't pick folders in mobile, only default location is used
+////                                logController.download()
+//                            } else {
+//                                fileDialog.title =          qsTr("Select save directory")
+//                                fileDialog.selectExisting = true
+//                                fileDialog.folder =         QGroundControl.settingsManager.appSettings.logSavePath
+//                                fileDialog.selectFolder =   true
+//                                fileDialog.openForLoad()
+//                            }
                         }
                         QGCFileDialog {
                             id: fileDialog
                             onAcceptedForLoad: {
-                                logController.download(file)
+                                console.log("saved file:",file);
+//                                fileDownloader.startDownload(,file+listView1.selection.get())
                                 close()
                             }
                         }
-                    }
-                    QGCButton {
-                        enabled:    !logController.requestingList && !logController.downloadingLogs && logController.model.count > 0
-                        text:       qsTr("Erase All")
-                        width:      _butttonWidth
-                        onClicked:  mainWindow.showComponentDialog(
-                            eraseAllMessage,
-                            qsTr("Delete All Log Files"),
-                            mainWindow.showDialogDefaultWidth,
-                            StandardButton.Yes | StandardButton.No)
-                        Component {
-                            id: eraseAllMessage
-                            QGCViewMessage {
-                                message:    qsTr("All log files will be erased permanently. Is this really what you want?")
-                                function accept() {
-                                    logController.eraseAll()
-                                    hideDialog()
-                                }
-                            }
-                        }
-                    }
-                    QGCButton {
-                        text:       qsTr("Cancel")
-                        width:      _butttonWidth
-                        enabled:    logController.requestingList || logController.downloadingLogs
-                        onClicked:  logController.cancel()
                     }
                 }
             }
