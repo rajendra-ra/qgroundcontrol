@@ -36,9 +36,12 @@ Rectangle {
         id: geoController
     }
 
-//    LogDownloadController {
-//        id: logController
-//    }
+    LogDownloadController {
+        id: logController
+    }
+    FileDownloader {
+        id: fileDownloader
+    }
 
     QGCFlickable {
         id:                 buttonScroll

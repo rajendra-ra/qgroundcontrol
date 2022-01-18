@@ -207,6 +207,7 @@ QVariantList& QGCCorePlugin::postFlightPages()
 {
     if (!_p->postFlightList.count()) {
         _p->postFlightList.append(QVariant::fromValue(new QmlComponentInfo(tr("Log Download"),     QUrl::fromUserInput("qrc:/qml/LogDownloadPage.qml"),        QUrl::fromUserInput("qrc:/qmlimages/LogDownloadIcon"))));
+        _p->postFlightList.append(QVariant::fromValue(new QmlComponentInfo(tr("Log Download Jetson"),     QUrl::fromUserInput("qrc:/qml/LogDownloadPageJetson.qml"),        QUrl::fromUserInput("qrc:/qmlimages/LogDownloadIcon"))));
 //#if !defined(__mobile__)
 //        _p->analyzeList.append(QVariant::fromValue(new QmlComponentInfo(tr("GeoTag Images"),    QUrl::fromUserInput("qrc:/qml/GeoTagPage.qml"),             QUrl::fromUserInput("qrc:/qmlimages/GeoTagIcon"))));
 //#endif
