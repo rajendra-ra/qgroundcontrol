@@ -1313,6 +1313,15 @@ Item {
             }
         }
     }
+    Timer {
+        id:             switchToMonitortimer
+        interval:       1000
+        onTriggered: {
+           showFlyView()
+            //missionStats.visible = true
+            //uploadCompleteText.visible = false
+        }
+    }
     function showPresetSelectDialog(){
         presetPopup.open()
         pageIndicator.currentIndex = 0
