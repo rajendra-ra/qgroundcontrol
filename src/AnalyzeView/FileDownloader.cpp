@@ -65,12 +65,21 @@ void FileDownloader::finishIndexing(){
         QRegularExpression re("<a href=\"(.*?)\">");
         QRegularExpressionMatchIterator i = re.globalMatch(html);
         _indexList.clear();
+        QString base = networkReply->url().toString();
+        baseUrl.setUrl(base);
         while (i.hasNext()) {
             QRegularExpressionMatch match = i.next();
     //        qDebug().noquote() << match.captured();
-            _indexList << match.captured(1);
+            QString name = match.captured(1);
+            bool isdir = false;
+            if(name.endsWith("/")){
+                name = name.remove("/");
+                isdir = true;
+            }
+            LogEntry *entry = new LogEntry(base,name,isdir);
+            _indexList.append(entry);
         }
-        emit indexListChanged(_indexList);
+        emit indexListChanged(&_indexList);
 
 //        _model->setStringList(_indexList);
 
@@ -80,7 +89,7 @@ void FileDownloader::finishIndexing(){
 //        cout<<data.toStdString();
 
         networkReply->deleteLater();
-        emit indexingSuccessful();
+        emit indexingSuccessful(base);
     }
     emit backReady();
 }
@@ -91,13 +100,18 @@ void FileDownloader::a_abortDownload(){
     destinationFile.remove();
 }
 void FileDownloader::startDownload(QUrl url, QString fileName){
-    if(networkReply) return;
     if(isBusy()) return;
+    QStringList _list =  fileName.split("/");
+    _list.removeLast();
+    QDir dir(_list.join("/"));
+    if (!dir.exists())
+        dir.mkpath(".");
     destinationFile.setFileName(fileName);
     if(!destinationFile.open(QIODevice::WriteOnly)) return;
     emit goingBusy();
     QNetworkRequest request(url);
     networkReply= nam->get(request);
+    if(!networkReply) return;
     connect(networkReply, &QIODevice::readyRead, this, &FileDownloader::readData);
     connect(networkReply, &QNetworkReply::downloadProgress,
             this, &FileDownloader::downloadProgress);
@@ -108,13 +122,13 @@ void FileDownloader::startDownloadIndex(QUrl url){
     if(!nam){
         nam = new QNetworkAccessManager();
     }
-    if(networkReply) return;
     if(isBusy()) return;
 //    destinationFile.setFileName(fileName);
 //    if(!destinationFile.open(QIODevice::WriteOnly)) return;
     emit goingBusy();
     QNetworkRequest request(url);
     networkReply= nam->get(request);
+    if(!networkReply) return;
 //    connect(networkReply, &QIODevice::readyRead, this, &FileDownloader::readData);
     connect(networkReply, &QNetworkReply::downloadProgress,
             this, &FileDownloader::downloadProgress);

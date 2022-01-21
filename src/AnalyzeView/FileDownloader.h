@@ -8,7 +8,10 @@
 #include <QNetworkReply>
 #include <QtWidgets>
 #include <QtNetwork>
-//Q_DECLARE_METATYPE(QStringList*)
+#include "loglistmodel.h"
+Q_DECLARE_METATYPE(LogEntry*)
+class LogEntry;
+class LogListModel;
 
 class FileDownloader : public QObject
 {
@@ -17,11 +20,11 @@ public:
     explicit FileDownloader();
     virtual ~FileDownloader();
     Q_PROPERTY(bool isBusy READ isBusy NOTIFY isBusyChanged)
-    Q_PROPERTY(QStringList indexList READ indexList NOTIFY indexListChanged)
+    Q_PROPERTY(LogListModel* indexList READ indexList NOTIFY indexListChanged)
     Q_INVOKABLE void startDownload(QUrl url, QString fileName);
     Q_INVOKABLE void startDownloadIndex(QUrl url);
     void abortDownload();
-    QStringList indexList(){return _indexList;}
+    LogListModel* indexList(){return &_indexList;}
 //    QStringListModel* model(){return _model;}
     bool isBusy();
 //    void download(QUrl imageUrl);
@@ -31,14 +34,14 @@ public:
     //connect to the following signals to get information about the ongoing download
     Q_SIGNAL void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     Q_SIGNAL void downloadSuccessful();
-    Q_SIGNAL void indexingSuccessful();
+    Q_SIGNAL void indexingSuccessful(QString _url);
     Q_SIGNAL void downloadError(QString errorString);
     Q_SIGNAL void selected(QString errorString);
     //the next two signals are used to indicate transitions between busy and
     //ready states of the file downloader, they can be used to update the GUI
     Q_SIGNAL void goingBusy();
     Q_SIGNAL void backReady();
-    Q_SIGNAL void indexListChanged(QStringList indexList);
+    Q_SIGNAL void indexListChanged(LogListModel* indexList);
     Q_SIGNAL void isBusyChanged(bool isBusy);
 private:
     Q_SLOT void readData();
@@ -51,11 +54,11 @@ private:
     void a_abortDownload();
 
     QNetworkAccessManager* nam;
-    QUrl downloadUrl;
+    QUrl baseUrl;
     QFile destinationFile;
     QPointer<QNetworkReply> networkReply;
     bool _busy = false;
-    QStringList _indexList;
+    LogListModel _indexList;
 //    QStringListModel *_model;
 
 };
