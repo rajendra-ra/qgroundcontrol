@@ -1314,7 +1314,7 @@ Item {
         }
     }
     Timer {
-        id:             switchToMonitortimer
+        id:             switchToMonitorTimer
         interval:       1000
         onTriggered: {
            showFlyView()

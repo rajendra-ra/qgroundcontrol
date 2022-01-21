@@ -60,7 +60,7 @@ cp -L libdirectfb/usr/lib/x86_64-linux-gnu/libfusion-1.2.so.9 ${APPDIR}/usr/lib/
 cp -L libdirectfb/usr/lib/x86_64-linux-gnu/libdirect-1.2.so.9 ${APPDIR}/usr/lib/x86_64-linux-gnu/
 
 echo "copy QGroundControl release into appimage"
-rsync -av --exclude=*.cpp --exclude=*.h --exclude=*.o --exclude="CMake*" --exclude="*.cmake" ${QGC_RELEASE_DIR}/* ${APPDIR}/
+rsync -av --exclude=*.cpp --exclude=*.h --exclude=*.debug --exclude=*.o --exclude="CMake*" --exclude="*.cmake" ${QGC_RELEASE_DIR}/* ${APPDIR}/
 rm -rf ${APPDIR}/package
 cp ${QGC_CUSTOM_LINUX_START_SH} ${APPDIR}/AppRun
 
