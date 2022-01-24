@@ -157,7 +157,8 @@ Item {
     property bool __roiSupported:           _activeVehicle ? !_hideROI && _activeVehicle.roiModeSupported : false
     property bool __orbitSupported:         _activeVehicle ? !_hideOrbit && _activeVehicle.orbitModeSupported : false
     property bool __flightMode:             _flightMode
-
+    property int _lastmissionsequence:0
+    property bool _continue: false
     function _outputState() {
         if (_corePlugin.guidedActionsControllerLogging()) {
             console.log(qsTr("_activeVehicle(%1) _vehicleArmed(%2) guidedModeSupported(%3) _vehicleFlying(%4) _vehicleWasFlying(%5) _vehicleInRTLMode(%6) pauseVehicleSupported(%7) _vehiclePaused(%8) _flightMode(%9) _missionItemCount(%10) roiSupported(%11) orbitSupported(%12) _missionActive(%13) _hideROI(%14) _hideOrbit(%15)").arg(_activeVehicle ? 1 : 0).arg(_vehicleArmed ? 1 : 0).arg(__guidedModeSupported ? 1 : 0).arg(_vehicleFlying ? 1 : 0).arg(_vehicleWasFlying ? 1 : 0).arg(_vehicleInRTLMode ? 1 : 0).arg(__pauseVehicleSupported ? 1 : 0).arg(_vehiclePaused ? 1 : 0).arg(_flightMode).arg(_missionItemCount).arg(__roiSupported).arg(__orbitSupported).arg(_missionActive).arg(_hideROI).arg(_hideOrbit))
@@ -165,7 +166,6 @@ Item {
     }
 
     on_ActiveVehicleChanged: _outputState()
-
     Component.onCompleted:              _outputState()
     on_VehicleArmedChanged:             _outputState()
     on_VehicleInRTLModeChanged:         _outputState()
@@ -179,8 +179,34 @@ Item {
     on_MissionActiveChanged:            _outputState()
 
     on_CurrentMissionIndexChanged: {
+        if(_missionItemCount){
+            let _diff = _currentMissionIndex-_lastmissionsequence
+//            console.log("diff:",_diff);
+
+            if(_diff==1){
+                if(_continue){
+                    confirmAction(actionStartMission)
+                }
+                _continue = false
+                _lastmissionsequence = _currentMissionIndex;
+//                console.log("_lastmissionsequence:",_lastmissionsequence);
+
+            } else if(_currentMissionIndex == 0){
+                _continue = false
+            } else if(_lastmissionsequence+1<_missionItemCount){
+                _continue = true
+                confirmAction(actionSetWaypoint,_lastmissionsequence+1);
+//                console.log("showing confirm action:",_lastmissionsequence+1);
+            } else if(_lastmissionsequence+1>_missionItemCount){
+                _lastmissionsequence = 0
+            }
+
+
+//            console.log("_remaining missions", _missionItemCount-_currentMissionIndex)
+        }
+
         if (_corePlugin.guidedActionsControllerLogging()) {
-            console.log("_currentMissionIndex", _currentMissionIndex)
+//            console.log("_currentMissionIndex", _currentMissionIndex)
         }
     }
     on_ResumeMissionIndexChanged: {
@@ -199,7 +225,8 @@ Item {
             console.log("showStartMission", showStartMission)
         }
         _outputState()
-        if (showStartMission) {
+        if (showStartMission && !_continue) {
+//            console.log("showing confirm action:start",_lastmissionsequence+1);
             confirmAction(actionStartMission)
         }
     }
