@@ -1300,8 +1300,8 @@ Item {
     Connections {
         target: _missionController
         function onProgressPctChanged(progressPct) {
-            console.debug("mission upload progress:",progressPct)
-            console.debug("offline",_planMasterController.offline,"\n syncInProgress:",_planMasterController.syncInProgress,"\n contains Item:",_planMasterController.containsItems)
+//            console.debug("mission upload progress:",progressPct)
+//            console.debug("offline",_planMasterController.offline,"\n syncInProgress:",_planMasterController.syncInProgress,"\n contains Item:",_planMasterController.containsItems)
             if (progressPct === 1 && _planMasterController.containsItems) {
                 switchToMonitorTimer.start()
 //                missionStats.visible = false
