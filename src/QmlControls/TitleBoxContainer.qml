@@ -178,6 +178,11 @@ Rectangle {
 //                            font.pointSize: 14
                             background: Image {
                                 source:"qrc:/qmlimages/edit.svg"
+                                sourceSize.height: height
+                                fillMode: Image.PreserveAspectFit
+                                sourceSize.width: width
+
+                                width:height
                             }
                             onClicked: {
                                 console.log("edit clicked")
@@ -250,6 +255,10 @@ Rectangle {
                             display: AbstractButton.IconOnly
                             background: Image {
                                 source:"qrc:/qmlimages/edit.svg"
+                                sourceSize.height: height
+                                fillMode: Image.PreserveAspectFit
+                                sourceSize.width: width
+                                width:height
                             }
                             onClicked: {
 //                                console.log("edit clicked")
@@ -270,7 +279,6 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:4}D{i:8}D{i:9}D{i:10}D{i:11}D{i:13}D{i:15}
-D{i:16}D{i:18}D{i:7}D{i:6}D{i:3}D{i:2}D{i:1}
+    D{i:0;autoSize:true;formeditorZoom:0.66;height:480;width:640}D{i:2}D{i:1}
 }
 ##^##*/
