@@ -215,15 +215,16 @@ Item {
     function update() {
 //        updateSignal();
         var min=0,max=0;
-        var _startAlt= _visualItems.get(0).coordinate.altitude
+        var _startAlt= 0//_visualItems.get(0).coordinate.altitude
         if(isNaN(_startAlt)){
           _startAlt = 0
         }
         let t = new Array(0)
+        let x = 0;
         for(var i=0;i<_visualItems.count;i++){
-            var x,y;
+            let y;
             var item = _visualItems.get(i)
-            x = item.distanceFromStart
+            x += item.coordinate.distanceTo(_visualItems.get(Math.max(i-1,0)).coordinate)
             if(item.isSimpleItem){
                 y = item.altitude.value+_startAlt
             } else {
