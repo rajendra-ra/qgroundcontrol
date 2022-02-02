@@ -1031,7 +1031,7 @@ Item {
                 createPlanRemoveAllPromptDialogPlanCreator.createPlan(createPlanRemoveAllPromptDialogMapCenter)
                 hideDialog()
 //                toolSelectDialog.hideDialog()
-                showPresetEditDialog()
+                showPresetEditDialog(session.type)
             }
             function reject() {
                 hideDialog()
@@ -1333,7 +1333,9 @@ Item {
         }
     }
     function showPresetSelectDialog(){
-        presetPopup.open()
+//        presetPopup.open()
+//        pageIndicator.currentIndex = 0
+        testPresetPopup.open()
         pageIndicator.currentIndex = 0
 //        toolSelectDialog.hideDialog()
 //        showPopupDialogFromComponent(presetSelectDialogComponent)
@@ -1446,6 +1448,7 @@ Item {
 //        }
 //    }
     function showPresetEditDialog(type){
+        console.log("showPresetEditDialog(",type,")")
 
         switch(type){
             case PlanView.PresetType.TypeNone:{
@@ -1454,20 +1457,33 @@ Item {
             case PlanView.PresetType.TypeAB:{
                 console.log("typeAB")
                 session.model = presetModels[1]
+                _testpresetmodel.model = session.model
                 break;
             }
             case PlanView.PresetType.TypeABA:{
+                console.log("typeABA")
+                session.model = presetModels[3]
+                _testpresetmodel.model = session.model
                 break;
             }
             case PlanView.PresetType.TypeABC:{
+                console.log("typeABC")
+                session.model = presetModels[2]
+                _testpresetmodel.model = session.model
                 break;
             }
             case PlanView.PresetType.TypeAZ:{
                 break;
             }
         }
-        presetPopup.open()
+
+//        presetPopup.open()
+//        pageIndicator.currentIndex = 1
+
+        testPresetPopup.open()
+//        _testpresetmodel.modelUpdated()
         pageIndicator.currentIndex = 1
+
 //        showPopupDialogFromComponent(presetEditDialogComponent)
     }
     function showAltitudeProfile(show){
@@ -1511,14 +1527,414 @@ Item {
                 onClicked: {
                     _rootListDelegate.ListView.view.currentIndex = index
                     _rootListDelegate.ListView.view.presetIndexChanged(index);
-                    console.log("selected index",_rootListDelegate.ListView.view)
+                    console.log("selected index",index)
                 }
             }
         }
     }
     /********************************************************************************/
+    /*********************************************************/
+    property int _lastIndex: 0
+    function updateMissionItem(index,coordinate,altitude){
+        console.log("updateMissionItem:index",index,"coordinate:",coordinate.latitude,coordinate.longitude,"altitude:",altitude);
+
+        if(session.type === PlanView.PresetType.TypeAB){
+            switch(index){
+            case 1:{
+                if(coordinate!==null)_visualItems.get(1).coordinate = coordinate;console.log("i:1 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(1).altitude.value = altitude;console.log("i:1  altitude:",altitude)
+                break;
+            }
+            case 2:{
+                if(coordinate!==null)_visualItems.get(2).coordinate = coordinate;console.log("i:2 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(2).altitude.value = altitude;console.log("i:2  altitude:",altitude)
+                break;
+            }
+            }
+            if(coordinate!==null)_visualItems.get(index).coordinate = coordinate;console.log("coordinate:",coordinate.latitude,coordinate.longitude)
+            if(altitude!==null)_visualItems.get(index).altitude.value = altitude;console.log("altitude:",altitude)
+        } else if(session.type === PlanView.PresetType.TypeABC){
+            switch(index){
+            case 1:{
+                if(coordinate!==null)_visualItems.get(1).coordinate = coordinate;console.log("i:1 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(1).altitude.value = altitude;console.log("i:1  altitude:",altitude)
+                break;
+            }
+            case 2:{
+                if(coordinate!==null)_visualItems.get(2).coordinate = coordinate;console.log("i:2 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(2).altitude.value = altitude;console.log("i:2  altitude:",altitude)
+                if(coordinate!==null)_visualItems.get(4).coordinate = coordinate;console.log("i:2 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(4).altitude.value = altitude;console.log("i:2  altitude:",altitude)
+                if(coordinate!==null)_visualItems.get(1).coordinate = session.model[0].preset.coordinate;console.log("i:1 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(1).altitude.value = session.model[0].preset.coordinate.altitude;console.log("i:1  altitude:",altitude)
+                break;
+            }
+            case 5:{
+                if(coordinate!==null)_visualItems.get(5).coordinate = coordinate;console.log("i:2 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(5).altitude.value = altitude;console.log("i:2  altitude:",altitude)
+                break;
+            }
+            }
+
+        } else if(session.type === PlanView.PresetType.TypeABA){
+            switch(index){
+            case 1:{
+                if(coordinate!==null)_visualItems.get(1).coordinate = coordinate;console.log("i:1 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(1).altitude.value = altitude;console.log("i:1  altitude:",altitude)
+                if(coordinate!==null)_visualItems.get(5).coordinate = coordinate;console.log("i:1 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(5).altitude.value = altitude;console.log("i:1  altitude:",altitude)
+                break;
+            }
+            case 2:{
+                if(coordinate!==null)_visualItems.get(2).coordinate = coordinate;console.log("i:2 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(2).altitude.value = altitude;console.log("i:2  altitude:",altitude)
+                if(coordinate!==null)_visualItems.get(4).coordinate = coordinate;console.log("i:2 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(4).altitude.value = altitude;console.log("i:2  altitude:",altitude)
+                if(coordinate!==null)_visualItems.get(1).coordinate = session.model[0].preset.coordinate;console.log("i:1 coordinate:",coordinate.latitude,coordinate.longitude)
+                if(altitude!==null)_visualItems.get(1).altitude.value = session.model[0].preset.coordinate.altitude;console.log("i:1  altitude:",altitude)
+                break;
+            }
+            case 5:{
+                if(coordinate!==null)_visualItems.get(5).coordinate = _visualItems.get(1).coordinate;console.log("i:2 coordinate:",_visualItems.get(5).coordinate.latitude,_visualItems.get(5).coordinate.longitude)
+                if(altitude!==null)_visualItems.get(5).altitude.value = altitude;console.log("i:2  altitude:",altitude)
+                break;
+            }
+            }
+        }
+
+
+//        _visualItems.get(index).coordinate
+    }
+
+    Component {
+        id:_testDelegate
+        Item {
+            id:_testDelegateRoot
+            implicitHeight: 150
+            implicitWidth: itemWidth
+            property int itemIndex:index
+            property int itemCount: _testDelegateRoot.ListView.view.count
+            property real itemWidth: (_testDelegateRoot.ListView.view.width-itemCount*5)/(itemCount+1)
+            property bool collapsed: _testDelegateRoot.ListView.view.currentIndex!==index;
+//            property bool collapsed: currentSessionPresetIndex!==index;
+            onCollapsedChanged: {
+                _dummybox.visible = collapsed;
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                propagateComposedEvents: true
+                hoverEnabled: true
+                onClicked: {
+                    console.log("collapsed",collapsed,_testDelegateRoot.ListView.view.currentIndex,index)
+                    _testDelegateRoot.ListView.view.currentIndex=index;
+                    _lastIndex = index;
+//                    console.log("modelData",modelData.index,modelData.preset.text,modelData.preset.coordinate)
+                    _dummybox.visible = collapsed;
+//                    interact(collapsed);
+                }
+                Component.onCompleted: {
+                    _testDelegateRoot.ListView.view.currentIndex=_lastIndex;
+                    console.log("_testDelegateRoot",modelData.preset,_testDelegateRoot.ListView.view.currentIndex,itemIndex,_lastIndex,collapsed)
+                    _dummybox.visible = collapsed;
+//                    interact(collapsed);
+
+//                    collapsed = _testDelegate.ListView.view.currentIndex!==index
+                }
+                function interact(_collapsed){
+                    if(_collapsed){
+                         _dummybox.visible = _collapsed;
+                    } else {
+                        _dummybox.visible = !_collapsed;
+                    }
+                }
+
+
+               TitleBoxContainer {
+                    id:_titlebox
+                    visible: !_dummybox.visible
+                    ma:parent
+                    anchors.fill: parent
+                    title: itemIndex===0?"Start":(itemIndex===(itemCount-1)?"Destination":"Mid-Stop")
+                    titleTextColor: "gray"
+                    index:modelData.index
+                    altitude: modelData.preset?modelData.preset.coordinate.altitude:0
+                    name:modelData.preset?modelData.preset.text:""
+                    location: modelData.preset?modelData.preset.coordinate:QtPositioning.coordinate()
+                    textColor:"white"
+                    textEditColor:"white"
+                    foregroundColor:qgcPal.windowShade
+                    onVisibleChanged: {
+                        if(visible)_testDelegateRoot.implicitWidth=itemWidth*2;
+                    }
+                    onLocationChanged: updateMissionItem(index,location,altitude);
+                    onAltitudeChanged: updateMissionItem(index,location,altitude);
+                }
+
+                Rectangle {
+                    id:_dummybox
+                    visible: true
+                    anchors.fill: parent
+                    radius: 5
+                    color: qgcPal.windowShade
+                    Text {
+                        anchors.fill: parent
+                        smooth: true
+                        font.pointSize: 14
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignLeft
+                        text: "Location:"+_titlebox.name+"\nAltitude:"+_titlebox.altitude+"m"//modelData.preset.text
+                        color: "white"
+                    }
+                    onVisibleChanged: {
+                        if(visible)_testDelegateRoot.implicitWidth=itemWidth;
+                    }
+                }
+            }
+        }
+
+    }
 
     Popup {
+        id:testPresetPopup
+        width: 750
+        height: 600
+        padding: 5
+        modal: true
+        closePolicy: Popup.NoAutoClose
+        anchors.centerIn: parent
+        clip:true
+        background: Rectangle {
+            color:qgcPal.windowShadeDark
+        }
+        onOpened: {
+//            if(session.model && _visualItems.count>1){
+//                session.model.forEach(function (index,item){
+//                    let i = item.index;
+//                    let p = item.preset;
+//                    let c =  _visualItems.get(i).coordinate
+//                    let a = _visualItems.get(i).altitude.value
+//                    if(p){
+//                        session.model[index].preset.coordinate.latitude = c.latitude
+//                                session.model[index].preset.coordinate.longitude = c.longitude
+//                                session.model[index].preset.coordinate.altitude = a
+//                    }
+
+
+//                })
+//            }
+        }
+
+        ColumnLayout {
+            id:_topCol
+            anchors.fill: parent
+            RowLayout {
+                id:_topRow
+                Layout.fillWidth: true
+                implicitHeight: ScreenTools.defaultFontPixelHeight*3
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                Button {
+                    id:_backBtn
+                    text: "Back"
+                    visible: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    background: Rectangle {
+                        color: qgcPal.windowShade
+                    }
+                    contentItem: Text {
+                        text: _backBtn.text
+                        font:_backBtn.font
+                        color: qgcPal.buttonText
+                    }
+                    onClicked: {
+                        if(pageIndicator.currentIndex == 0){
+                            testPresetPopup.close()
+                            showToolSelectDialog()
+                        } else if(pageIndicator.currentIndex > 0){
+                            pageIndicator.currentIndex--;
+                        }
+                    }
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+                PageIndicator {
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                    id: pageIndicator
+                    interactive: true
+                    count: testView.count
+                    currentIndex: testView.currentIndex
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+
+            }
+            SwipeView {
+                id:testView
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                currentIndex: pageIndicator.currentIndex
+                onCurrentIndexChanged: {
+//                    _testpresetmodel.update()
+//                    console.log("model",_testpresetmodel.model)
+                }
+
+                clip: true
+                Item {
+                    id:_selectPage
+                    GridLayout {
+                        id: innerLayout
+                        anchors.fill: parent
+                        rows: 2
+                        columns: 2
+                        Repeater {
+                            model: _planMasterController.planCreatorsPreset
+                            Rectangle {
+                                id:button
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                color:  button.pressed || button.highlighted ? qgcPal.buttonHighlight : qgcPal.windowShade
+
+                                property bool highlighted: mouseArea.containsMouse
+                                property bool pressed:     mouseArea.pressed
+                                ColumnLayout {
+                                    id: buttonLayout
+                                    anchors.fill: parent
+                                    spacing: 5
+                                    Image {
+//                                        id:                 planCreatorImage
+                                        source:             object.imageResource
+//                                        Layout.minimumHeight: 50
+//                                        Layout.minimumWidth: 50
+//                                        Layout.maximumHeight: 100
+//                                        Layout.maximumWidth: 100
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        fillMode: Image.PreserveAspectFit
+                                    }
+                                    Text {
+//                                        id:                     planCreatorNameLabel
+                                        horizontalAlignment:    Text.AlignHCenter
+                                        verticalAlignment:      Text.AlignVCenter
+//                                        font.pixelSize:         ScreenTools.defaultFontPixelHeight
+                                        font.pointSize: 14
+                                        text:                   ""//object.name
+                                        color:                  button.pressed || button.highlighted ? qgcPal.buttonHighlightText : qgcPal.buttonText
+                                    }
+                                }
+                                MouseArea {
+                                    id:                 mouseArea
+                                    anchors.fill:       parent
+                                    hoverEnabled:       true
+//                                    preventStealing:    true
+                                    onClicked:{
+                                        console.log("size:",button.width,button.height)
+//                                        presetSelectDialog.hideDialog()
+                                        globals.toolSelectMode = true
+                                        session.type = object.presetType
+
+                                        if (_planMasterController.containsItems) {
+                                            createPlanRemoveAllPromptDialogMapCenter = _mapCenter()
+                                            createPlanRemoveAllPromptDialogPlanCreator = object
+                                            mainWindow.showComponentDialog(createPlanRemoveAllPromptDialog, qsTr("Create Plan"), mainWindow.showDialogDefaultWidth, StandardButton.Yes | StandardButton.No)
+                                        } else {
+                                            object.createPlan(_mapCenter())
+                                            showPresetEditDialog(object.presetType)
+                                        }
+                                        _lastIndex = 0
+                                    }
+
+                                    function _mapCenter() {
+                                        var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
+                                        return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Item {
+                    id: testpresetedit
+                    ColumnLayout {
+                        anchors.fill: parent
+                        ListView {
+                            id:_testpresetmodel
+                            Layout.preferredHeight:150
+                            model:session.model
+                            snapMode: ListView.SnapToItem
+                            orientation: ListView.Horizontal
+                            flickableDirection: Flickable.HorizontalFlick
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                            spacing:5
+                            delegate: _testDelegate
+                            function updateModel(_model){
+                                model = _model;
+                            }
+                            onModelChanged: {
+                                currentIndex = _lastIndex
+                            }
+                        }
+                        ListView {
+                            id:_presetListtest
+                            height:150
+                            model:presetModelDefault
+                            flickableDirection: Flickable.VerticalFlick
+                            snapMode: ListView.SnapToItem
+                            orientation: ListView.Vertical
+                            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            delegate: presetDelegate
+                            spacing:1
+                            signal presetIndexChanged(int presetIndex);
+                            onPresetIndexChanged: {
+                                session.model[_testpresetmodel.currentIndex].preset = model[presetIndex];
+                                console.log(session.model[_testpresetmodel.currentIndex].preset.text,session.model[_testpresetmodel.currentIndex].preset.coordinate.latitude,session.model[_testpresetmodel.currentIndex].preset.coordinate.longitude)
+                                _testpresetmodel.updateModel(session.model)
+                                updateMissionItem(session.model[_testpresetmodel.currentIndex].index,session.model[_testpresetmodel.currentIndex].preset.coordinate,session.model[_testpresetmodel.currentIndex].preset.coordinate.altitude);
+                            }
+                        }
+
+
+
+                        RowLayout {
+                            id:_bottomNav
+                            height:50
+//                            anchors.bottom: parent.bottom
+                            Item {
+                                Layout.fillWidth: true
+                            }
+
+                            Rectangle {
+                                Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+                                Layout.preferredHeight:45
+                                Layout.preferredWidth:100
+                                Button {
+                                    anchors.fill: parent
+                                    text: "Confirm"
+                                    font.pointSize: 14
+                                    onClicked: {
+                                        testPresetPopup.close()
+//                                        hideDialog()
+                                        showAltitudeProfile(true)
+                                        mapFitFunctions.fitMapViewportToMissionItems()
+//                                        presetEditPage.loaded = false
+                                        altitudeProfile.update()
+        //                                _planMasterController.upload()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /**********************************************************/
+    /*Popup {
         id:presetPopup
         width: 750
         height: 600
@@ -1538,8 +1954,6 @@ Item {
                 titleA.altitude = session.model[0].preset.coordinate.altitude.toFixed(2)
                 titleB.altitude = session.model[1].preset.coordinate.altitude.toFixed(2)
             }
-
-
         }
 
         ColumnLayout {
@@ -1672,16 +2086,16 @@ Item {
 
                                     function _mapCenter() {
                                         var centerPoint = Qt.point(editorMap.centerViewport.left + (editorMap.centerViewport.width / 2), editorMap.centerViewport.top + (editorMap.centerViewport.height / 2))
-                                        return editorMap.toCoordinate(centerPoint, false /* clipToViewPort */)
+                                        return editorMap.toCoordinate(centerPoint, false /* clipToViewPort *//*)
                                     }
                                 }
                             }
                         }
                     }
-                }
+                }*/
 
 
-                Item {
+                /*Item {
                     id:presetEditPage
                     property bool checked: false
                     property bool loaded: false
@@ -1859,6 +2273,7 @@ Item {
             }
         }
     }
+    */
 
     /*##^##
     Designer {
@@ -2064,9 +2479,9 @@ Item {
         function updateSession(item,index){
             let x = _visualItems.get(item.index)
             if(item.preset){
-//                console.log("session",item.preset.coordinate,x.coordinate)
+                console.log("session",item.preset.coordinate,x.coordinate)
                 console.log("backend:",x.coordinate.latitude,x.coordinate.longitude)
-                console.log("preset:",item.preset.coordinate.latitude,item.preset.coordinate.longitude)
+//                console.log("preset:",item.preset.coordinate.latitude,item.preset.coordinate.longitude)
                 let preset = session.model[index].preset
                 console.log("session model:",preset.coordinate.latitude,preset.coordinate.longitude);
                 item.preset.coordinate.latitude = x.coordinate.latitude.toFixed(_decimalPlaces-1)
@@ -2074,28 +2489,30 @@ Item {
 
 //                item.preset.coordinate.latitude = x.coordinate.latitude.toFixed(_decimalPlaces-1)
 //                item.preset.coordinate.longitude = x.coordinate.longitude.toFixed(_decimalPlaces-1)
-                item.preset.coordinate.altitude = x.altitude.value
+                item.preset.coordinate.altitude = x.altitude.value.toFixed(2)
             }
         }
         function onRecalcTerrainProfile(){
             for(let i=0;i<_visualItems.count;i++){
                 let item = _visualItems.get(i)
-                if(i===1){
+                if(i===1 && session.type !== PlanView.PresetType.TypeABA){
                     item.coordinate.latitude = item.launchCoordinate.latitude
                     item.coordinate.longitude = item.launchCoordinate.longitude
-
                 }
             }
 
 //            altitudeProfile.update()
             if(session.model){
                 session.model.forEach(updateSession)
+                if(!testPresetPopup.visible){
+                    _testpresetmodel.updateModel(session.model)
+                }
             }
         }
     }
     Timer {
         id:             _altitudeProfiletimer
-        interval:       500
+        interval:       1000
         repeat: true
         running: _altitudeProfile.visible
         onTriggered: {
