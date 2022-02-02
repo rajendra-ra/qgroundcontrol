@@ -23,8 +23,8 @@ void ABAPlanCreator::createPlan(const QGeoCoordinate& mapCenterCoord)
     _planMasterController->removeAll();
     VisualMissionItem* takeoffItemA = _missionController->insertTakeoffItem(mapCenterCoord, -1);//Takeoff @ A
     _missionController->insertPresetItem(mapCenterCoord,MAV_CMD_NAV_WAYPOINT,-1,true);//Waypoint B
-    VisualMissionItem* landItemB = _missionController->insertPresetItem(mapCenterCoord,MAV_CMD_NAV_LAND,-1);//Land @ B
-    VisualMissionItem* takeoffItemB = _missionController->insertTakeoffItem(landItemB->coordinate(), -1);//Takeoff @ B
+    /*VisualMissionItem* landItemB = */_missionController->insertPresetItem(mapCenterCoord,MAV_CMD_NAV_LAND,-1);//Land @ B
+    VisualMissionItem* takeoffItemB = _missionController->insertTakeoffItem(/*landItemB->coordinate()*/mapCenterCoord, -1);//Takeoff @ B
     _missionController->insertPresetItem(mapCenterCoord,MAV_CMD_NAV_WAYPOINT,-1);//Waypoint A
     _missionController->insertPresetItem(mapCenterCoord,MAV_CMD_NAV_LAND,-1);//Land @ A
     //    _missionController->insertPresetItem(mapCenterCoord,-1,true);

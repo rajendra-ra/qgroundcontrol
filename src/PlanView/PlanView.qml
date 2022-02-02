@@ -124,7 +124,8 @@ Item {
     }
 
     property var session: {
-        "model":presetABType
+        "model":null,
+        "type":PlanView.PresetType.TypeNone
     }
 
     MapFitFunctions {
