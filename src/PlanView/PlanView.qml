@@ -89,17 +89,26 @@ Item {
         { text: qsTr("RangeAero Office"), coordinate: QtPositioning.coordinate(13.0436028,77.5773236,20) },
         { text: qsTr("Peacock layout"), coordinate: QtPositioning.coordinate(13.0472723,77.4711951,25) },
     ]
-    property var presetModelSession :{
-        "A":null,
-        "B":null
-    }
+
     property var presetABType: [
         {"index":1,"preset":null},
         {"index":2,"preset":null}
     ]
+    property var presetABCType: [
+        {"index":1,"preset":null},
+        {"index":2,"preset":null},
+        {"index":5,"preset":null}
+    ]
+    property var presetABAType: [
+        {"index":1,"preset":null},
+        {"index":2,"preset":null}/*,
+        {"index":5,"preset":null}*/
+    ]
     property var presetModels: [
         null,
         presetABType,
+        presetABCType,
+        presetABAType
     ]
     property var presetContainers: [
 
