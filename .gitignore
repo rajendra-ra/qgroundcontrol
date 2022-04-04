@@ -90,3 +90,5 @@ Qt*-linux*.tar.*
 
 libs/airmapd/include/boost
 *.AppImage
+
+Debug_Build/
