@@ -123,7 +123,7 @@ AnalyzePage {
                                 }
                                 let _item = _downloadListFiles.pop();
 //                                console.log("request file:",_item.url,_item.path);
-                                fileDownloader.startDownload(_item.url,QGroundControl.settingsManager.appSettings.logSavePath+"/"+_item.path);
+                                fileDownloader.startDownload(_item.url,QGroundControl.settingsManager.appSettings.logSavePath+"/"+decodeURIComponent(_item.path));
 //                                fileDownloader.startDownload(_text,)
                             } else {
                                 _dirdownload = false
@@ -307,7 +307,7 @@ AnalyzePage {
                                         x = addressField.text+"/" + s.name;
                                     }
                                     _dirdownload = false;
-                                    fileDownloader.startDownload(x,QGroundControl.settingsManager.appSettings.logSavePath+"/"+s.name);
+                                    fileDownloader.startDownload(x,QGroundControl.settingsManager.appSettings.logSavePath+"/"+decodeURIComponent(s.name));
                                 } else if(s.isDir && !fileDownloader.isBusy){
                                     _dirdownload = true;
                                     _downloadListDir = [];
