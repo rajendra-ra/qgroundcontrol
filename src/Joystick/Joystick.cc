@@ -64,7 +64,8 @@ const char* Joystick::_buttonActionGimbalLeft =         QT_TR_NOOP("Gimbal Left"
 const char* Joystick::_buttonActionGimbalRight =        QT_TR_NOOP("Gimbal Right");
 const char* Joystick::_buttonActionGimbalCenter =       QT_TR_NOOP("Gimbal Center");
 const char* Joystick::_buttonActionEmergencyStop =      QT_TR_NOOP("Emergency Stop");
-
+//Custom Button Action
+const char* Joystick::_buttonActionCustom =      QT_TR_NOOP("Custom Action");
 const char* Joystick::_rgFunctionSettingsKey[Joystick::maxFunction] = {
     "RollAxis",
     "PitchAxis",
@@ -689,6 +690,7 @@ void Joystick::startPolling(Vehicle* vehicle)
             disconnect(this, &Joystick::centerGimbal,       _activeVehicle, &Vehicle::centerGimbal);
             disconnect(this, &Joystick::gimbalControlValue, _activeVehicle, &Vehicle::gimbalControlValue);
             disconnect(this, &Joystick::emergencyStop,      _activeVehicle, &Vehicle::emergencyStop);
+//            disconnect(this, &Joystick::customAction,      _activeVehicle, &Vehicle::customCommand);
         }
         // Always set up the new vehicle
         _activeVehicle = vehicle;
@@ -1019,7 +1021,9 @@ void Joystick::_executeButtonAction(const QString& action, bool buttonDown)
         }
     } else if(action == _buttonActionEmergencyStop) {
       if(buttonDown) emit emergencyStop();
-    } else {
+    } else if(action == _buttonActionCustom) {
+        if(buttonDown) emit customAction();
+      } else {
         qCDebug(JoystickLog) << "_buttonAction unknown action:" << action;
     }
 }
@@ -1108,6 +1112,7 @@ void Joystick::_buildActionList(Vehicle* activeVehicle)
     _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionGimbalRight,   true));
     _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionGimbalCenter));
     _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionEmergencyStop));
+    _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionCustom));
     for(int i = 0; i < _assignableButtonActions.count(); i++) {
         AssignableButtonAction* p = qobject_cast<AssignableButtonAction*>(_assignableButtonActions[i]);
         _availableActionTitles << p->action();
