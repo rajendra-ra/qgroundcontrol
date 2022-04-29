@@ -690,7 +690,7 @@ void Joystick::startPolling(Vehicle* vehicle)
             disconnect(this, &Joystick::centerGimbal,       _activeVehicle, &Vehicle::centerGimbal);
             disconnect(this, &Joystick::gimbalControlValue, _activeVehicle, &Vehicle::gimbalControlValue);
             disconnect(this, &Joystick::emergencyStop,      _activeVehicle, &Vehicle::emergencyStop);
-//            disconnect(this, &Joystick::customAction,      _activeVehicle, &Vehicle::customCommand);
+            disconnect(this, &Joystick::customAction,      _activeVehicle, &Vehicle::customCommand);
         }
         // Always set up the new vehicle
         _activeVehicle = vehicle;
@@ -713,6 +713,7 @@ void Joystick::startPolling(Vehicle* vehicle)
             connect(this, &Joystick::centerGimbal,       _activeVehicle, &Vehicle::centerGimbal);
             connect(this, &Joystick::gimbalControlValue, _activeVehicle, &Vehicle::gimbalControlValue);
             connect(this, &Joystick::emergencyStop,      _activeVehicle, &Vehicle::emergencyStop);
+            connect(this, &Joystick::customAction,      _activeVehicle, &Vehicle::customCommand);
         }
     }
     if (!isRunning()) {
