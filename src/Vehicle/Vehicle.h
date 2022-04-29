@@ -448,6 +448,7 @@ public:
 
     bool armed              () { return _armed; }
     void setArmed           (bool armed, bool showError);
+    void customCommand(int channel, int raw);
     void setArmedShowError  (bool armed) { setArmed(armed, true); }
 
     bool flightModeSetAvailable             ();
