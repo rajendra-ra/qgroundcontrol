@@ -1872,7 +1872,16 @@ void Vehicle::setArmed(bool armed, bool showError)
                    showError,
                    armed ? 1.0f : 0.0f);
 }
-
+void Vehicle::customCommand(int channel, int raw)
+{
+    // We specifically use COMMAND_LONG:MAV_CMD_COMPONENT_ARM_DISARM since it is supported by more flight stacks.
+    sendRCChannelDataThreadSafe(channel,(uint16_t)raw);
+//    sendMavCommand(_defaultComponentId,
+//                   MAV_CMD_COMPONENT_ARM_DISARM,
+//                   true,    // show error if fails
+//                   1.0f,    // arm
+//                   2989);   // force arm
+}
 void Vehicle::forceArm(void)
 {
     sendMavCommand(_defaultComponentId,
