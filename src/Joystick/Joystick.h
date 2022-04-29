@@ -216,7 +216,7 @@ signals:
     void setVtolInFwdFlight         (bool set);
     void setFlightMode              (const QString& flightMode);
     void emergencyStop              ();
-    void customAction              ();
+    void customAction              (int channel, int raw);
 
 protected:
     void    _setDefaultCalibration  ();
