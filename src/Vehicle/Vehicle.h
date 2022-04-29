@@ -418,7 +418,7 @@ public:
     bool joystickEnabled            ();
     void setJoystickEnabled         (bool enabled);
     void sendJoystickDataThreadSafe (float roll, float pitch, float yaw, float thrust, quint16 buttons);
-
+    void sendRCChannelDataThreadSafe(int channel, uint16_t raw);
     // Property accesors
     int id() { return _id; }
     MAV_AUTOPILOT firmwareType() const { return _firmwareType; }
