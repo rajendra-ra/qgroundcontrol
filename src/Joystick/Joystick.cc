@@ -1023,7 +1023,7 @@ void Joystick::_executeButtonAction(const QString& action, bool buttonDown)
     } else if(action == _buttonActionEmergencyStop) {
       if(buttonDown) emit emergencyStop();
     } else if(action == _buttonActionCustom) {
-        if(buttonDown) emit customAction();
+        if(buttonDown) emit customAction(8,2000);
       } else {
         qCDebug(JoystickLog) << "_buttonAction unknown action:" << action;
     }
