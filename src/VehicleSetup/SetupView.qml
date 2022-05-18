@@ -294,6 +294,15 @@ Rectangle {
                 Layout.fillWidth:   true
                 onClicked:          showPanel(this, "SetupParameterEditor.qml")
             }
+            SubMenuButton {
+                setupIndicator:     false
+                exclusiveGroup:     setupButtonGroup
+                visible:            QGroundControl.multiVehicleManager.activeVehicle &&
+                                    _corePlugin.showAdvancedUI
+                text:               qsTr("Mavlink Signing")
+                Layout.fillWidth:   true
+                onClicked:          showPanel(this, "MavlinkSigningSetup.qml")
+            }
 
         }
     }
