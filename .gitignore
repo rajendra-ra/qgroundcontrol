@@ -85,3 +85,8 @@ Qt*-linux*.tar.*
 .vs/
 
 libs/airmapd/include/boost
+
+Debug_Build/
+deploy/**/*.AppImage
+.vscode/c_cpp_properties.json
+.vscode/settings.json
