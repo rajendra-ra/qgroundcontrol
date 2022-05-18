@@ -69,6 +69,8 @@ public:
     void    writeBytesThreadSafe        (const char *bytes, int length);
     void    addVehicleReference         (void);
     void    removeVehicleReference      (void);
+    /// Signing structure for mavlink 2 signing
+    mavlink_signing_t signing;
 
 signals:
     void bytesReceived      (LinkInterface* link, QByteArray data);
