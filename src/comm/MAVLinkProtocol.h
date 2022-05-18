@@ -63,6 +63,13 @@ public:
     unsigned getCurrentVersion() {
         return _current_version;
     }
+    mavlink_signing_streams_t signing_streams;
+
+    static bool accept_unsigned_callback(const mavlink_status_t *status, uint32_t msgId)
+    {
+        Q_UNUSED(status);
+        return msgId == MAVLINK_MSG_ID_RADIO_STATUS;
+    }
     /**
      * Reset the counters for all metadata for this link.
      */
