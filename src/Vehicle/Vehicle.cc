@@ -3260,6 +3260,32 @@ void Vehicle::_ackMavlinkLogData(uint16_t sequence)
                 &ack);
     sendMessageOnLinkThreadSafe(sharedLink.get(), msg);
 }
+void Vehicle::enableSigning(const QString& key)
+{
+    SharedLinkInterfacePtr  sharedLink = vehicleLinkManager()->primaryLink().lock();
+    if (!sharedLink) {
+        qCDebug(VehicleLog) << "enableSigning: primary link gone!";
+        return;
+    }
+    mavlink_signing_t& signing = sharedLink.get()->signing;
+    memset(&signing, 0, sizeof(signing));
+    _setupSigning.target_system = _id;
+    _setupSigning.target_component = _compID;
+    _setupSigning.initial_timestamp = QDateTime(QDate(2015, 1, 1),QTime()).msecsTo(QDateTime::currentDateTimeUtc()) * 100;
+    memcpy(_setupSigning.secret_key, QCryptographicHash::hash(key.toUtf8(), QCryptographicHash::Sha256).data(), 32);
+
+    signing.link_id = (uint8_t)sharedLink->mavlinkChannel();
+    signing.timestamp = _setupSigning.initial_timestamp;
+    signing.flags = MAVLINK_SIGNING_FLAG_SIGN_OUTGOING;
+    signing.accept_unsigned_callback = _mavlink->accept_unsigned_callback;
+    memcpy(signing.secret_key, _setupSigning.secret_key, 32);
+
+    mavlink_status_t *status = mavlink_get_channel_status(sharedLink->mavlinkChannel());
+    status->signing = &signing;
+    status->signing_streams = &_mavlink->signing_streams;
+
+    _mavlink->setVersion(200);
+}
 void Vehicle::resetSigning(void)
 {
     SharedLinkInterfacePtr  sharedLink = vehicleLinkManager()->primaryLink().lock();
