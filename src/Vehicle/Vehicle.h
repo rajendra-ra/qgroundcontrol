@@ -397,6 +397,15 @@ public:
     /// Trigger camera using MAV_CMD_DO_DIGICAM_CONTROL command
     Q_INVOKABLE void triggerSimpleCamera(void);
 
+    /// setup signing using SETUP_SIGNING message
+    Q_INVOKABLE void setupSigning(const QString& key);
+
+    /// enable signing
+    Q_INVOKABLE void enableSigning(const QString& key);
+
+    /// enable signing
+    Q_INVOKABLE void resetSigning(void);
+
 #if !defined(NO_ARDUPILOT_DIALECT)
     Q_INVOKABLE void flashBootloader();
 #endif
@@ -957,7 +966,11 @@ private:
     int     _id;                    ///< Mavlink system id
     int     _defaultComponentId;
     bool    _offlineEditingVehicle = false; ///< true: This Vehicle is a "disconnected" vehicle for ui use while offline editing
-
+    typedef struct __secret_key_t {
+     QString value; /*<  key*/
+    } secret_key_t;
+    secret_key_t _key;
+    mavlink_setup_signing_t _setupSigning;
     MAV_AUTOPILOT       _firmwareType;
     MAV_TYPE            _vehicleType;
     FirmwarePlugin*     _firmwarePlugin = nullptr;
