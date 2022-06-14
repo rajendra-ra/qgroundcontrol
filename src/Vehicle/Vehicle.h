@@ -279,6 +279,9 @@ public:
     Q_PROPERTY(Fact* distanceToGCS      READ distanceToGCS      CONSTANT)
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
     Q_PROPERTY(Fact* throttlePct        READ throttlePct        CONSTANT)
+    //router-status
+    Q_PROPERTY(Fact* routerStatus       READ routerStatus        CONSTANT)
+    Q_PROPERTY(Fact* routerChannelNum   READ routerChannelNum    CONSTANT)
 
     Q_PROPERTY(FactGroup*           gps             READ gpsFactGroup               CONSTANT)
     Q_PROPERTY(FactGroup*           wind            READ windFactGroup              CONSTANT)
