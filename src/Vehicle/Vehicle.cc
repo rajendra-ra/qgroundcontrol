@@ -719,6 +719,9 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     case MAVLINK_MSG_ID_OBSTACLE_DISTANCE:
         _handleObstacleDistance(message);
         break;
+    case MAVLINK_MSG_ID_ROUTER_CHANNEL_STATUS:
+        _handleRouterStatus(message);
+        break;
 
     case MAVLINK_MSG_ID_SERIAL_CONTROL:
     {
@@ -976,6 +979,17 @@ void Vehicle::_handleAttitudeWorker(double rollRadians, double pitchRadians, dou
     _headingFact.setRawValue(yaw);
 }
 
+void Vehicle::_handleRouterStatus(mavlink_message_t& message)
+{
+    if (_receivingAttitudeQuaternion) {
+        return;
+    }
+
+    mavlink_router_channel_status_t status;
+    mavlink_msg_router_channel_status_decode(&message, &status);
+    _routerStatusFact.setRawValue(status.channel_active);
+    _routerChannelNumFact.setRawValue(status.total_channels);
+}
 void Vehicle::_handleAttitude(mavlink_message_t& message)
 {
     if (_receivingAttitudeQuaternion) {
