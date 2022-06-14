@@ -606,6 +606,10 @@ public:
     Fact* distanceToGCS                     () { return &_distanceToGCSFact; }
     Fact* hobbs                             () { return &_hobbsFact; }
     Fact* throttlePct                       () { return &_throttlePctFact; }
+    // router-status
+    Fact* routerStatus                      () { return &_routerStatusFact; }
+    //router-channel-num routerChannelNum
+    Fact* routerChannelNum                  () { return &_routerChannelNumFact; }
 
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
     FactGroup* windFactGroup                () { return &_windFactGroup; }
