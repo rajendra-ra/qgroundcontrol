@@ -26,8 +26,75 @@ ColumnLayout {
     property real   _outerRadius:           _innerRadius + _topBottomMargin
     property real   _spacing:               ScreenTools.defaultFontPixelHeight * 0.33
     property real   _topBottomMargin:       (width * 0.05) / 2
+    property var    vehicle: globals.activeVehicle
+    property bool name_s: false
+
+    function nameChanged(){
+        name_s = !name_s;
+    }
 
     QGCPalette { id: qgcPal }
+    Rectangle {
+        height:             _outerRadius * 1.5
+        Layout.fillWidth:   true
+        color: "transparent"
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+//                parent.color = "red";
+                mainWindow.showPopupDialogFromComponent(nameChangeDialog, { });
+            }
+        }
+        GridLayout {
+            id:                 routerStatus
+            columns: 2
+            rows: 4
+            columnSpacing: 0
+            rowSpacing: 0
+            anchors.fill: parent
+            flow: GridLayout.TopToBottom
+            Repeater {
+                id: indicatorRepeater
+                model: vehicle?vehicle.routerChannelNum.rawValue:0
+                Rectangle {
+//                    Layout.alignment: Qt.AlignTop
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    height: ScreenTools.defaultFontPixelHeight
+                    border.width: 0
+                    radius: ScreenTools.defaultFontPixelHeight
+                    color: qgcPal.window
+                    Rectangle {
+                        id: indicator
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        anchors.bottom: parent.bottom
+                        width: height
+                        radius: height
+                        color: checkIfActive(index)?"green":"red"
+                        function checkIfActive(i){
+                            var x = vehicle?vehicle.routerStatus.rawValue:0;
+    //                        console.log((1<<i)&x,vehicle.routerChannelNum.rawValue);
+                            return (1<<i)&x;
+                        }
+                    }
+
+                    Text {
+                        property bool name: name_s
+                        anchors.left: indicator.right
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        horizontalAlignment: Text.AlignHCenter
+                        text: vehicle.getRouterChannelName(index)
+                        color: "white"
+                        onNameChanged: text=vehicle.getRouterChannelName(index)
+                    }
+                }
+            }
+        }
+    }
+
 
     Rectangle {
         id:                 visualInstrument
