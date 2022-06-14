@@ -9,6 +9,10 @@
 
 import QtQuick          2.12
 import QtQuick.Layouts  1.12
+import QtQuick.Controls 2.5
+import QtQuick.Dialogs  1.3
+import QtQuick.Layouts  1.2
+import QtQuick.Extras   1.4
 
 import QGroundControl               1.0
 import QGroundControl.Controls      1.0
@@ -126,5 +130,39 @@ ColumnLayout {
 
     TerrainProgress {
         Layout.fillWidth: true
+    }
+    Component {
+        id: nameChangeDialog
+
+        QGCPopupDialog {
+//            id: nameChangeDialog
+            title:      qsTr("Channel Name(s)")
+            buttons:    StandardButton.Close
+
+            ColumnLayout {
+                Repeater {
+                    model: vehicle?vehicle.routerChannelNum.rawValue:0
+
+                    Row {
+                        height: ScreenTools.minTouchPixels
+                        Layout.fillWidth: true
+
+                        QGCLabel {
+                            width:      80
+                            text:       qsTr("CH "+index)
+                            wrapMode:   Text.WordWrap
+                        }
+                        QGCTextField {
+                            text:               vehicle.getRouterChannelName(index)
+                            onEditingFinished:  updateChannelName(index, text)
+                            function updateChannelName(index,text){
+                                vehicle.setRouterChannelName(index,text);
+                            }
+                        }
+                    }
+                }
+            }
+            onHideDialog: nameChanged()
+        }
     }
 }
