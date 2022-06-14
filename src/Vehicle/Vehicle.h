@@ -1221,6 +1221,8 @@ private:
     Fact _distanceToGCSFact;
     Fact _hobbsFact;
     Fact _throttlePctFact;
+    Fact _routerStatusFact;
+    Fact _routerChannelNumFact;
 
     VehicleGPSFactGroup             _gpsFactGroup;
     VehicleWindFactGroup            _windFactGroup;
@@ -1263,6 +1265,8 @@ private:
     static const char* _distanceToGCSFactName;
     static const char* _hobbsFactName;
     static const char* _throttlePctFactName;
+    static const char* _routerStatusFactName;
+    static const char* _routerChannelNumFactName;
 
     static const char* _gpsFactGroupName;
     static const char* _windFactGroupName;
