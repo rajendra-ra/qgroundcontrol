@@ -2642,7 +2642,6 @@ int Vehicle::_findMavCommandListEntryIndex(int targetCompId, MAV_CMD command)
 
     return -1;
 }
-
 bool Vehicle::_sendMavCommandShouldRetry(MAV_CMD command)
 {
     switch (command) {
@@ -3865,7 +3864,17 @@ void Vehicle::clearAllParamMapRC(void)
         sendMessageOnLinkThreadSafe(sharedLink.get(), message);
     }
 }
+QString Vehicle::getRouterChannelName(int index)
+{
+    QSettings _s;
+    return _s.value(tr("ROUTER_CHANNEL_%1").arg(index),tr("CH %1").arg(index)).toString();
 
+}
+void Vehicle::setRouterChannelName(int index, QString text)
+{
+    QSettings _s;
+    _s.setValue(tr("ROUTER_CHANNEL_%1").arg(index),text);
+}
 void Vehicle::sendJoystickDataThreadSafe(float roll, float pitch, float yaw, float thrust, quint16 buttons)
 {
     SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();
