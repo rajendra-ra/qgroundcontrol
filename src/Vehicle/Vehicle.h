@@ -400,6 +400,10 @@ public:
     /// Trigger camera using MAV_CMD_DO_DIGICAM_CONTROL command
     Q_INVOKABLE void triggerSimpleCamera(void);
 
+    /// Get Router Channel Name
+    Q_INVOKABLE QString getRouterChannelName(int index);
+    /// Set Router Channel Name
+    Q_INVOKABLE void setRouterChannelName(int index,QString text);
 #if !defined(NO_ARDUPILOT_DIALECT)
     Q_INVOKABLE void flashBootloader();
 #endif
