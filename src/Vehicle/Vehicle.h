@@ -1230,6 +1230,9 @@ private:
     Fact _throttlePctFact;
     Fact _routerStatusFact;
     Fact _routerChannelNumFact;
+//    Fact _fuelLevelFact;
+    Fact _engineRPMFact;
+    Fact _rotorRPMFact;
 
     VehicleGPSFactGroup             _gpsFactGroup;
     VehicleWindFactGroup            _windFactGroup;
