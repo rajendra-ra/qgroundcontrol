@@ -1216,6 +1216,9 @@ private:
     Fact _distanceToGCSFact;
     Fact _hobbsFact;
     Fact _throttlePctFact;
+//    Fact _fuelLevelFact;
+    Fact _engineRPMFact;
+    Fact _rotorRPMFact;
 
     VehicleGPSFactGroup             _gpsFactGroup;
     VehicleWindFactGroup            _windFactGroup;
