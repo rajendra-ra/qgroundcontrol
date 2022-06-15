@@ -1002,6 +1002,19 @@ void Vehicle::_handleRouterStatus(mavlink_message_t& message)
     _routerStatusFact.setRawValue(status.channel_active);
     _routerChannelNumFact.setRawValue(status.total_channels);
 }
+//void Vehicle::_handleFuelLevel(mavlink_message_t& message)
+//{
+//    mavlink_ status;
+//    mavlink_msg_router_channel_status_decode(&message, &status);
+//    _routerStatusFact.setRawValue(status.channel_active);
+//}
+void Vehicle::_handleRPM(mavlink_message_t& message)
+{
+    mavlink_rpm_t rpm;
+    mavlink_msg_rpm_decode(&message, &rpm);
+    _engineRPMFact.setRawValue(rpm.rpm1);
+    _rotorRPMFact.setRawValue(rpm.rpm2);
+}
 void Vehicle::_handleAttitude(mavlink_message_t& message)
 {
     if (_receivingAttitudeQuaternion) {
