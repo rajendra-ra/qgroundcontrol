@@ -54,4 +54,17 @@ Row {
             visible:            item.showIndicator
         }
     }
+
+//    Loader {
+//        anchors.top:        parent.top
+//        anchors.bottom:     parent.bottom
+//        source:             "/toolbar/FuelIndicator.qml"
+//        visible:            true//item.showIndicator
+//    }
+    Loader {
+        anchors.top:        parent.top
+        anchors.bottom:     parent.bottom
+        source:             "/toolbar/RPMIndicator.qml"
+        visible:            true//item.showIndicator
+    }
 }
