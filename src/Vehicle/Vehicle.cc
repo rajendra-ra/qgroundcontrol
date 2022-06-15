@@ -89,6 +89,10 @@ const char* Vehicle::_distanceToGCSFactName =       "distanceToGCS";
 const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
 
+//const char*  Vehicle::_fuelLevelFactName =          "fuelLevel";
+const char*  Vehicle::_engineRPMFactName =          "engineRPM";
+const char*  Vehicle::_rotorRPMFactName =           "rotorRPM";
+
 const char* Vehicle::_gpsFactGroupName =                "gps";
 const char* Vehicle::_windFactGroupName =               "wind";
 const char* Vehicle::_vibrationFactGroupName =          "vibration";
