@@ -931,6 +931,8 @@ private:
     void _handleGimbalOrientation       (const mavlink_message_t& message);
     void _handleObstacleDistance        (const mavlink_message_t& message);
     // ArduPilot dialect messages
+    void _handleRPM                     (mavlink_message_t& message);
+
 #if !defined(NO_ARDUPILOT_DIALECT)
     void _handleCameraFeedback          (const mavlink_message_t& message);
 #endif
