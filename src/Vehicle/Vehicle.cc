@@ -996,10 +996,6 @@ void Vehicle::_handleAttitudeWorker(double rollRadians, double pitchRadians, dou
 
 void Vehicle::_handleRouterStatus(mavlink_message_t& message)
 {
-    if (_receivingAttitudeQuaternion) {
-        return;
-    }
-
     mavlink_router_channel_status_t status;
     mavlink_msg_router_channel_status_decode(&message, &status);
     _routerStatusFact.setRawValue(status.channel_active);
