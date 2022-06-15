@@ -726,6 +726,9 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     case MAVLINK_MSG_ID_OBSTACLE_DISTANCE:
         _handleObstacleDistance(message);
         break;
+    case MAVLINK_MSG_ID_RPM:
+        _handleRPM(message);
+        break;
 
     case MAVLINK_MSG_ID_SERIAL_CONTROL:
     {
