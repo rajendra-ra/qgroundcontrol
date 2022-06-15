@@ -1277,6 +1277,9 @@ private:
     static const char* _throttlePctFactName;
     static const char* _routerStatusFactName;
     static const char* _routerChannelNumFactName;
+//    static const char*  _fuelLevelFactName;
+    static const char*  _engineRPMFactName;
+    static const char*  _rotorRPMFactName;
 
     static const char* _gpsFactGroupName;
     static const char* _windFactGroupName;
