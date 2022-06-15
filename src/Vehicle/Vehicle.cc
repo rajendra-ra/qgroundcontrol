@@ -90,6 +90,9 @@ const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
 const char* Vehicle::_routerStatusFactName =        "routerStatus";
 const char* Vehicle::_routerChannelNumFactName =    "routerChannelNum";
+//const char*  Vehicle::_fuelLevelFactName =          "fuelLevel";
+const char*  Vehicle::_engineRPMFactName =          "engineRPM";
+const char*  Vehicle::_rotorRPMFactName =           "rotorRPM";
 
 const char* Vehicle::_gpsFactGroupName =                "gps";
 const char* Vehicle::_windFactGroupName =               "wind";
