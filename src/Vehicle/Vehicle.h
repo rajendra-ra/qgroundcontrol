@@ -1009,6 +1009,8 @@ private:
     void _handleObstacleDistance        (const mavlink_message_t& message);
     void _handleEvent(uint8_t comp_id, std::unique_ptr<events::parser::ParsedEvent> event);
     // ArduPilot dialect messages
+    void _handleRPM                     (mavlink_message_t& message);
+
 #if !defined(NO_ARDUPILOT_DIALECT)
     void _handleCameraFeedback          (const mavlink_message_t& message);
 #endif
