@@ -436,6 +436,10 @@ void Vehicle::_commonInit()
     _addFact(&_distanceToGCSFact,       _distanceToGCSFactName);
     _addFact(&_throttlePctFact,         _throttlePctFactName);
 
+//    _addFact(&_fuelLevelFact,           _fuelLevelFactName);
+    _addFact(&_rotorRPMFact,            _rotorRPMFactName);
+    _addFact(&_engineRPMFact,           _engineRPMFactName);
+
     _hobbsFact.setRawValue(QVariant(QString("0000:00:00")));
     _addFact(&_hobbsFact,               _hobbsFactName);
 
