@@ -614,6 +614,11 @@ public:
     Fact* routerStatus                      () { return &_routerStatusFact; }
     //router-channel-num routerChannelNum
     Fact* routerChannelNum                  () { return &_routerChannelNumFact; }
+    /// fuel level
+//    Fact* fuelLevel                      () { return &_fuelLevelFact; }
+    /// rpm
+    Fact* engineRPM                      () { return &_engineRPMFact; }
+    Fact* rotorRPM                      () { return &_rotorRPMFact; }
 
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
     FactGroup* windFactGroup                () { return &_windFactGroup; }
