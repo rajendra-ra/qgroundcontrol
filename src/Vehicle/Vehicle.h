@@ -1262,6 +1262,10 @@ private:
     static const char* _hobbsFactName;
     static const char* _throttlePctFactName;
 
+//    static const char*  _fuelLevelFactName;
+    static const char*  _engineRPMFactName;
+    static const char*  _rotorRPMFactName;
+
     static const char* _gpsFactGroupName;
     static const char* _windFactGroupName;
     static const char* _vibrationFactGroupName;
