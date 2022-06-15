@@ -303,6 +303,10 @@ public:
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
     Q_PROPERTY(Fact* throttlePct        READ throttlePct        CONSTANT)
 
+//    Q_PROPERTY(Fact* fuelLevel          READ fuelLevel          CONSTANT)
+    Q_PROPERTY(Fact* engineRPM          READ engineRPM          CONSTANT)
+    Q_PROPERTY(Fact* rotorRPM           READ rotorRPM           CONSTANT)
+
     Q_PROPERTY(FactGroup*           gps             READ gpsFactGroup               CONSTANT)
     Q_PROPERTY(FactGroup*           gps2            READ gps2FactGroup              CONSTANT)
     Q_PROPERTY(FactGroup*           wind            READ windFactGroup              CONSTANT)
