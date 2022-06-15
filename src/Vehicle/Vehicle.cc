@@ -985,7 +985,6 @@ void Vehicle::_handleAttitudeWorker(double rollRadians, double pitchRadians, dou
     _pitchFact.setRawValue(pitch);
     _headingFact.setRawValue(yaw);
 }
-
 //void Vehicle::_handleFuelLevel(mavlink_message_t& message)
 //{
 //    mavlink_ status;
