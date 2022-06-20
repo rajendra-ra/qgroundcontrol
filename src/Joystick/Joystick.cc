@@ -1033,6 +1033,15 @@ void Joystick::_executeButtonAction(const QString& action, bool buttonDown)
         }
     } else if(action == _buttonActionEmergencyStop) {
       if(buttonDown) emit emergencyStop();
+    } else if(action == _buttonActionEngine) {
+        qCDebug(JoystickLog) <<"Execute:"<< action;
+        if(buttonDown) {emit sendRCOverride(6,2000);} else emit sendRCOverride(6,1000);
+    } else if(action == _buttonActionMotorInterlock) {
+        qCDebug(JoystickLog) <<"Execute:"<< action;
+        if(buttonDown) {emit sendRCOverride(7,2000);} else emit sendRCOverride(7,1000);
+    } else if(action == _buttonActionChoke) {
+        qCDebug(JoystickLog) <<"Execute:"<< action;
+        if(buttonDown) {emit sendRCOverride(9,2000);} else emit sendRCOverride(9,1000);
     } else {
         if (buttonDown && _activeVehicle) {
             for (auto& item : _customMavCommands) {
