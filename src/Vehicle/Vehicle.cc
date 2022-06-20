@@ -1071,7 +1071,7 @@ void Vehicle::_handleRPM(mavlink_message_t& message)
     mavlink_rpm_t rpm;
     mavlink_msg_rpm_decode(&message, &rpm);
     _engineRPMFact.setRawValue(rpm.rpm2);
-    _rotorRPMFact.setRawValue(rpm.rpm21;
+    _rotorRPMFact.setRawValue(rpm.rpm1);
 }
 
 void Vehicle::_handleAttitude(mavlink_message_t& message)
