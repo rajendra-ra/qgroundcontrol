@@ -65,6 +65,9 @@ const char* Joystick::_buttonActionGimbalLeft =         QT_TR_NOOP("Gimbal Left"
 const char* Joystick::_buttonActionGimbalRight =        QT_TR_NOOP("Gimbal Right");
 const char* Joystick::_buttonActionGimbalCenter =       QT_TR_NOOP("Gimbal Center");
 const char* Joystick::_buttonActionEmergencyStop =      QT_TR_NOOP("Emergency Stop");
+const char* Joystick::_buttonActionChoke =              QT_TR_NOOP("Engine Choke");
+const char* Joystick::_buttonActionEngine =             QT_TR_NOOP("Engine On/Off");
+const char* Joystick::_buttonActionMotorInterlock =     QT_TR_NOOP("Motor Interlock");
 
 const char* Joystick::_rgFunctionSettingsKey[Joystick::maxFunction] = {
     "RollAxis",
