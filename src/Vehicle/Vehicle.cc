@@ -2041,7 +2041,12 @@ void Vehicle::setArmed(bool armed, bool showError)
                    showError,
                    armed ? 1.0f : 0.0f);
 }
+void Vehicle::sendRCOverride(int channel, int raw)
+{
+    qCDebug(VehicleLog) << "sendRCOverride" <<"channel:"<<channel<<"value:"<<raw;
+    sendRCChannelDataThreadSafe(channel,(uint16_t)raw);
 
+}
 void Vehicle::forceArm(void)
 {
     sendMavCommand(_defaultComponentId,
@@ -3990,7 +3995,56 @@ void Vehicle::clearAllParamMapRC(void)
         sendMessageOnLinkThreadSafe(sharedLink.get(), message);
     }
 }
+void Vehicle::sendRCChannelDataThreadSafe(int channel, uint16_t raw)
+{
+    qCDebug(VehicleLog)<< "sendRCChannelDataThreadSafe:"<<"channel"<<channel<<"value"<<raw;
+    SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();
+    if (!sharedLink) {
+        qCDebug(VehicleLog)<< "sendRCChannelDataThreadSafe: primary link gone!";
+        return;
+    }
 
+    if (sharedLink->linkConfiguration()->isHighLatency()) {
+        return;
+    }
+    uint16_t chanRaw[18];
+
+    for (int i=0; i<18; i++) {
+        chanRaw[i] = UINT16_MAX;
+    }
+    chanRaw[channel] = raw;
+
+    mavlink_message_t message;
+
+    mavlink_msg_rc_channels_override_pack_chan(
+                _mavlink->getSystemId(),
+                _mavlink->getComponentId(),
+                sharedLink->mavlinkChannel(),
+                &message,
+                _id,
+                _compID,
+                chanRaw[0],            // channel raw value
+                chanRaw[1],            // channel raw value
+                chanRaw[2],            // channel raw value
+                chanRaw[3],            // channel raw value
+                chanRaw[4],            // channel raw value
+                chanRaw[5],            // channel raw value
+                chanRaw[6],            // channel raw value
+                chanRaw[7],            // channel raw value
+                chanRaw[8],            // channel raw value
+                chanRaw[9],            // channel raw value
+                chanRaw[10],           // channel raw value
+                chanRaw[11],           // channel raw value
+                chanRaw[12],           // channel raw value
+                chanRaw[13],           // channel raw value
+                chanRaw[14],           // channel raw value
+                chanRaw[15],           // channel raw value
+                chanRaw[16],           // channel raw value
+                chanRaw[17]           // channel raw value
+                );
+    qCDebug(VehicleLog)<< "sendRCChannelDataThreadSafe:"<<"about to send";
+    sendMessageOnLinkThreadSafe(sharedLink.get(), message);
+}
 void Vehicle::sendJoystickDataThreadSafe(float roll, float pitch, float yaw, float thrust, quint16 buttons)
 {
     SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();

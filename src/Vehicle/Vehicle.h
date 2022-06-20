@@ -456,6 +456,7 @@ public:
     void setJoystickEnabled         (bool enabled);
     void sendJoystickDataThreadSafe (float roll, float pitch, float yaw, float thrust, quint16 buttons);
 
+    void sendRCChannelDataThreadSafe(int channel, uint16_t raw);
     // Property accesors
     int id() const{ return _id; }
     MAV_AUTOPILOT firmwareType() const { return _firmwareType; }
@@ -486,6 +487,7 @@ public:
     bool armed              () const{ return _armed; }
     void setArmed           (bool armed, bool showError);
     void setArmedShowError  (bool armed) { setArmed(armed, true); }
+    void sendRCOverride(int channel, int raw);
 
     bool flightModeSetAvailable             ();
     QStringList flightModes                 ();
