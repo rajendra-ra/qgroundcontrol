@@ -1130,6 +1130,9 @@ void Joystick::_buildActionList(Vehicle* activeVehicle)
     _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionGimbalRight,   true));
     _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionGimbalCenter));
     _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionEmergencyStop));
+    _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionChoke));
+    _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionEngine));
+    _assignableButtonActions.append(new AssignableButtonAction(this, _buttonActionMotorInterlock));
     for (auto& item : _customMavCommands)
         _assignableButtonActions.append(new AssignableButtonAction(this, item.name()));
 
