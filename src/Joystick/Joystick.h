@@ -353,6 +353,9 @@ private:
     static const char* _buttonActionGimbalRight;
     static const char* _buttonActionGimbalCenter;
     static const char* _buttonActionEmergencyStop;
+    static const char* _buttonActionChoke;
+    static const char* _buttonActionEngine;
+    static const char* _buttonActionMotorInterlock;
 
 private slots:
     void _activeVehicleChanged(Vehicle* activeVehicle);
