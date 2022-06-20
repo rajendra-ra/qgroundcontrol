@@ -700,6 +700,7 @@ void Joystick::startPolling(Vehicle* vehicle)
             disconnect(this, &Joystick::centerGimbal,       _activeVehicle, &Vehicle::centerGimbal);
             disconnect(this, &Joystick::gimbalControlValue, _activeVehicle, &Vehicle::gimbalControlValue);
             disconnect(this, &Joystick::emergencyStop,      _activeVehicle, &Vehicle::emergencyStop);
+            disconnect(this, &Joystick::sendRCOverride,     _activeVehicle, &Vehicle::sendRCOverride);
         }
         // Always set up the new vehicle
         _activeVehicle = vehicle;
@@ -722,6 +723,7 @@ void Joystick::startPolling(Vehicle* vehicle)
             connect(this, &Joystick::centerGimbal,       _activeVehicle, &Vehicle::centerGimbal);
             connect(this, &Joystick::gimbalControlValue, _activeVehicle, &Vehicle::gimbalControlValue);
             connect(this, &Joystick::emergencyStop,      _activeVehicle, &Vehicle::emergencyStop);
+            connect(this, &Joystick::sendRCOverride,      _activeVehicle, &Vehicle::sendRCOverride);
         }
     }
     if (!isRunning()) {
@@ -741,6 +743,7 @@ void Joystick::stopPolling(void)
             disconnect(this, &Joystick::gimbalYawStep,      _activeVehicle, &Vehicle::gimbalYawStep);
             disconnect(this, &Joystick::centerGimbal,       _activeVehicle, &Vehicle::centerGimbal);
             disconnect(this, &Joystick::gimbalControlValue, _activeVehicle, &Vehicle::gimbalControlValue);
+            disconnect(this, &Joystick::sendRCOverride,     _activeVehicle, &Vehicle::sendRCOverride);
         }
         _exitThread = true;
     }
