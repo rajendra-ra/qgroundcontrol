@@ -84,7 +84,7 @@ private:
     double  _fixedBaseLongitude;
     float   _fixedBaseAltitudeMeters;
     float   _fixedBaseAccuracyMeters;
-    GPSHelper::GPSConfig _gpsConfig{};
+    GPSHelper::OutputMode _gpsConfig;
 
 	struct sensor_gps_s        _reportGpsPos;
 	struct satellite_info_s    *_pReportSatInfo = nullptr;
