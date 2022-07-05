@@ -1988,6 +1988,8 @@ void Vehicle::_loadSettings()
         setJoystickEnabled(settings.value(_joystickEnabledSettingsKey, false).toBool());
         _startJoystick(true);
     }
+    _keyFile = settings.value("MAVLINK_SIGNING_KEY_FILE","").toString();
+    emit keyFileChanged(_keyFile);
 }
 
 void Vehicle::_saveSettings()
@@ -3455,6 +3457,7 @@ void Vehicle::setupSigning(void)
         return;
     }
     QSettings _setting;
+    _setting.beginGroup(QString(_settingsGroup).arg(_id));
     if(_keyFile.isEmpty()){
         _keyFile = _setting.value("MAVLINK_SIGNING_KEY_FILE","").toString();
         emit keyFileChanged(_keyFile);
@@ -3498,6 +3501,7 @@ void Vehicle::enableSigning(void)
     }
 
     QSettings _setting;
+    _setting.beginGroup(QString(_settingsGroup).arg(_id));
     if(_keyFile.isEmpty()){
         _keyFile = _setting.value("MAVLINK_SIGNING_KEY_FILE","").toString();
         emit keyFileChanged(_keyFile);
