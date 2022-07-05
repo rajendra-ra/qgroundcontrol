@@ -57,10 +57,14 @@ SetupPage {
                     text: globals.activeVehicle.keyFile
                     height: setupSigningButton.height
                     color: "white"
+                    font.family: "Helvetica"
+                    padding: 5
+                    font.pixelSize: ScreenTools.defaultFontPixelHeight
                 }
             }
 
             Row {
+                spacing: 1
                 QGCButton {
                     id:         enableSigningButton
                     text:       qsTr("Enable Signing")
