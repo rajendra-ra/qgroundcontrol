@@ -2508,7 +2508,10 @@ QString Vehicle::gotoFlightMode() const
 {
     return _firmwarePlugin->gotoFlightMode();
 }
-
+QString Vehicle::keyFile() const
+{
+    return _keyFile;
+}
 void Vehicle::guidedModeRTL(bool smartRTL)
 {
     if (!guidedModeSupported()) {
@@ -3444,13 +3447,28 @@ void Vehicle::_ackMavlinkLogData(uint16_t sequence)
                 &ack);
     sendMessageOnLinkThreadSafe(sharedLink.get(), msg);
 }
-void Vehicle::setupSigning(const QString& key)
+void Vehicle::setupSigning(void)
 {
     SharedLinkInterfacePtr  sharedLink = vehicleLinkManager()->primaryLink().lock();
     if (!sharedLink) {
         qCDebug(VehicleLog) << "setupSigning: primary link gone!";
         return;
     }
+    QSettings _setting;
+    if(_keyFile.isEmpty()){
+        _keyFile = _setting.value("MAVLINK_SIGNING_KEY_FILE","").toString();
+        emit keyFileChanged(_keyFile);
+    } else {
+        _setting.setValue("MAVLINK_SIGNING_KEY_FILE",_keyFile);
+    }
+    if(_keyFile.isEmpty()){
+        return;
+    }
+    QFile _file(_keyFile);
+    if (!_file.open(QFile::ReadOnly | QFile::Text)) return;
+    QString key;
+    QTextStream in(&_file);
+    key.append(in.readAll());
 
     mavlink_message_t       msg;
     _setupSigning.target_system = _id;
@@ -3471,13 +3489,30 @@ void Vehicle::setupSigning(const QString& key)
 //    enableSigning(key);
 
 }
-void Vehicle::enableSigning(const QString& key)
+void Vehicle::enableSigning(void)
 {
     SharedLinkInterfacePtr  sharedLink = vehicleLinkManager()->primaryLink().lock();
     if (!sharedLink) {
         qCDebug(VehicleLog) << "enableSigning: primary link gone!";
         return;
     }
+
+    QSettings _setting;
+    if(_keyFile.isEmpty()){
+        _keyFile = _setting.value("MAVLINK_SIGNING_KEY_FILE","").toString();
+        emit keyFileChanged(_keyFile);
+    } else {
+        _setting.setValue("MAVLINK_SIGNING_KEY_FILE",_keyFile);
+    }
+    if(_keyFile.isEmpty()){
+        return;
+    }
+    QFile _file(_keyFile);
+    if (!_file.open(QFile::ReadOnly | QFile::Text)) return;
+    QString key;
+    QTextStream in(&_file);
+    key.append(in.readAll());
+
     mavlink_signing_t& signing = sharedLink.get()->signing;
     memset(&signing, 0, sizeof(signing));
     _setupSigning.target_system = _id;
@@ -3524,6 +3559,14 @@ void Vehicle::resetSigning(void)
     sendMessageOnLinkThreadSafe(sharedLink.get(), msg);
 //    enableSigning(key);
 
+}
+void Vehicle::chooseFile(const QUrl &url)
+{
+//    QUrl _url(url);
+//    url.toLocalFile();
+    qCDebug(VehicleLog) << "chooseFile: "<<url.toLocalFile();
+    _keyFile = url.toLocalFile();
+    emit keyFileChanged(_keyFile);
 }
 void Vehicle::_handleMavlinkLoggingData(mavlink_message_t& message)
 {

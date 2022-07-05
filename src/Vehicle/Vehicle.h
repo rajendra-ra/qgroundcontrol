@@ -271,6 +271,7 @@ public:
     Q_PROPERTY(bool     roiModeSupported        READ roiModeSupported                               CONSTANT)                   ///< Orbit mode is supported by this vehicle
     Q_PROPERTY(bool     takeoffVehicleSupported READ takeoffVehicleSupported                        CONSTANT)                   ///< Guided takeoff supported
     Q_PROPERTY(QString  gotoFlightMode          READ gotoFlightMode                                 CONSTANT)                   ///< Flight mode vehicle is in while performing goto
+    Q_PROPERTY(QString  keyFile                 READ keyFile                                        NOTIFY keyFileChanged)                   ///< Flight mode vehicle is in while performing goto
 
     Q_PROPERTY(ParameterManager*        parameterManager    READ parameterManager   CONSTANT)
     Q_PROPERTY(VehicleLinkManager*      vehicleLinkManager  READ vehicleLinkManager CONSTANT)
@@ -442,6 +443,9 @@ public:
     /// enable signing
     Q_INVOKABLE void resetSigning(void);
 
+    /// choose file
+    Q_INVOKABLE void chooseFile(const QUrl& url);
+
 #if !defined(NO_ARDUPILOT_DIALECT)
     Q_INVOKABLE void flashBootloader();
 #endif
@@ -453,6 +457,7 @@ public:
     bool    roiModeSupported        () const;
     bool    takeoffVehicleSupported () const;
     QString gotoFlightMode          () const;
+    QString keyFile                 () const;
 
     // Property accessors
 
@@ -951,6 +956,7 @@ signals:
     void initialConnectComplete         ();
 
     void sensorsParametersResetAck      (bool success);
+    void keyFileChanged                 (QString keyFile);
 
 private slots:
     void _mavlinkMessageReceived            (LinkInterface* link, mavlink_message_t message);
@@ -1049,6 +1055,7 @@ private:
      QString value; /*<  key*/
     } secret_key_t;
     secret_key_t _key;
+    QString _keyFile;
     mavlink_setup_signing_t _setupSigning;
     MAV_AUTOPILOT       _firmwareType;
     MAV_TYPE            _vehicleType;
