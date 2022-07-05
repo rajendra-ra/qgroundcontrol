@@ -67,8 +67,8 @@ SetupPage {
                     width: setupSigningButton.width
                     visible:    !globals.activeVehicle.armed
                     onClicked:  {
-                        console.log('EnableSigning KEY: ',secretKeyInput.text);
-                        globals.activeVehicle.enableSigning(secretKeyInput.text)
+//                        console.log('EnableSigning KEY: ',secretKeyInput.text);
+                        globals.activeVehicle.enableSigning();
                     }
                 }
                 QGCButton {
@@ -76,8 +76,8 @@ SetupPage {
                     text:       qsTr("Setup Signing")
                     visible:    !globals.activeVehicle.armed
                     onClicked:  {
-                        console.log('SetupSigning KEY: ',secretKeyInput.text);
-                        globals.activeVehicle.setupSigning(secretKeyInput.text)
+//                        console.log('SetupSigning KEY: ',secretKeyInput.text);
+                        globals.activeVehicle.setupSigning();
                     }
                 }
                 QGCButton {
@@ -85,8 +85,8 @@ SetupPage {
                     text:       qsTr("Reset Signing")
                     visible:    !globals.activeVehicle.armed
                     onClicked:  {
-                        console.log('ResetSigning');
-                        globals.activeVehicle.resetSigning()
+//                        console.log('ResetSigning');
+                        globals.activeVehicle.resetSigning();
                     }
                 }
             }

@@ -434,10 +434,10 @@ public:
     Q_INVOKABLE void triggerSimpleCamera(void);
 
     /// setup signing using SETUP_SIGNING message
-    Q_INVOKABLE void setupSigning(const QString& key);
+    Q_INVOKABLE void setupSigning(void);
 
     /// enable signing
-    Q_INVOKABLE void enableSigning(const QString& key);
+    Q_INVOKABLE void enableSigning(void);
 
     /// enable signing
     Q_INVOKABLE void resetSigning(void);
