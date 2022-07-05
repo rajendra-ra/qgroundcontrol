@@ -17,37 +17,50 @@ SetupPage {
     pageComponent:      pageComponent
     pageName:           qsTr("Mavlink Signing")
     pageDescription:    "" // qsTr("Joystick Setup is used to configure and calibrate joysticks.")
-
+    FileDialog {
+        id: fileDialog
+        title: "Please choose a file"
+        folder: shortcuts.documents
+        nameFilters: [ "Key file (*.key)" ]
+        onAccepted: {
+            console.log("You chose: " + fileDialog.fileUrl)
+//            Qt.quit()
+            globals.activeVehicle.chooseFile(fileDialog.fileUrl);
+//            fileLabel.text = fileDialog.fileUrl;
+        }
+        onRejected: {
+            console.log("Canceled")
+//            Qt.quit()
+        }
+//        Component.onCompleted: visible = true
+    }
     Component {
         id: pageComponent
         Column {
             width:   availableWidth
             height:  availableHeight
             spacing: ScreenTools.defaultFontPixelHeight
-            QGCTextField {
-                id: secretKeyInput
-                text:           "admin123"
-                Layout.alignment: Qt.AlignTop
-                visible:        true//feature ? (feature.type !== AirspaceRuleFeature.Boolean) : false
-                showUnits:      false
-                height: setupSigningButton.height
-                unitsLabel: {
-                    return ""
-                }
-//                    anchors.right:  parent.right
-//                    anchors.left:   setupSigningButton.right
-                inputMethodHints: Qt.ImhNone;//feature ? (feature.type === AirspaceRuleFeature.Float ? Qt.ImhFormattedNumbersOnly : Qt.ImhNone) : Qt.ImhNone
-//                    onAccepted: {
-//                        if(feature)
-//                            feature.value = text;//parseFloat(text)
-//                    }
-//                    onEditingFinished: {
-//                        if(feature)
-//                            feature.value = text;//parseFloat(text)
-//                    }
-            }
             Row {
-                Layout.alignment: Qt.AlignTop
+                QGCButton {
+                    id: secretKeyInput
+                    text:           qsTr("Choose key file")
+                    Layout.alignment: Qt.AlignTop
+                    visible:        true//feature ? (feature.type !== AirspaceRuleFeature.Boolean) : false
+                    height: setupSigningButton.height
+                    onClicked:  {
+                        console.log('choose file');
+                        fileDialog.open();
+                    }
+                }
+                Label {
+                    id: fileLabel
+                    text: globals.activeVehicle.keyFile
+                    height: setupSigningButton.height
+                    color: "white"
+                }
+            }
+
+            Row {
                 QGCButton {
                     id:         enableSigningButton
                     text:       qsTr("Enable Signing")
