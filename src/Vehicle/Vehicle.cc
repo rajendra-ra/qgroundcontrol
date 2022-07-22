@@ -2041,6 +2041,11 @@ void Vehicle::setArmed(bool armed, bool showError)
                    showError,
                    armed ? 1.0f : 0.0f);
 }
+/*
+* wrapper function to send rc value to a specific channel
+* @param channel int :  channel to send values to
+* @param  raw int    : value to be sent
+*/
 void Vehicle::sendRCOverride(int channel, int raw)
 {
     qCDebug(VehicleLog) << "sendRCOverride" <<"channel:"<<channel<<"value:"<<raw;
@@ -3995,6 +4000,10 @@ void Vehicle::clearAllParamMapRC(void)
         sendMessageOnLinkThreadSafe(sharedLink.get(), message);
     }
 }
+/* helper function to rc values to specific channel
+* @param chnanel int : channle number
+* @param raw uint16_t: value to be sent
+*/
 void Vehicle::sendRCChannelDataThreadSafe(int channel, uint16_t raw)
 {
     qCDebug(VehicleLog)<< "sendRCChannelDataThreadSafe:"<<"channel"<<channel<<"value"<<raw;
@@ -4008,7 +4017,9 @@ void Vehicle::sendRCChannelDataThreadSafe(int channel, uint16_t raw)
         return;
     }
     uint16_t chanRaw[18];
-
+    
+    // set all values to  UINT16_MAX to ignore overriding except for the channel we are sending valu to.
+    // will be sent oonly to one channel at a time.
     for (int i=0; i<18; i++) {
         chanRaw[i] = UINT16_MAX;
     }
