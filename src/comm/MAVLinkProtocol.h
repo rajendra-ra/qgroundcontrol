@@ -63,8 +63,10 @@ public:
     unsigned getCurrentVersion() const{
         return _current_version;
     }
+    /** @brief store link signing info */
     mavlink_signing_streams_t signing_streams;
-
+    
+    /** @brief callback to ignore signing on specific messages */
     static bool accept_unsigned_callback(const mavlink_status_t *status, uint32_t msgId)
     {
         Q_UNUSED(status);
