@@ -1988,7 +1988,9 @@ void Vehicle::_loadSettings()
         setJoystickEnabled(settings.value(_joystickEnabledSettingsKey, false).toBool());
         _startJoystick(true);
     }
+    // load key file path set from last session
     _keyFile = settings.value("MAVLINK_SIGNING_KEY_FILE","").toString();
+    // emit signal for keyfile path change
     emit keyFileChanged(_keyFile);
 }
 
@@ -2510,6 +2512,9 @@ QString Vehicle::gotoFlightMode() const
 {
     return _firmwarePlugin->gotoFlightMode();
 }
+/**
+* getter for key file path
+*/
 QString Vehicle::keyFile() const
 {
     return _keyFile;
@@ -3449,6 +3454,10 @@ void Vehicle::_ackMavlinkLogData(uint16_t sequence)
                 &ack);
     sendMessageOnLinkThreadSafe(sharedLink.get(), msg);
 }
+
+/**
+*  helper function to setup signing on vehicle 
+*/
 void Vehicle::setupSigning(void)
 {
     SharedLinkInterfacePtr  sharedLink = vehicleLinkManager()->primaryLink().lock();
@@ -3492,6 +3501,10 @@ void Vehicle::setupSigning(void)
 //    enableSigning(key);
 
 }
+
+/**
+*  helper function to enable message signing on qgc
+*/
 void Vehicle::enableSigning(void)
 {
     SharedLinkInterfacePtr  sharedLink = vehicleLinkManager()->primaryLink().lock();
@@ -3536,6 +3549,10 @@ void Vehicle::enableSigning(void)
 
     _mavlink->setVersion(200);
 }
+
+/**
+*  helper function to reset key on vehicle
+*/
 void Vehicle::resetSigning(void)
 {
     SharedLinkInterfacePtr  sharedLink = vehicleLinkManager()->primaryLink().lock();
@@ -3564,6 +3581,10 @@ void Vehicle::resetSigning(void)
 //    enableSigning(key);
 
 }
+
+/**
+*  helper function to set key file path
+*/
 void Vehicle::chooseFile(const QUrl &url)
 {
 //    QUrl _url(url);
