@@ -4017,7 +4017,7 @@ void Vehicle::sendRCChannelDataThreadSafe(int channel, uint16_t raw)
         return;
     }
     uint16_t chanRaw[18];
-    
+
     // set all values to  UINT16_MAX to ignore overriding except for the channel we are sending value to.
     // will be sent only to one channel at a time.
     for (int i=0; i<18; i++) {
