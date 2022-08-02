@@ -1,10 +1,27 @@
 # QGroundControl Change Log
 
 Note: This file only contains high level features or important fixes.
-
+## 4.3 - Daily build
+### 4.3.0
+*  FPV
+    * adding PFD
+* Log Browser and Downloader
+    * log browser
+    * log downloader
+    * server setup on obc
+    * download completion indicator
+* Param Handle/Edit
+    * DLB param
+    * ICE param
+* Vibration threshold warning
+* DLB Error Handling
+* Fuel Level Notifications
+    * level notification
+    * error notification
+* DLB Error notification Frequency Management
 ## 4.1 - Daily build
 
-### 4.1.2 - Not yet released
+### 4.1.2 - released
 * Bug: Radio setup - Fix double send of `MAV_CMD_PREFLIGHT_CALIBRATION` causing "Unable to send command" error.
 
 ### 4.1.1 - Stable
