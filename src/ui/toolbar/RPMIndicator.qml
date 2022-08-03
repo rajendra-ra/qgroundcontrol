@@ -6,7 +6,9 @@
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
-
+/**
+ * RPM Indicator UI File to display Engine RPM and Rotor RPM.  
+ */
 import QtQuick                              2.11
 import QtQuick.Controls                     2.4
 

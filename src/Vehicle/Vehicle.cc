@@ -96,7 +96,6 @@ const char* Vehicle::_distanceToGCSFactName =       "distanceToGCS";
 const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
 
-//const char*  Vehicle::_fuelLevelFactName =          "fuelLevel";
 const char*  Vehicle::_engineRPMFactName =          "engineRPM";
 const char*  Vehicle::_rotorRPMFactName =           "rotorRPM";
 
@@ -1060,12 +1059,7 @@ void Vehicle::_handleAttitudeWorker(double rollRadians, double pitchRadians, dou
     _headingFact.setRawValue(yaw);
 }
 
-//void Vehicle::_handleFuelLevel(mavlink_message_t& message)
-//{
-//    mavlink_ status;
-//    mavlink_msg_router_channel_status_decode(&message, &status);
-//    _routerStatusFact.setRawValue(status.channel_active);
-//}
+// RPM message handler: parse RPM message and update stored rmp values.
 void Vehicle::_handleRPM(mavlink_message_t& message)
 {
     mavlink_rpm_t rpm;
