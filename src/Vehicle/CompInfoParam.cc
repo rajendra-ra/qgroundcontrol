@@ -303,7 +303,7 @@ QObject* CompInfoParam::_getOpaqueParameterMetaData(void)
         qWarning() << "CompInfoParam::_getOpaqueParameterMetaData _noJsonMetadata == false";
     }
 
-    if (!_opaqueParameterMetaData && compId == MAV_COMP_ID_AUTOPILOT1) {
+    if (!_opaqueParameterMetaData && (compId == MAV_COMP_ID_AUTOPILOT1 || compId == MAV_COMP_ID_ONBOARD_COMPUTER)) {
         // Load best parameter meta data set
         int majorVersion, minorVersion;
         QString metaDataFile = _parameterMetaDataFile(vehicle, vehicle->firmwareType(), majorVersion, minorVersion);
