@@ -435,6 +435,9 @@ HEADERS += \
     src/api/QGCSettings.h \
     src/api/QmlComponentInfo.h \
     src/GPS/Drivers/src/base_station.h \
+    src/AnalyzeView/logentry.h \
+    src/AnalyzeView/loglistmodel.h \
+    src/AnalyzeView/FileDownloader.h
 
 contains (DEFINES, QGC_ENABLE_PAIRING) {
     HEADERS += \
@@ -447,6 +450,9 @@ SOURCES += \
     src/api/QGCOptions.cc \
     src/api/QGCSettings.cc \
     src/api/QmlComponentInfo.cc \
+    src/AnalyzeView/logentry.cpp \
+    src/AnalyzeView/loglistmodel.cpp \    
+    src/AnalyzeView/FileDownloader.cpp
 
 contains (DEFINES, QGC_ENABLE_PAIRING) {
     SOURCES += \
