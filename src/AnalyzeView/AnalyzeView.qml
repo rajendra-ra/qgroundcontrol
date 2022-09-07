@@ -40,6 +40,10 @@ Rectangle {
         id: logController
     }
 
+    FileDownloader {
+        id: fileDownloader
+    }
+
     QGCFlickable {
         id:                 buttonScroll
         width:              buttonColumn.width
