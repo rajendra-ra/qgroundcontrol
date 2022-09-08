@@ -389,6 +389,9 @@ public:
     /// Reboot vehicle
     Q_INVOKABLE void rebootVehicle();
 
+    /// Reboot Component
+    Q_INVOKABLE void rebootComponent(int compId);
+
     /// Clear Messages
     Q_INVOKABLE void clearMessages();
 
@@ -1032,6 +1035,7 @@ private:
     EventHandler& _eventHandler         (uint8_t compid);
 
     static void _rebootCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
+    static void _rebootCompCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
 
     int     _id;                    ///< Mavlink system id
     int     _defaultComponentId;
