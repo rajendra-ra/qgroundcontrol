@@ -459,6 +459,9 @@ void Vehicle::_commonInit()
             _addFactGroup(i.value(), i.key());
         }
     }
+    // load DLB Meta Data
+    _loadDLBMetaData();
+
 
     _flightDistanceFact.setRawValue(0);
     _flightTimeFact.setRawValue(0);
@@ -3781,6 +3784,49 @@ void Vehicle::_setMessageInterval(int messageId, int rate)
                    rate);
 }
 
+void Vehicle::_loadDLBMetaData()
+{
+    QString metaDataFile = QStringLiteral(":/mavlink/R10_HMS.xml"); // meta data file
+    QFile xmlFile(metaDataFile); //
+    Q_ASSERT(xmlFile.exists());
+    bool success = xmlFile.open(QIODevice::ReadOnly);
+    Q_UNUSED(success);
+    Q_ASSERT(success);
+    QXmlStreamReader xml(xmlFile.readAll()); // initialise
+    xmlFile.close();
+    if (xml.hasError()) {
+        qCWarning(VehicleLog) << "Badly formed XML, reading failed: " << xml.errorString();
+        return;
+    }
+    QStack<int>     xmlState; // stack for xml parser state
+    uint16_t        i;
+    while (!xml.atEnd()) {
+        if (xml.isStartElement() && xml.name() == QLatin1String("mavlink")){
+            xmlState.push(XmlRoot);
+        }
+        else if (xml.isStartElement() && xml.name() == QLatin1String("enums")){
+            if(xmlState.top() == XmlRoot)
+                xmlState.push(XmlEnums);
+        }
+        else if (xml.isStartElement() && xml.name() == QLatin1String("enum")){
+            if(xmlState.top() == XmlEnums)
+                xmlState.push(XmlEnum);
+        }
+        else if (xml.isStartElement() && xml.name() == QLatin1String("entry")){
+            if(xmlState.top() == XmlEnum)
+                xmlState.push(XmlEntry);
+            i = xml.attributes().value("value").toUShort();
+        }
+        else if (xml.isStartElement() && xml.name() == QLatin1String("description")){
+            if(xmlState.top() == XmlEntry){
+                _dlbErrorCodeMetaDataMap.insert(i, xml.readElementText()); // add to meta data mapping
+                xmlState.pop();
+            }
+        }
+        xml.readNext();
+    }
+    xmlState.clear();
+}
 bool Vehicle::isInitialConnectComplete() const
 {
     return !_initialConnectStateMachine->active();
