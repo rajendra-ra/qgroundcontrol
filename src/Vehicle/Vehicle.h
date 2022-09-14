@@ -1278,6 +1278,15 @@ private:
 
     QMap<uint8_t /* batteryId */, uint8_t /* MAV_BATTERY_CHARGE_STATE_OK */> _lowestBatteryChargeStateAnnouncedMap;
 
+    // DLB Error Code Mapping
+    QMap<uint16_t, QString> _dlbErrorCodeMetaDataMap;
+    // Enum for XMLParser to check state
+    enum {
+        XmlRoot,
+        XmlEnums,
+        XmlEnum,
+        XmlEntry
+    };
     float _altitudeTuningOffset = qQNaN(); // altitude offset, so the plotted value is around 0
 
     // FactGroup facts
