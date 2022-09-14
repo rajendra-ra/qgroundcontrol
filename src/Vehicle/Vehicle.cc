@@ -757,7 +757,50 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     case MAVLINK_MSG_ID_OBSTACLE_DISTANCE:
         _handleObstacleDistance(message);
         break;
-
+    case MAVLINK_MSG_ID_R10_DLB_ERROR:
+    {
+        mavlink_message_t msg;
+        mavlink_r10_dlb_error_t dlb_error;
+        mavlink_statustext_t st;
+        mavlink_msg_r10_dlb_error_decode(&message,&dlb_error);
+        QString s = "";
+        if(_dlbErrorCodeMetaDataMap.contains(dlb_error.ERROR_CODE)){
+            s = _dlbErrorCodeMetaDataMap.value(dlb_error.ERROR_CODE); // get Error code description from mapping
+        }
+        strcpy(st.text,s.toUtf8().data());
+        st.id = 0;
+        st.chunk_seq = 0;
+        st.severity = MAV_SEVERITY_WARNING;
+        if (dlb_error.ERROR_CODE < 3000)
+            st.severity = MAV_SEVERITY_EMERGENCY;
+        if (dlb_error.ERROR_CODE > 4000)
+            st.severity = MAV_SEVERITY_INFO;
+        mavlink_msg_statustext_encode(_id,_compID,&msg,&st);
+        _handleStatusText(msg); // send to notice board
+    }
+        break;
+    case MAVLINK_MSG_ID_R10_PSDATA_ERROR:
+    {
+        mavlink_message_t msg;
+        mavlink_r10_psdata_error_t psdata_error;
+        mavlink_statustext_t st;
+        mavlink_msg_r10_psdata_error_decode(&message,&psdata_error);
+        QString s = "";
+        if(_dlbErrorCodeMetaDataMap.contains(psdata_error.ERROR_CODE)){
+            s = _dlbErrorCodeMetaDataMap.value(psdata_error.ERROR_CODE); // get Error code description from mapping
+        }
+        strcpy(st.text,s.toUtf8().data());
+        st.id = 0;
+        st.chunk_seq = 0;
+        st.severity = MAV_SEVERITY_WARNING;
+        if (psdata_error.ERROR_CODE < 3000)
+            st.severity = MAV_SEVERITY_EMERGENCY;
+        if (psdata_error.ERROR_CODE > 4000)
+            st.severity = MAV_SEVERITY_INFO;
+        mavlink_msg_statustext_encode(_id,_compID,&msg,&st);
+        _handleStatusText(msg); // send to notice board
+    }
+        break;
     case MAVLINK_MSG_ID_EVENT:
     case MAVLINK_MSG_ID_CURRENT_EVENT_SEQUENCE:
     case MAVLINK_MSG_ID_RESPONSE_EVENT_ERROR:
