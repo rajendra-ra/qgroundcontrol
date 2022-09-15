@@ -16,6 +16,8 @@ const char* VehicleVibrationFactGroup::_zAxisFactName =      "zAxis";
 const char* VehicleVibrationFactGroup::_clipCount1FactName = "clipCount1";
 const char* VehicleVibrationFactGroup::_clipCount2FactName = "clipCount2";
 const char* VehicleVibrationFactGroup::_clipCount3FactName = "clipCount3";
+// init vibration threshold fact name
+const char* VehicleVibrationFactGroup::_vibeThresholdFactName =      "vibeThreshold";
 
 VehicleVibrationFactGroup::VehicleVibrationFactGroup(QObject* parent)
     : FactGroup         (1000, ":/json/Vehicle/VibrationFact.json", parent)
@@ -25,6 +27,7 @@ VehicleVibrationFactGroup::VehicleVibrationFactGroup(QObject* parent)
     , _clipCount1Fact   (0, _clipCount1FactName,    FactMetaData::valueTypeUint32)
     , _clipCount2Fact   (0, _clipCount2FactName,    FactMetaData::valueTypeUint32)
     , _clipCount3Fact   (0, _clipCount3FactName,    FactMetaData::valueTypeUint32)
+    , _vibeThresholdFact(0, _vibeThresholdFactName,      FactMetaData::valueTypeDouble)
 {
     _addFact(&_xAxisFact,       _xAxisFactName);
     _addFact(&_yAxisFact,       _yAxisFactName);
@@ -33,10 +36,15 @@ VehicleVibrationFactGroup::VehicleVibrationFactGroup(QObject* parent)
     _addFact(&_clipCount2Fact,  _clipCount2FactName);
     _addFact(&_clipCount3Fact,  _clipCount3FactName);
 
+    _addFact(&_vibeThresholdFact,       _vibeThresholdFactName);
+
     // Start out as not available "--.--"
     _xAxisFact.setRawValue(qQNaN());
     _yAxisFact.setRawValue(qQNaN());
     _zAxisFact.setRawValue(qQNaN());
+
+    // Set Default Vibe Threshold Value 30
+    _vibeThresholdFact.setRawValue(30);
 }
 
 void VehicleVibrationFactGroup::handleMessage(Vehicle* /* vehicle */, mavlink_message_t& message)
