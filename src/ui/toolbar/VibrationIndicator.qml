@@ -55,7 +55,7 @@ Item {
             }
             MouseArea {
                 anchors.fill:   parent
-                onClicked:      mainWindow.showIndicatorPopup(_root, rcRSSIInfo)
+                onClicked:      mainWindow.showIndicatorPopup(_root, vibeInfo)
             }
         }
         Rectangle {
@@ -72,7 +72,7 @@ Item {
                     color: "red"
                 }
                 GridLayout {
-                    id:                 highVibeGrid
+                    id:                 highvibeGrid
                     visible:            true
                     anchors.margins:    ScreenTools.defaultFontPixelHeight
                     columnSpacing:      ScreenTools.defaultFontPixelWidth
@@ -102,31 +102,31 @@ Item {
         }
     }
     Component {
-        id: rcRSSIInfo
+        id: vibeInfo
 
         Rectangle {
-            width:  rcrssiCol.width   + ScreenTools.defaultFontPixelWidth  * 3
-            height: rcrssiCol.height  + ScreenTools.defaultFontPixelHeight * 2
+            width:  vibeCol.width   + ScreenTools.defaultFontPixelWidth  * 3
+            height: vibeCol.height  + ScreenTools.defaultFontPixelHeight * 2
             radius: ScreenTools.defaultFontPixelHeight * 0.5
             color:  qgcPal.window
             border.color:   qgcPal.text
 
             Column {
-                id:                 rcrssiCol
+                id:                 vibeCol
                 spacing:            ScreenTools.defaultFontPixelHeight * 0.5
-                width:              Math.max(rcrssiGrid.width, rssiLabel.width)
+                width:              Math.max(vibeGrid.width, vibeLabel.width)
                 anchors.margins:    ScreenTools.defaultFontPixelHeight
                 anchors.centerIn:   parent
 
                 QGCLabel {
-                    id:             rssiLabel
+                    id:             vibeLabel
                     text:           _activeVehicle ? qsTr("Vibration") : qsTr("Data Unavailable")
                     font.family:    ScreenTools.demiboldFontFamily
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
                 GridLayout {
-                    id:                 rcrssiGrid
+                    id:                 vibeGrid
                     visible:            true
                     anchors.margins:    ScreenTools.defaultFontPixelHeight
                     columnSpacing:      ScreenTools.defaultFontPixelWidth
@@ -164,94 +164,9 @@ Item {
 
                         MouseArea {
                             anchors.fill: parent
-                            onClicked: {
-//                                console.log(vibeThresholdField.text);
-//                                console.log(vibeThreshold);
-                            }
+                            onClicked: {  }
                         }
                     }
-                }
-            }
-        }
-    }
-    Component {
-        id: vehicleMessagesPopup
-
-        Rectangle {
-            width:          mainWindow.width  * 0.666
-            height:         mainWindow.height * 0.666
-            radius:         ScreenTools.defaultFontPixelHeight / 2
-            color:          qgcPal.window
-            border.color:   qgcPal.text
-
-            function formatMessage(message) {
-                message = message.replace(new RegExp("<#E>", "g"), "color: " + qgcPal.warningText + "; font: " + (ScreenTools.defaultFontPointSize.toFixed(0) - 1) + "pt monospace;");
-                message = message.replace(new RegExp("<#I>", "g"), "color: " + qgcPal.warningText + "; font: " + (ScreenTools.defaultFontPointSize.toFixed(0) - 1) + "pt monospace;");
-                message = message.replace(new RegExp("<#N>", "g"), "color: " + qgcPal.text + "; font: " + (ScreenTools.defaultFontPointSize.toFixed(0) - 1) + "pt monospace;");
-                return message;
-            }
-
-            Component.onCompleted: {
-                messageText.text = formatMessage(_activeVehicle.formattedMessages)
-                //-- Hack to scroll to last message
-                for (var i = 0; i < _activeVehicle.messageCount; i++)
-                    messageFlick.flick(0,-5000)
-                _activeVehicle.resetMessages()
-            }
-
-            Connections {
-                target: _activeVehicle
-                onNewFormattedMessage :{
-                    messageText.append(formatMessage(formattedMessage))
-                    //-- Hack to scroll down
-                    messageFlick.flick(0,-500)
-                }
-            }
-
-            QGCLabel {
-                anchors.centerIn:   parent
-                text:               qsTr("No Messages")
-                visible:            messageText.length === 0
-            }
-
-            //-- Clear Messages
-            QGCColoredImage {
-                anchors.bottom:     parent.bottom
-                anchors.right:      parent.right
-                anchors.margins:    ScreenTools.defaultFontPixelHeight * 0.5
-                height:             ScreenTools.isMobile ? ScreenTools.defaultFontPixelHeight * 1.5 : ScreenTools.defaultFontPixelHeight
-                width:              height
-                sourceSize.height:   height
-                source:             "/res/TrashDelete.svg"
-                fillMode:           Image.PreserveAspectFit
-                mipmap:             true
-                smooth:             true
-                color:              qgcPal.text
-                visible:            messageText.length !== 0
-                MouseArea {
-                    anchors.fill:   parent
-                    onClicked: {
-                        if (_activeVehicle) {
-                            _activeVehicle.clearMessages()
-                            mainWindow.hideIndicatorPopup()
-                        }
-                    }
-                }
-            }
-
-            QGCFlickable {
-                id:                 messageFlick
-                anchors.margins:    ScreenTools.defaultFontPixelHeight
-                anchors.fill:       parent
-                contentHeight:      messageText.height
-                contentWidth:       messageText.width
-                pixelAligned:       true
-
-                TextEdit {
-                    id:             messageText
-                    readOnly:       true
-                    textFormat:     TextEdit.RichText
-                    color:          qgcPal.text
                 }
             }
         }
