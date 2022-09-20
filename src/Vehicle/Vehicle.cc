@@ -459,7 +459,7 @@ void Vehicle::_commonInit()
             _addFactGroup(i.value(), i.key());
         }
     }
-    // load DLB Meta Data
+    // load DLB Meta Data such as ERROR code description
     _loadDLBMetaData();
 
 
@@ -759,6 +759,8 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
         break;
     case MAVLINK_MSG_ID_R10_DLB_ERROR:
     {
+        // dlb error message send via dlb
+
         mavlink_message_t msg;
         mavlink_r10_dlb_error_t dlb_error;
         mavlink_statustext_t st;
@@ -781,6 +783,8 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
         break;
     case MAVLINK_MSG_ID_R10_PSDATA_ERROR:
     {
+        // psdata  dlb error message send via dlb
+
         mavlink_message_t msg;
         mavlink_r10_psdata_error_t psdata_error;
         mavlink_statustext_t st;
@@ -3826,7 +3830,9 @@ void Vehicle::_setMessageInterval(int messageId, int rate)
                    messageId,
                    rate);
 }
-
+/*
+* method to load dlb error description
+*/
 void Vehicle::_loadDLBMetaData()
 {
     QString metaDataFile = QStringLiteral(":/mavlink/R10_HMS.xml"); // meta data file
