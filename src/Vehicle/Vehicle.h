@@ -1283,7 +1283,7 @@ private:
     QMap<uint16_t, QString> _dlbErrorCodeMetaDataMap;
     
     // Enum for XMLParser to check state
-    // to check which element it reading
+    // to check which element it is reading
     enum {
         XmlRoot,
         XmlEnums,
