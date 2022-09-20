@@ -1279,6 +1279,7 @@ private:
     QMap<uint8_t /* batteryId */, uint8_t /* MAV_BATTERY_CHARGE_STATE_OK */> _lowestBatteryChargeStateAnnouncedMap;
 
     // DLB Error Code Mapping
+    // `ERROR_CODE -> Description`
     QMap<uint16_t, QString> _dlbErrorCodeMetaDataMap;
     
     // Enum for XMLParser to check state
