@@ -120,7 +120,7 @@ Item {
 
                 QGCLabel {
                     id:             vibeLabel
-                    text:           _activeVehicle ? qsTr("Vibration") : qsTr("Data Unavailable")
+                    text:           _activeVehicle ? qsTr("Vibration (m/s/s)") : qsTr("Data Unavailable")
                     font.family:    ScreenTools.demiboldFontFamily
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
