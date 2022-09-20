@@ -1030,7 +1030,7 @@ private:
     void _chunkedStatusTextCompleted    (uint8_t compId);
     void _setMessageInterval            (int messageId, int rate);
     EventHandler& _eventHandler         (uint8_t compid);
-    // to load metat DLB Error code Description
+    // load meta data (DLB Error code Description)
     void _loadDLBMetaData();
 
     static void _rebootCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
@@ -1280,7 +1280,9 @@ private:
 
     // DLB Error Code Mapping
     QMap<uint16_t, QString> _dlbErrorCodeMetaDataMap;
+    
     // Enum for XMLParser to check state
+    // to check which element it reading
     enum {
         XmlRoot,
         XmlEnums,
