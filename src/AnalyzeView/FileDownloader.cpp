@@ -62,7 +62,7 @@ void FileDownloader::finishIndexing(){
         QByteArray data= networkReply->readAll();
         QString html = QString(data);
 
-        QRegularExpression re("<a href=\"(.*?)\">");
+        QRegularExpression re("<td><a href=\"(.*?)\">(.*?)</a></td>");
         QRegularExpressionMatchIterator i = re.globalMatch(html);
         _indexList.clear();
         QString base = networkReply->url().toString();
