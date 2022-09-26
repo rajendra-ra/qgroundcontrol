@@ -95,7 +95,8 @@ const char* Vehicle::_headingToHomeFactName =       "headingToHome";
 const char* Vehicle::_distanceToGCSFactName =       "distanceToGCS";
 const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
-const char* Vehicle::_networkStatusFactName =         "networkStatus";
+// init: for network status fact name
+const char* Vehicle::_networkStatusFactName =       "networkStatus";
 
 const char* Vehicle::_gpsFactGroupName =                "gps";
 const char* Vehicle::_gps2FactGroupName =               "gps2";
@@ -157,7 +158,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _distanceToGCSFact            (0, _distanceToGCSFactName,     FactMetaData::valueTypeDouble)
     , _hobbsFact                    (0, _hobbsFactName,             FactMetaData::valueTypeString)
     , _throttlePctFact              (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
-    , _networkStatusFact            (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
+    , _networkStatusFact            (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)  /* init: network status fact  */
     , _gpsFactGroup                 (this)
     , _gps2FactGroup                (this)
     , _windFactGroup                (this)
@@ -434,7 +435,7 @@ void Vehicle::_commonInit()
     _addFact(&_headingToHomeFact,       _headingToHomeFactName);
     _addFact(&_distanceToGCSFact,       _distanceToGCSFactName);
     _addFact(&_throttlePctFact,         _throttlePctFactName);
-    _addFact(&_networkStatusFact,       _networkStatusFactName);
+    _addFact(&_networkStatusFact,       _networkStatusFactName); // add varible to vehicle class
 
     _hobbsFact.setRawValue(QVariant(QString("0000:00:00")));
     _addFact(&_hobbsFact,               _hobbsFactName);
@@ -1679,29 +1680,30 @@ void Vehicle::_handleHeartbeat(mavlink_message_t& message)
 void Vehicle::_handleComponentsHeartbeat(mavlink_message_t& message)
 {
     if (message.compid == _defaultComponentId) {
+        // update counter for every vehicle heartbeat
         _dlbHeartbeatCount++;
         _obcHeartbeatCount++;
+        // set status disconneted if heartbeat not received for more then 5 secs
         if(_dlbHeartbeatCount>5)
-            _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b1);
+            _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b1); // set dlb status disconnented
         if(_obcHeartbeatCount>5)
-            _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b10);
+            _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b10); // set obc status disconnented
         return;
     }
     switch (message.compid) {
     case MAV_COMP_ID_USER1:
-        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b1);
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b1); // set status connented
         _dlbHeartbeatCount = 0;
-        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
+//        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
         break;
     case MAV_COMP_ID_ONBOARD_COMPUTER:
-        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b10);
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b10); // set status connented
         _obcHeartbeatCount = 0;
-        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
+//        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
         break;
     default:
         break;
     }
-
 }
 void Vehicle::_handleRadioStatus(mavlink_message_t& message)
 {

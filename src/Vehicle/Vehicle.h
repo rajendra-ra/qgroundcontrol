@@ -302,7 +302,7 @@ public:
     Q_PROPERTY(Fact* distanceToGCS      READ distanceToGCS      CONSTANT)
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
     Q_PROPERTY(Fact* throttlePct        READ throttlePct        CONSTANT)
-    Q_PROPERTY(Fact* networkStatus      READ networkStatus      CONSTANT)
+    Q_PROPERTY(Fact* networkStatus      READ networkStatus      CONSTANT) // status value interface to ui
 
     Q_PROPERTY(FactGroup*           gps             READ gpsFactGroup               CONSTANT)
     Q_PROPERTY(FactGroup*           gps2            READ gps2FactGroup              CONSTANT)
@@ -648,7 +648,7 @@ public:
     Fact* distanceToGCS                     () { return &_distanceToGCSFact; }
     Fact* hobbs                             () { return &_hobbsFact; }
     Fact* throttlePct                       () { return &_throttlePctFact; }
-    Fact* networkStatus                     () { return &_networkStatusFact; }
+    Fact* networkStatus                     () { return &_networkStatusFact; } // getter for network status
 
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
     FactGroup* gps2FactGroup                () { return &_gps2FactGroup; }
@@ -984,7 +984,7 @@ private:
     void _handlePing                    (LinkInterface* link, mavlink_message_t& message);
     void _handleHomePosition            (mavlink_message_t& message);
     void _handleHeartbeat               (mavlink_message_t& message);
-    void _handleComponentsHeartbeat     (mavlink_message_t& message);
+    void _handleComponentsHeartbeat     (mavlink_message_t& message);// component heartbeat hendler
     void _handleRadioStatus             (mavlink_message_t& message);
     void _handleRCChannels              (mavlink_message_t& message);
     void _handleBatteryStatus           (mavlink_message_t& message);
@@ -1310,7 +1310,7 @@ private:
     Fact _distanceToGCSFact;
     Fact _hobbsFact;
     Fact _throttlePctFact;
-    Fact _networkStatusFact;
+    Fact _networkStatusFact; // network status
 
     VehicleGPSFactGroup             _gpsFactGroup;
     VehicleGPS2FactGroup            _gps2FactGroup;
