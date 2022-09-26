@@ -95,6 +95,7 @@ const char* Vehicle::_headingToHomeFactName =       "headingToHome";
 const char* Vehicle::_distanceToGCSFactName =       "distanceToGCS";
 const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
+const char* Vehicle::_networkStatusFactName =         "networkStatus";
 
 const char* Vehicle::_gpsFactGroupName =                "gps";
 const char* Vehicle::_gps2FactGroupName =               "gps2";
@@ -156,6 +157,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _distanceToGCSFact            (0, _distanceToGCSFactName,     FactMetaData::valueTypeDouble)
     , _hobbsFact                    (0, _hobbsFactName,             FactMetaData::valueTypeString)
     , _throttlePctFact              (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
+    , _networkStatusFact            (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
     , _gpsFactGroup                 (this)
     , _gps2FactGroup                (this)
     , _windFactGroup                (this)
@@ -310,6 +312,7 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _distanceToGCSFact                (0, _distanceToGCSFactName,     FactMetaData::valueTypeDouble)
     , _hobbsFact                        (0, _hobbsFactName,             FactMetaData::valueTypeString)
     , _throttlePctFact                  (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
+    , _networkStatusFact                (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
     , _gpsFactGroup                     (this)
     , _gps2FactGroup                    (this)
     , _windFactGroup                    (this)
@@ -431,6 +434,7 @@ void Vehicle::_commonInit()
     _addFact(&_headingToHomeFact,       _headingToHomeFactName);
     _addFact(&_distanceToGCSFact,       _distanceToGCSFactName);
     _addFact(&_throttlePctFact,         _throttlePctFactName);
+    _addFact(&_networkStatusFact,       _networkStatusFactName);
 
     _hobbsFact.setRawValue(QVariant(QString("0000:00:00")));
     _addFact(&_hobbsFact,               _hobbsFactName);
@@ -449,6 +453,9 @@ void Vehicle::_commonInit()
     _addFactGroup(&_estimatorStatusFactGroup,   _estimatorStatusFactGroupName);
     _addFactGroup(&_hygrometerFactGroup,        _hygrometerFactGroupName);
     _addFactGroup(&_terrainFactGroup,           _terrainFactGroupName);
+
+    // set default value
+    _networkStatusFact.setRawValue(0b00);
 
     // Add firmware-specific fact groups, if provided
     QMap<QString, FactGroup*>* fwFactGroups = _firmwarePlugin->factGroups();
@@ -669,6 +676,7 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
         break;
     case MAVLINK_MSG_ID_HEARTBEAT:
         _handleHeartbeat(message);
+        _handleComponentsHeartbeat(message);
         break;
     case MAVLINK_MSG_ID_RADIO_STATUS:
         _handleRadioStatus(message);
@@ -1668,7 +1676,33 @@ void Vehicle::_handleHeartbeat(mavlink_message_t& message)
         }
     }
 }
+void Vehicle::_handleComponentsHeartbeat(mavlink_message_t& message)
+{
+    if (message.compid == _defaultComponentId) {
+        _dlbHeartbeatCount++;
+        _obcHeartbeatCount++;
+        if(_dlbHeartbeatCount>5)
+            _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b1);
+        if(_obcHeartbeatCount>5)
+            _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b10);
+        return;
+    }
+    switch (message.compid) {
+    case MAV_COMP_ID_USER1:
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b1);
+        _dlbHeartbeatCount = 0;
+        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
+        break;
+    case MAV_COMP_ID_ONBOARD_COMPUTER:
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b10);
+        _obcHeartbeatCount = 0;
+        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
+        break;
+    default:
+        break;
+    }
 
+}
 void Vehicle::_handleRadioStatus(mavlink_message_t& message)
 {
 

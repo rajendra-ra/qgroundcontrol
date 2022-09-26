@@ -302,6 +302,7 @@ public:
     Q_PROPERTY(Fact* distanceToGCS      READ distanceToGCS      CONSTANT)
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
     Q_PROPERTY(Fact* throttlePct        READ throttlePct        CONSTANT)
+    Q_PROPERTY(Fact* networkStatus      READ networkStatus      CONSTANT)
 
     Q_PROPERTY(FactGroup*           gps             READ gpsFactGroup               CONSTANT)
     Q_PROPERTY(FactGroup*           gps2            READ gps2FactGroup              CONSTANT)
@@ -647,6 +648,7 @@ public:
     Fact* distanceToGCS                     () { return &_distanceToGCSFact; }
     Fact* hobbs                             () { return &_hobbsFact; }
     Fact* throttlePct                       () { return &_throttlePctFact; }
+    Fact* networkStatus                     () { return &_networkStatusFact; }
 
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
     FactGroup* gps2FactGroup                () { return &_gps2FactGroup; }
@@ -982,6 +984,7 @@ private:
     void _handlePing                    (LinkInterface* link, mavlink_message_t& message);
     void _handleHomePosition            (mavlink_message_t& message);
     void _handleHeartbeat               (mavlink_message_t& message);
+    void _handleComponentsHeartbeat     (mavlink_message_t& message);
     void _handleRadioStatus             (mavlink_message_t& message);
     void _handleRCChannels              (mavlink_message_t& message);
     void _handleBatteryStatus           (mavlink_message_t& message);
@@ -1030,6 +1033,9 @@ private:
     void _chunkedStatusTextCompleted    (uint8_t compId);
     void _setMessageInterval            (int messageId, int rate);
     EventHandler& _eventHandler         (uint8_t compid);
+
+    int _obcHeartbeatCount = 0;
+    int _dlbHeartbeatCount = 0;
 
     static void _rebootCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
 
@@ -1304,6 +1310,7 @@ private:
     Fact _distanceToGCSFact;
     Fact _hobbsFact;
     Fact _throttlePctFact;
+    Fact _networkStatusFact;
 
     VehicleGPSFactGroup             _gpsFactGroup;
     VehicleGPS2FactGroup            _gps2FactGroup;
@@ -1356,6 +1363,7 @@ private:
     static const char* _distanceToGCSFactName;
     static const char* _hobbsFactName;
     static const char* _throttlePctFactName;
+    static const char* _networkStatusFactName;
 
     static const char* _gpsFactGroupName;
     static const char* _gps2FactGroupName;
