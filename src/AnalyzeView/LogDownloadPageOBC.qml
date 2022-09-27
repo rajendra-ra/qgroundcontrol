@@ -32,19 +32,11 @@ AnalyzePage {
     property bool _dirdownload: false
     property var _root:null
     property var  _indexModel: fileDownloader.indexList
-//    property var _currentIndexList: fileDownloader.indexList
     property var _downloadListDir: []
     property var _downloadListFiles :[]
     property int _totalFiles:0
-//    signal requestList(var url);
-//    onRequestList: {
-//        fileDownloader.startDownloadIndex(url)
-//    }
 
     QGCPalette { id: palette; colorGroupEnabled: enabled }
-//    ListModel {
-//        id:_indexModel
-//    }
 
     Component {
         id: pageComponent
@@ -55,58 +47,35 @@ AnalyzePage {
             Connections {
                 target: fileDownloader
                 onIndexingSuccessful:{
-//                    console.log("indexing Successful");
                     listView1.resizeColumnsToContents();
-//                    listView1.resizeRowsToContents();
                     addressField.text = _url;
                     if(_dirdownload){
-//                        console.log("dirdownload list",_dirdownload);
                         for(let i=0;i<_indexModel.count;i++){
                             let x = _indexModel.get(i)
                             let _path = _root.dir + x.url.split(_root.dir)[1]
                             let y = {url:x.url,path:_path}
 
-//                            console.log("item ",x.url);
                             if(x.isDir){
                                 _downloadListDir.push(y);
                             } else {
                                 _downloadListFiles.push(y);
                             }
-
-//                            _downloadList.push(x.url);
-//                            console.log("indexModel:",_indexModel.count)
                         }
-//                        _downloadList = fileDownloader.indexList
-//                        listView1.model = _indexModel;
                     } else {
                         _downloadListDir = []
                         _downloadListFiles = []
-//                        for(let j=0;j<_currentIndexList.count;j++){
-//                            let x = _currentIndexList.get(j)
-//                            console.log("item ",x);
-//                            _indexModel.append(x);
-//                            console.log("indexModel:",_indexModel.count)
-//                        }
                     }
 
                 }
-                onGoingBusy:{
-//                    console.log("Downloading in Progress");
-
-                }
+                onGoingBusy:{ }
                 onBackReady:{
                     if(_dirdownload){
-//                        console.log("recursively request:",_downloadListDir.length);
                         if(_downloadListDir.length>0){
-//                            console.log("remaining dirs:",_downloadListDir.length);
                         } else if(_downloadListFiles.length>0){
-//                            console.log("remaining files:",_downloadListFiles.length)
                         } else {
-//                            console.log("Downloaded All files Successful");
                             _totalFiles = 0;
                         }
                     } else {
-//                        console.log("Downloading Successful");
                         _progress = 0.0
                     }
                 }
@@ -114,7 +83,6 @@ AnalyzePage {
                     if(!isBusy && _dirdownload){
                         if(_downloadListDir.length>0){
                             let _item = _downloadListDir.pop();
-//                            console.log("request dir:",_item.url,fileDownloader.isBusy);
                             fileDownloader.startDownloadIndex(_item.url);
                         } else {
                             if(_downloadListFiles.length >0){
@@ -122,17 +90,12 @@ AnalyzePage {
                                     _totalFiles = _downloadListFiles.length
                                 }
                                 let _item = _downloadListFiles.pop();
-//                                console.log("request file:",_item.url,_item.path);
                                 fileDownloader.startDownload(_item.url,QGroundControl.settingsManager.appSettings.logSavePath+"/"+decodeURIComponent(_item.path));
-//                                fileDownloader.startDownload(_text,)
                             } else {
                                 _dirdownload = false
-//                                console.log("go back to root path");
                                 fileDownloader.startDownloadIndex(_root.path);
                             }
                         }
-
-
                     }
                 }
 
@@ -148,8 +111,6 @@ AnalyzePage {
                 }
             }
             RowLayout {
-//                width:  availableWidth
-//                height: availableHeight
                 Layout.fillWidth: true
                 Layout.fillHeight: false
                 Layout.preferredHeight: ScreenTools.defaultFontPixelHeight*1.5
@@ -202,7 +163,6 @@ AnalyzePage {
                             a.push(last)
                             return;
                         }
-
                     }
                 }
 
@@ -222,16 +182,14 @@ AnalyzePage {
             }
             RowLayout {
                 id:indexListLayout
-//                width:  availableWidth
-//                height: availableHeight
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 TableView {
                     id: listView1
                     Layout.fillWidth: true
                     Layout.fillHeight:  true
-                    model: _indexModel/*fileDownloader.indexList*/
-                    Component.onCompleted: {/*_indexModel = fileDownloader.indexList;*/}
+                    model: _indexModel
+                    Component.onCompleted: {}
                     rowDelegate: Rectangle {
                         height: 30
                         SystemPalette {
@@ -242,13 +200,6 @@ AnalyzePage {
                           var baseColor = styleData.alternate?myPalette.alternateBase:myPalette.base
                           return styleData.selected?myPalette.highlight:baseColor
                        }
-
-//                        Text {
-//                            text: modelData?modelData:""
-//                            anchors.fill: parent
-//                            font.pointSize: 13
-//                            horizontalAlignment: Text.AlignLeft
-//                        }
                     }
 
                     TableViewColumn {
@@ -266,7 +217,6 @@ AnalyzePage {
                     }
                     onDoubleClicked: {
                        let s = listView1.model.get(row)
-//                        let s = modelData
                         if(s.isDir){
                             let x = ""
                             if(addressField.text.endsWith("/")){
@@ -278,8 +228,6 @@ AnalyzePage {
 
                             fileDownloader.startDownloadIndex(x);
                         }
-
-//                        console.log("DoubleClicked:",row,s.fullname)
                     }
                 }
                 Column {
@@ -287,33 +235,21 @@ AnalyzePage {
                     Layout.alignment:   Qt.AlignTop | Qt.AlignLeft
                     QGCButton {
                         id: refreshBtn
-                        enabled:    !fileDownloader.isBusy//!logController.requestingList && !logController.downloadingLogs
+                        enabled:    !fileDownloader.isBusy
                         text:       qsTr("Refresh")
                         width:      _butttonWidth
                         font.pointSize: 14
                         onClicked: {
-//                            if (!QGroundControl.multiVehicleManager.activeVehicle || QGroundControl.multiVehicleManager.activeVehicle.isOfflineEditingVehicle) {
-//                                mainWindow.showMessageDialog(qsTr("Log Refresh"), qsTr("You must be connected to a vehicle in order to download logs."))
-//                            } else {
-//                                logController.refresh()
-//                            }
-//                            addressField.rootUri = addressField.text
                             fileDownloader.startDownloadIndex(addressField.text);
                         }
                     }
                     QGCButton {
                         id: downloadBtn
-                        enabled:   /* !logController.requestingList && !logController.downloadingLogs && */listView1.selection.count > 0 && !fileDownloader.isBusy
+                        enabled:   listView1.selection.count > 0 && !fileDownloader.isBusy
                         text:       qsTr("Download")
                         width:      _butttonWidth
                         font.pointSize: 14
                         onClicked: {
-                            //-- Clear selection
-//                            for(var i = 0; i < logController.model.count; i++) {
-//                                var o = logController.model.get(i)
-//                                if (o) o.selected = false
-//                            }
-                            //-- Flag selected log files
                             listView1.selection.forEach(function(rowIndex){
                                 let s = listView1.model.get(rowIndex)
                                 let x = ""
@@ -329,39 +265,20 @@ AnalyzePage {
                                     _dirdownload = true;
                                     _downloadListDir = [];
                                     _downloadListFiles = [];
-//                                    listView1.model = _indexModel;
-//                                    _indexModel = listView1.model
                                     if(addressField.text.endsWith("/")){
                                         x= addressField.text;
                                     } else {
                                         x = addressField.text+"/";
                                     }
-//                                    console.log("dir:",x);
                                     _root = {dir:s.fullname,path:x}
                                     x = x + s.fullname;
                                     fileDownloader.startDownloadIndex(x);
                                 }
-
-//                                console.log("selected index:",rowIndex);
-//                                var o = logController.model.get(rowIndex)
-//                                if (o) o.selected = true
                             })
-//                            if (ScreenTools.isMobile) {
-//                                // You can't pick folders in mobile, only default location is used
-////                                logController.download()
-//                            } else {
-//                                fileDialog.title =          qsTr("Select save directory")
-//                                fileDialog.selectExisting = true
-//                                fileDialog.folder =         QGroundControl.settingsManager.appSettings.logSavePath
-//                                fileDialog.selectFolder =   true
-//                                fileDialog.openForLoad()
-//                            }
                         }
                         QGCFileDialog {
                             id: fileDialog
                             onAcceptedForLoad: {
-//                                console.log("saved file:",file);
-//                                fileDownloader.startDownload(,file+listView1.selection.get())
                                 close()
                             }
                         }
