@@ -28,7 +28,7 @@ AnalyzePage {
     property real _margin:          ScreenTools.defaultFontPixelWidth
     property real _butttonWidth:    ScreenTools.defaultFontPixelWidth * 10
     property bool _isBusy: fileDownloader.isBusy || (_downloadListFiles.length>0)
-    property real _progress: 0.0
+    property int _progress: 0
     property bool _dirdownload: false
     property var _root:null
     property var  _indexModel: fileDownloader.indexList
@@ -76,7 +76,7 @@ AnalyzePage {
                             _totalFiles = 0;
                         }
                     } else {
-                        _progress = 0.0
+                        downloadProgress.value = 0.0
                     }
                 }
                 onIsBusyChanged:{
@@ -101,12 +101,12 @@ AnalyzePage {
 
                 onDownloadProgress:{
                     if(bytesTotal){
-                        _progress = bytesReceived/bytesTotal;
+                        downloadProgress.value = bytesReceived*100/bytesTotal;
                         if(_dirdownload && _totalFiles){
-                            _progress = 1-_downloadListFiles.length/_totalFiles;
+                            downloadProgress.value = (1-_downloadListFiles.length)*100/_totalFiles;
                         }
                     } else {
-                        _progress = 0.0
+                        downloadProgress.value = 0;
                     }
                 }
             }
@@ -178,6 +178,7 @@ AnalyzePage {
                     Layout.preferredHeight: addressField.height
                     id:downloadProgress
                     value: _progress
+                    onValueChanged: {_progress = value;}
                 }
             }
             RowLayout {
