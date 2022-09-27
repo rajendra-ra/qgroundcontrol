@@ -1034,8 +1034,8 @@ private:
     void _setMessageInterval            (int messageId, int rate);
     EventHandler& _eventHandler         (uint8_t compid);
 
-    int _obcHeartbeatCount = 0;
-    int _dlbHeartbeatCount = 0;
+    int _obcHeartbeatCount = 0; // obc missed heartbeat counter
+    int _dlbHeartbeatCount = 0; // dlb missed heartbeat counter
 
     static void _rebootCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
 
@@ -1310,7 +1310,7 @@ private:
     Fact _distanceToGCSFact;
     Fact _hobbsFact;
     Fact _throttlePctFact;
-    Fact _networkStatusFact; // network status
+    Fact _networkStatusFact; // fact variable to store network status
 
     VehicleGPSFactGroup             _gpsFactGroup;
     VehicleGPS2FactGroup            _gps2FactGroup;
