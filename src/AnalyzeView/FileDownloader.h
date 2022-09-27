@@ -21,15 +21,14 @@ public:
     virtual ~FileDownloader();
     Q_PROPERTY(bool isBusy READ isBusy NOTIFY isBusyChanged)
     Q_PROPERTY(LogListModel* indexList READ indexList NOTIFY indexListChanged)
+    // download file trigger
     Q_INVOKABLE void startDownload(QUrl url, QString fileName);
+    // download index trigger
     Q_INVOKABLE void startDownloadIndex(QUrl url);
     void abortDownload();
+    // getter files list
     LogListModel* indexList(){return &_indexList;}
-//    QStringListModel* model(){return _model;}
     bool isBusy();
-//    void download(QUrl imageUrl);
-//    float getProgress();
-//    QByteArray downloadedData() const;
 
     //connect to the following signals to get information about the ongoing download
     Q_SIGNAL void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
@@ -59,7 +58,6 @@ private:
     QPointer<QNetworkReply> networkReply;
     bool _busy = false;
     LogListModel _indexList;
-//    QStringListModel *_model;
 
 };
 

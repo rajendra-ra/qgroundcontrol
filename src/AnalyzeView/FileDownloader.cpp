@@ -9,7 +9,7 @@ FileDownloader::FileDownloader()
             this, &FileDownloader::makeBusy);
 }
 FileDownloader::~FileDownloader(){
-    //destructor cancels the ongoing dowload (if any)
+    //destructor cancels the ongoing download (if any)
     if(networkReply){
         a_abortDownload();
         nam->deleteLater();
@@ -69,7 +69,6 @@ void FileDownloader::finishIndexing(){
         baseUrl.setUrl(base);
         while (i.hasNext()) {
             QRegularExpressionMatch match = i.next();
-    //        qDebug().noquote() << match.captured();
             QString name = match.captured(1);
             bool isdir = false;
             if(name.endsWith("/")){
@@ -80,14 +79,6 @@ void FileDownloader::finishIndexing(){
             _indexList.append(entry);
         }
         emit indexListChanged(&_indexList);
-
-//        _model->setStringList(_indexList);
-
-
-//        destinationFile.write(data);
-//        destinationFile.close();
-//        cout<<data.toStdString();
-
         networkReply->deleteLater();
         emit indexingSuccessful(base);
     }
@@ -123,13 +114,10 @@ void FileDownloader::startDownloadIndex(QUrl url){
         nam = new QNetworkAccessManager();
     }
     if(isBusy()) return;
-//    destinationFile.setFileName(fileName);
-//    if(!destinationFile.open(QIODevice::WriteOnly)) return;
     emit goingBusy();
     QNetworkRequest request(url);
     networkReply= nam->get(request);
     if(!networkReply) return;
-//    connect(networkReply, &QIODevice::readyRead, this, &FileDownloader::readData);
     connect(networkReply, &QNetworkReply::downloadProgress,
             this, &FileDownloader::downloadProgress);
     connect(networkReply, &QNetworkReply::finished,
