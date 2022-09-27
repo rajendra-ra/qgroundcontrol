@@ -25,7 +25,7 @@ public:
     Q_INVOKABLE void startDownload(QUrl url, QString fileName);
     // download index trigger
     Q_INVOKABLE void startDownloadIndex(QUrl url);
-    void abortDownload();
+    Q_INVOKABLE void abortDownload();
     // getter files list
     LogListModel* indexList(){return &_indexList;}
     bool isBusy();

@@ -283,6 +283,16 @@ AnalyzePage {
                             }
                         }
                     }
+                    QGCButton {
+                        id: cancelBtn
+                        enabled:    fileDownloader.isBusy
+                        text:       qsTr("Cancel")
+                        width:      _butttonWidth
+                        font.pointSize: 14
+                        onClicked: {
+                            fileDownloader.abortDownload();
+                        }
+                    }
                 }
             }
         }
