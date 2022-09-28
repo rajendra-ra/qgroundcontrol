@@ -33,6 +33,12 @@
         </values>
         <field name="Bitmask">0:Feedback from mid stick,1:High throttle cancels landing,2:Disarm on land detection</field>
       </param>
+      <param humanName="Telemetry startup delay" name="ArduCopter:TELEM_DELAY" documentation="The amount of time (in seconds) to delay radio telemetry to prevent an Xbee bricking on power up" user="Advanced">
+        <field name="Units">s</field>
+        <field name="UnitText">seconds</field>
+        <field name="Range">0 30</field>
+        <field name="Increment">1</field>
+      </param>
       <param humanName="GCS PID tuning mask" name="ArduCopter:GCS_PID_MASK" documentation="bitmask of PIDs to send MAVLink PID_TUNING messages for" user="Advanced">
         <values>
           <value code="0">None</value>
@@ -7014,6 +7020,79 @@
         <field name="Units">%</field>
         <field name="UnitText">percent</field>
         <field name="Increment">1</field>
+      </param>
+    </parameters>
+    <parameters name="ICE_">
+      <param humanName="Enable ICEngine control" name="ICE_ENABLE" documentation="This enables internal combustion engine control" user="Advanced">
+        <values>
+          <value code="0">Disabled</value>
+          <value code="1">Enabled</value>
+        </values>
+      </param>
+      <param humanName="Input channel for engine start" name="ICE_START_CHAN" documentation="This is an RC input channel for requesting engine start. Engine will try to start when channel is at or above 1700. Engine will stop when channel is at or below 1300. Between 1301 and 1699 the engine will not change state unless a MAVLink command or mission item commands a state change, or the vehicle is disarmed. See ICE_STARTCHN_MIN parameter to change engine stop PWM value and/or to enable debouncing of the START_CH to avoid accidental engine kills due to noise on channel." user="Standard">
+        <values>
+          <value code="0">None</value>
+          <value code="1">Chan1</value>
+          <value code="2">Chan2</value>
+          <value code="3">Chan3</value>
+          <value code="4">Chan4</value>
+          <value code="5">Chan5</value>
+          <value code="6">Chan6</value>
+          <value code="7">Chan7</value>
+          <value code="8">Chan8</value>
+          <value code="9">Chan9</value>
+          <value code="10">Chan10</value>
+          <value code="11">Chan11</value>
+          <value code="12">Chan12</value>
+          <value code="13">Chan13</value>
+          <value code="14">Chan14</value>
+          <value code="15">Chan15</value>
+          <value code="16">Chan16</value>
+        </values>
+      </param>
+      <param humanName="Time to run starter" name="ICE_STARTER_TIME" documentation="This is the number of seconds to run the starter when trying to start the engine" user="Standard">
+        <field name="Units">s</field>
+        <field name="UnitText">seconds</field>
+        <field name="Range">0.1 5</field>
+      </param>
+      <param humanName="Time to wait between starts" name="ICE_START_DELAY" documentation="Delay between start attempts" user="Standard">
+        <field name="Units">s</field>
+        <field name="UnitText">seconds</field>
+        <field name="Range">1 10</field>
+      </param>
+      <param humanName="RPM threshold" name="ICE_RPM_THRESH" documentation="This is the measured RPM above which the engine is considered to be running" user="Standard">
+        <field name="Range">100 100000</field>
+      </param>
+      <param humanName="RPM instance channel to use" name="ICE_RPM_CHAN" documentation="This is which of the RPM instances to use for detecting the RPM of the engine" user="Standard">
+        <values>
+          <value code="0">None</value>
+          <value code="1">RPM1</value>
+          <value code="2">RPM2</value>
+        </values>
+      </param>
+      <param humanName="Throttle percentage for engine start" name="ICE_START_PCT" documentation="This is the percentage throttle output for engine start" user="Standard">
+        <field name="Range">0 100</field>
+      </param>
+      <param humanName="Throttle percentage for engine idle" name="ICE_IDLE_PCT" documentation="This is the minimum percentage throttle output while running, this includes being disarmed, but not safe" user="Standard">
+        <field name="Range">0 100</field>
+      </param>
+      <param humanName="RPM Setpoint for Idle Governor" name="ICE_IDLE_RPM" documentation="This configures the RPM that will be commanded by the idle governor. Set to -1 to disable" user="Advanced">
+</param>
+      <param humanName="Deadband for Idle Governor" name="ICE_IDLE_DB" documentation="This configures the deadband that is tolerated before adjusting the idle setpoint">
+</param>
+      <param humanName="Slew Rate for idle control" name="ICE_IDLE_SLEW" documentation="This configures the slewrate used to adjust the idle setpoint in percentage points per second">
+</param>
+      <param humanName="ICE options" name="ICE_OPTIONS" documentation="Options for ICE control">
+        <field name="Bitmask">0:DisableIgnitionRCFailsafe</field>
+      </param>
+      <param humanName="Input channel for engine start minimum PWM" name="ICE_STARTCHN_MIN" documentation="This is a minimum PWM value for engine start channel for an engine stop to be commanded. Setting this value will avoid RC input glitches with low PWM values from causing an unwanted engine stop. A value of zero means any PWM below 1300 triggers an engine stop." user="Standard">
+        <field name="Range">0 1300</field>
+      </param>
+      <param humanName="GPIO pin for Starter trigger" name="ICE_STARTER_GPIO" documentation="This configures the GPIO to be used to trigger the Starter" user="Standard">
+        <field name="Range">101 108</field>
+      </param>
+      <param humanName="GPIO pin for Ignition trigger" name="ICE_IGNTN_GPIO" documentation="This configures the GPIO to be used to trigger the Starter" user="Standard">
+        <field name="Range">101 108</field>
       </param>
     </parameters>
     <parameters name="IM_">
