@@ -1934,7 +1934,20 @@ QString Vehicle::formattedMessages()
     return messages;
 }
 
+QString Vehicle::componentMessages()
+{
+    QString messages;
+    for(UASMessage* message: _toolbox->uasMessageHandler()->messages()) {
+        messages += message->getFormatedText();
+    }
+    return messages;
+}
+
 void Vehicle::clearMessages()
+{
+    _toolbox->uasMessageHandler()->clearMessages();
+}
+void Vehicle::clearComponentMessages()
 {
     _toolbox->uasMessageHandler()->clearMessages();
 }
@@ -2012,6 +2025,24 @@ void Vehicle::_handleTextMessage(int newCount)
 }
 
 void Vehicle::resetMessages()
+{
+    // Reset Counts
+    int count = _currentMessageCount;
+    MessageType_t type = _currentMessageType;
+    _currentErrorCount   = 0;
+    _currentWarningCount = 0;
+    _currentNormalCount  = 0;
+    _currentMessageCount = 0;
+    _currentMessageType = MessageNone;
+    if(count != _currentMessageCount) {
+        emit newMessageCountChanged();
+    }
+    if(type != _currentMessageType) {
+        emit messageTypeChanged();
+    }
+}
+
+void Vehicle::resetComponentMessages()
 {
     // Reset Counts
     int count = _currentMessageCount;

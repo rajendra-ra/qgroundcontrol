@@ -178,6 +178,7 @@ public:
     Q_PROPERTY(int                  newMessageCount             READ newMessageCount                                                NOTIFY newMessageCountChanged)
     Q_PROPERTY(int                  messageCount                READ messageCount                                                   NOTIFY messageCountChanged)
     Q_PROPERTY(QString              formattedMessages           READ formattedMessages                                              NOTIFY formattedMessagesChanged)
+    Q_PROPERTY(QString              componentMessages           READ componentMessages                                              NOTIFY componentMessagesChanged)
     Q_PROPERTY(QString              latestError                 READ latestError                                                    NOTIFY latestErrorChanged)
     Q_PROPERTY(bool                 joystickEnabled             READ joystickEnabled            WRITE setJoystickEnabled            NOTIFY joystickEnabledChanged)
     Q_PROPERTY(int                  flowImageIndex              READ flowImageIndex                                                 NOTIFY flowImageIndexChanged)
@@ -338,6 +339,9 @@ public:
     // Called when the message drop-down is invoked to clear current count
     Q_INVOKABLE void resetMessages();
 
+    // Called when the message drop-down is invoked to clear current count
+    Q_INVOKABLE void resetComponentMessages();
+
     Q_INVOKABLE void virtualTabletJoystickValue(double roll, double pitch, double yaw, double thrust);
 
     /// Command vehicle to return to launch
@@ -391,6 +395,9 @@ public:
 
     /// Clear Messages
     Q_INVOKABLE void clearMessages();
+
+    /// Clear Component Messages
+    Q_INVOKABLE void clearComponentMessages();
 
     Q_INVOKABLE void sendPlan(QString planFile);
 
@@ -544,6 +551,7 @@ public:
     int             newMessageCount             () const{ return _currentMessageCount; }
     int             messageCount                () const{ return _messageCount; }
     QString         formattedMessages           ();
+    QString         componentMessages           ();
     QString         latestError                 () { return _latestError; }
     float           latitude                    () { return static_cast<float>(_coordinate.latitude()); }
     float           longitude                   () { return static_cast<float>(_coordinate.longitude()); }
@@ -872,7 +880,9 @@ signals:
     void newMessageCountChanged         ();
     void messageCountChanged            ();
     void formattedMessagesChanged       ();
+    void componentMessagesChanged       ();
     void newFormattedMessage            (QString formattedMessage);
+    void newComponentMessage            (QString formattedMessage);
     void latestErrorChanged             ();
     void longitudeChanged               ();
     void currentConfigChanged           ();
