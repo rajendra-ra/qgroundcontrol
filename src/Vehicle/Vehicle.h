@@ -85,6 +85,43 @@ class ParsedEvent;
 
 Q_DECLARE_LOGGING_CATEGORY(VehicleLog)
 
+/**
+ * @brief The CompMessage class to store component error message data
+ */
+class CompMessage
+{
+    friend class Vehicle;
+public:
+    /**
+     * @brief Get message source component ID
+     */
+    int getComponentID() const       { return _compId; }
+    /**
+     * @brief Get message severity (from MAV_SEVERITY_XXX enum)
+     */
+    int getSeverity() const          { return _severity; }
+    /**
+     * @brief Get message text (e.g. "[pm] sending list")
+     */
+    QString getText()           { return _text; }
+    /**
+     * @brief Get (html) formatted text (in the form: "[11:44:21.137 - COMP:50] Info: [pm] sending list")
+     */
+    QString getFormatedText()   { return _formatedText; }
+    /**
+     * @return true: This message is a of a severity which is considered an error
+     */
+    bool severityIsError() const;
+
+private:
+    CompMessage(int componentid, int severity, QString text);
+    void _setFormatedText(const QString formatedText) { _formatedText = formatedText; }
+    int _compId;
+    int _severity;
+    QString _text;
+    QString _formatedText;
+};
+
 class Vehicle : public FactGroup
 {
     Q_OBJECT
@@ -1009,6 +1046,7 @@ private:
     void _handleAttitude                (mavlink_message_t& message);
     void _handleAttitudeQuaternion      (mavlink_message_t& message);
     void _handleStatusText              (mavlink_message_t& message);
+    void _handleComponentMessage        (mavlink_message_t& message); // handler to handle dlb error messages
     void _handleOrbitExecutionStatus    (const mavlink_message_t& message);
     void _handleGimbalOrientation       (const mavlink_message_t& message);
     void _handleObstacleDistance        (const mavlink_message_t& message);
@@ -1042,6 +1080,11 @@ private:
     EventHandler& _eventHandler         (uint8_t compid);
     // load meta data (DLB Error code Description)
     void _loadDLBMetaData();
+
+    // store all dlb error messages
+    QVector<CompMessage*>    _compMessages;
+    // formatting dlb error messages
+    CompMessage* _formatTextMessage                  (int compId, int severity, QString text);
 
     static void _rebootCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
 

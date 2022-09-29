@@ -95,7 +95,7 @@ Item {
                 //-- Hack to scroll to last message
                 for (var i = 0; i < _activeVehicle.messageCount; i++)
                     messageFlick.flick(0,-5000)
-                _activeVehicle.resetComponentMessages()
+//                _activeVehicle.resetComponentMessages()
             }
 
             Connections {

@@ -111,6 +111,26 @@ const char* Vehicle::_estimatorStatusFactGroupName =    "estimatorStatus";
 const char* Vehicle::_terrainFactGroupName =            "terrain";
 const char* Vehicle::_hygrometerFactGroupName =         "hygrometer";
 
+CompMessage::CompMessage(int componentid, int severity, QString text)
+{
+    _compId   = componentid;
+    _severity = severity;
+    _text     = text;
+}
+
+bool CompMessage::severityIsError() const
+{
+    switch (_severity) {
+        case MAV_SEVERITY_EMERGENCY:
+        case MAV_SEVERITY_ALERT:
+        case MAV_SEVERITY_CRITICAL:
+        case MAV_SEVERITY_ERROR:
+            return true;
+        default:
+            return false;
+    }
+}
+
 // Standard connected vehicle
 Vehicle::Vehicle(LinkInterface*             link,
                  int                        vehicleId,
@@ -758,51 +778,9 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
         _handleObstacleDistance(message);
         break;
     case MAVLINK_MSG_ID_R10_DLB_ERROR:
-    {
-        // dlb error message send via dlb
-
-        mavlink_message_t msg;
-        mavlink_r10_dlb_error_t dlb_error;
-        mavlink_statustext_t st;
-        mavlink_msg_r10_dlb_error_decode(&message,&dlb_error);
-        QString s = "";
-        if(_dlbErrorCodeMetaDataMap.contains(dlb_error.ERROR_CODE)){
-            s = _dlbErrorCodeMetaDataMap.value(dlb_error.ERROR_CODE); // get Error code description from mapping
-        }
-        strcpy(st.text,s.toUtf8().data());
-        st.id = 0;
-        st.chunk_seq = 0;
-        st.severity = MAV_SEVERITY_WARNING;
-        if (dlb_error.ERROR_CODE < 3000)
-            st.severity = MAV_SEVERITY_EMERGENCY;
-        if (dlb_error.ERROR_CODE > 4000)
-            st.severity = MAV_SEVERITY_INFO;
-        mavlink_msg_statustext_encode(_id,_compID,&msg,&st);
-        _handleStatusText(msg); // send to notice board
-    }
-        break;
     case MAVLINK_MSG_ID_R10_PSDATA_ERROR:
     {
-        // psdata  dlb error message send via dlb
-
-        mavlink_message_t msg;
-        mavlink_r10_psdata_error_t psdata_error;
-        mavlink_statustext_t st;
-        mavlink_msg_r10_psdata_error_decode(&message,&psdata_error);
-        QString s = "";
-        if(_dlbErrorCodeMetaDataMap.contains(psdata_error.ERROR_CODE)){
-            s = _dlbErrorCodeMetaDataMap.value(psdata_error.ERROR_CODE); // get Error code description from mapping
-        }
-        strcpy(st.text,s.toUtf8().data());
-        st.id = 0;
-        st.chunk_seq = 0;
-        st.severity = MAV_SEVERITY_WARNING;
-        if (psdata_error.ERROR_CODE < 3000)
-            st.severity = MAV_SEVERITY_EMERGENCY;
-        if (psdata_error.ERROR_CODE > 4000)
-            st.severity = MAV_SEVERITY_INFO;
-        mavlink_msg_statustext_encode(_id,_compID,&msg,&st);
-        _handleStatusText(msg); // send to notice board
+        _handleComponentMessage(message);
     }
         break;
     case MAVLINK_MSG_ID_EVENT:
@@ -1024,6 +1002,126 @@ void Vehicle::_handleStatusText(mavlink_message_t& message)
         _chunkedStatusTextTimer.stop();
         _chunkedStatusTextCompleted(message.compid);
     }
+}
+CompMessage* Vehicle::_formatTextMessage(int compId, int severity, QString text)
+{
+
+    // Color the output depending on the message severity. We have 3 distinct cases:
+    // 1: If we have an ERROR or worse, make it bigger, bolder, and highlight it red.
+    // 2: If we have a warning or notice, just make it bold and color it orange.
+    // 3: Otherwise color it the standard color, white.
+
+    // So first determine the styling based on the severity.
+    QString style;
+    switch (severity)
+    {
+    case MAV_SEVERITY_EMERGENCY:
+    case MAV_SEVERITY_ALERT:
+    case MAV_SEVERITY_CRITICAL:
+    case MAV_SEVERITY_ERROR:
+        style = QString("<#E>");
+//        _errorCount++;
+//        _errorCountTotal++;
+        break;
+    case MAV_SEVERITY_NOTICE:
+    case MAV_SEVERITY_WARNING:
+        style = QString("<#I>");
+//        _warningCount++;
+        break;
+    default:
+        style = QString("<#N>");
+//        _normalCount++;
+        break;
+    }
+
+    // And determine the text for the severitie
+    QString severityText;
+    switch (severity)
+    {
+    case MAV_SEVERITY_EMERGENCY:
+        severityText = tr(" EMERGENCY:");
+        break;
+    case MAV_SEVERITY_ALERT:
+        severityText = tr(" ALERT:");
+        break;
+    case MAV_SEVERITY_CRITICAL:
+        severityText = tr(" Critical:");
+        break;
+    case MAV_SEVERITY_ERROR:
+        severityText = tr(" Error:");
+        break;
+    case MAV_SEVERITY_WARNING:
+        severityText = tr(" Warning:");
+        break;
+    case MAV_SEVERITY_NOTICE:
+        severityText = tr(" Notice:");
+        break;
+    case MAV_SEVERITY_INFO:
+        severityText = tr(" Info:");
+        break;
+    case MAV_SEVERITY_DEBUG:
+        severityText = tr(" Debug:");
+        break;
+    default:
+        break;
+    }
+
+    // Finally preppend the properly-styled text with a timestamp.
+    QString dateString = QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
+    CompMessage* message = new CompMessage(compId, severity, text);
+
+    message->_setFormatedText(QString("<font style=\"%1\">[%2]%4 %5</font><br/>").arg(style).arg(dateString).arg(severityText).arg(text));
+
+
+    return message;
+//    _compMessages.append(message);
+//    int count = _compMessages.count();
+
+//    if (_showErrorsInToolbar && message->severityIsError()) {
+//        _app->showCriticalVehicleMessage(message->getText());
+//    }
+}
+void Vehicle::_handleComponentMessage(mavlink_message_t& message)
+{
+    CompMessage* formattedmessage;
+    QString s = "";
+    int severity = MAV_SEVERITY_WARNING;
+    uint16_t err = 3000;
+    switch(message.msgid)
+    {
+    case MAVLINK_MSG_ID_R10_DLB_ERROR:
+        mavlink_r10_dlb_error_t dlb_error;
+        mavlink_msg_r10_dlb_error_decode(&message,&dlb_error);
+        err = dlb_error.ERROR_CODE;
+        severity = MAV_SEVERITY_WARNING;
+        if(dlb_error.ERROR_CODE<3000)
+            severity = MAV_SEVERITY_EMERGENCY;
+        break;
+
+    case MAVLINK_MSG_ID_R10_PSDATA_ERROR:
+        mavlink_r10_psdata_error_t psdata_error;
+        mavlink_msg_r10_psdata_error_decode(&message,&psdata_error);
+        err = psdata_error.ERROR_CODE;
+        severity = MAV_SEVERITY_WARNING;
+        if(psdata_error.ERROR_CODE<3000)
+            severity = MAV_SEVERITY_EMERGENCY;
+        break;
+    default:
+        break;
+    }
+
+    if (err<3000)
+        severity = MAV_SEVERITY_EMERGENCY;
+    if (err>4000)
+        severity = MAV_SEVERITY_INFO;
+
+    if(_dlbErrorCodeMetaDataMap.contains(err)){
+        s = _dlbErrorCodeMetaDataMap.value(err); // get Error code description from mapping
+    }
+    formattedmessage = _formatTextMessage(message.compid,severity,s);
+    _compMessages.append(formattedmessage);
+
+    emit newComponentMessage(formattedmessage->getFormatedText());
 }
 
 void Vehicle::_handleVfrHud(mavlink_message_t& message)
@@ -1937,7 +2035,7 @@ QString Vehicle::formattedMessages()
 QString Vehicle::componentMessages()
 {
     QString messages;
-    for(UASMessage* message: _toolbox->uasMessageHandler()->messages()) {
+    for(CompMessage* message: _compMessages) {
         messages += message->getFormatedText();
     }
     return messages;
@@ -1949,7 +2047,10 @@ void Vehicle::clearMessages()
 }
 void Vehicle::clearComponentMessages()
 {
-    _toolbox->uasMessageHandler()->clearMessages();
+    while(_compMessages.count()) {
+        delete _compMessages.last();
+        _compMessages.pop_back();
+    }
 }
 
 void Vehicle::_handletextMessageReceived(UASMessage* message)
