@@ -212,9 +212,11 @@ public:
     Q_PROPERTY(bool                 messageTypeNormal           READ messageTypeNormal                                              NOTIFY messageTypeChanged)
     Q_PROPERTY(bool                 messageTypeWarning          READ messageTypeWarning                                             NOTIFY messageTypeChanged)
     Q_PROPERTY(bool                 messageTypeError            READ messageTypeError                                               NOTIFY messageTypeChanged)
+    Q_PROPERTY(int                  compMessageType             READ compMessageType                                                NOTIFY compMessageTypeChanged)
     Q_PROPERTY(int                  newMessageCount             READ newMessageCount                                                NOTIFY newMessageCountChanged)
     Q_PROPERTY(int                  messageCount                READ messageCount                                                   NOTIFY messageCountChanged)
     Q_PROPERTY(QString              formattedMessages           READ formattedMessages                                              NOTIFY formattedMessagesChanged)
+    Q_PROPERTY(int                  compMessageCount            READ compMessageCount                                               NOTIFY compMessageCountChanged)
     Q_PROPERTY(QString              componentMessages           READ componentMessages                                              NOTIFY componentMessagesChanged)
     Q_PROPERTY(QString              latestError                 READ latestError                                                    NOTIFY latestErrorChanged)
     Q_PROPERTY(bool                 joystickEnabled             READ joystickEnabled            WRITE setJoystickEnabled            NOTIFY joystickEnabledChanged)
@@ -585,8 +587,10 @@ public:
     bool            messageTypeNormal           () { return _currentMessageType == MessageNormal; }
     bool            messageTypeWarning          () { return _currentMessageType == MessageWarning; }
     bool            messageTypeError            () { return _currentMessageType == MessageError; }
+    int             compMessageType             () { return _currentCompMessageType; }
     int             newMessageCount             () const{ return _currentMessageCount; }
     int             messageCount                () const{ return _messageCount; }
+    int             compMessageCount            () const{ return _compMessageCount; }
     QString         formattedMessages           ();
     QString         componentMessages           ();
     QString         latestError                 () { return _latestError; }
@@ -914,7 +918,9 @@ signals:
     void messagesSentChanged            ();
     void messagesLostChanged            ();
     void messageTypeChanged             ();
+    void compMessageTypeChanged         ();
     void newMessageCountChanged         ();
+    void compMessageCountChanged        ();
     void messageCountChanged            ();
     void formattedMessagesChanged       ();
     void componentMessagesChanged       ();
@@ -1116,10 +1122,12 @@ private:
     UASInterface*   _mav = nullptr;
     int             _currentMessageCount = 0;
     int             _messageCount = 0;
+    int             _compMessageCount = 0;
     int             _currentErrorCount = 0;
     int             _currentWarningCount = 0;
     int             _currentNormalCount = 0;
     MessageType_t   _currentMessageType = MessageNone;
+    MessageType_t   _currentCompMessageType = MessageNone;
     QString         _latestError;
     int             _updateCount = 0;
     int             _rcRSSI = 255;
