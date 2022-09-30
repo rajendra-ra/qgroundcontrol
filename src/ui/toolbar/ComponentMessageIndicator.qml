@@ -29,20 +29,21 @@ Item {
     property bool showIndicator: true
 
     property var    _activeVehicle:         QGroundControl.multiVehicleManager.activeVehicle
-    property bool   _isMessageImportant:    _activeVehicle ? _activeVehicle.compMessageType : false
+    property bool   _isMessageImportant:    _activeVehicle ? _activeVehicle.compMessageType>2 : false
 
     function getMessageColor() {
+
         if (_activeVehicle) {
-            if (_activeVehicle.messageTypeNone)
+            if (_activeVehicle.compMessageType === 0)
                 return qgcPal.colorGrey
-            if (_activeVehicle.messageTypeNormal)
+            if (_activeVehicle.compMessageType === 1)
                 return qgcPal.colorBlue;
-            if (_activeVehicle.messageTypeWarning)
+            if (_activeVehicle.compMessageType === 2)
                 return qgcPal.colorOrange;
-            if (_activeVehicle.messageTypeError)
+            if (_activeVehicle.compMessageType === 3)
                 return qgcPal.colorRed;
             // Cannot be so make make it obnoxious to show error
-            console.warn("ComponentMessageIndicator.qml:getMessageColor Invalid vehicle message type", _activeVehicle.messageTypeNone)
+            console.warn("ComponentMessageIndicator.qml:getMessageColor Invalid vehicle message type", _activeVehicle.compMessageType)
             return "purple";
         }
         //-- It can only get here when closing (vehicle gone while window active)
@@ -56,7 +57,7 @@ Item {
         sourceSize.height:  height
         fillMode:           Image.PreserveAspectFit
         cache:              false
-        visible:            _activeVehicle && _activeVehicle.messageCount > 0 && _isMessageImportant
+        visible:            _activeVehicle && _activeVehicle.compMessageCount > 0 && _isMessageImportant
     }
 
     QGCColoredImage {
