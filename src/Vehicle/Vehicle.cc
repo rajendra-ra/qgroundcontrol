@@ -1020,19 +1020,22 @@ CompMessage* Vehicle::_formatTextMessage(int compId, int severity, QString text)
     case MAV_SEVERITY_CRITICAL:
     case MAV_SEVERITY_ERROR:
         style = QString("<#E>");
-//        _errorCount++;
-//        _errorCountTotal++;
+        _currentCompMessageType = MessageError;
         break;
     case MAV_SEVERITY_NOTICE:
     case MAV_SEVERITY_WARNING:
         style = QString("<#I>");
-//        _warningCount++;
+        if(_currentCompMessageType!=MessageError)
+            _currentCompMessageType = MessageWarning;
         break;
     default:
         style = QString("<#N>");
-//        _normalCount++;
+        if(_currentCompMessageType!=MessageError && _currentCompMessageType!=MessageWarning)
+            _currentCompMessageType = MessageNormal;
         break;
     }
+    // send signal of severity level change
+    emit compMessageTypeChanged();
 
     // And determine the text for the severitie
     QString severityText;
@@ -1070,57 +1073,62 @@ CompMessage* Vehicle::_formatTextMessage(int compId, int severity, QString text)
     QString dateString = QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
     CompMessage* message = new CompMessage(compId, severity, text);
 
+    // prepare formatted string to display
     message->_setFormatedText(QString("<font style=\"%1\">[%2]%4 %5</font><br/>").arg(style).arg(dateString).arg(severityText).arg(text));
 
+    // increment component message count and signal its change
+    _compMessageCount++;
+    emit compMessageCountChanged();
 
     return message;
-//    _compMessages.append(message);
-//    int count = _compMessages.count();
-
-//    if (_showErrorsInToolbar && message->severityIsError()) {
-//        _app->showCriticalVehicleMessage(message->getText());
-//    }
 }
 void Vehicle::_handleComponentMessage(mavlink_message_t& message)
 {
-    CompMessage* formattedmessage;
-    QString s = "";
-    int severity = MAV_SEVERITY_WARNING;
-    uint16_t err = 3000;
+    CompMessage* formattedmessage;          // error message to display
+    QString s = "[%1]: %2";                 // template string to display on notice board
+    int severity = MAV_SEVERITY_WARNING;    // severity level of error
+    const uint8_t dlb_mask = 0b001;         // dlb enable bitmask
+//    const uint8_t obc_mask = 0b010;       // obc enable bitmask
+//    const uint8_t esc_mask = 0b100;       // esc enable bitmask
+    uint16_t err = 0;
     switch(message.msgid)
     {
     case MAVLINK_MSG_ID_R10_DLB_ERROR:
         mavlink_r10_dlb_error_t dlb_error;
         mavlink_msg_r10_dlb_error_decode(&message,&dlb_error);
         err = dlb_error.ERROR_CODE;
-        severity = MAV_SEVERITY_WARNING;
-        if(dlb_error.ERROR_CODE<3000)
-            severity = MAV_SEVERITY_EMERGENCY;
         break;
 
     case MAVLINK_MSG_ID_R10_PSDATA_ERROR:
         mavlink_r10_psdata_error_t psdata_error;
         mavlink_msg_r10_psdata_error_decode(&message,&psdata_error);
         err = psdata_error.ERROR_CODE;
-        severity = MAV_SEVERITY_WARNING;
-        if(psdata_error.ERROR_CODE<3000)
-            severity = MAV_SEVERITY_EMERGENCY;
         break;
     default:
         break;
     }
 
+    // identify severity level
     if (err<3000)
         severity = MAV_SEVERITY_EMERGENCY;
     if (err>4000)
         severity = MAV_SEVERITY_INFO;
 
+    // get error message description from meta data file
     if(_dlbErrorCodeMetaDataMap.contains(err)){
-        s = _dlbErrorCodeMetaDataMap.value(err); // get Error code description from mapping
+        s = s.arg(err).arg(_dlbErrorCodeMetaDataMap.value(err)); // get Error code description from mapping
     }
+    //compile error message to display ready text
     formattedmessage = _formatTextMessage(message.compid,severity,s);
+    // add message to list
     _compMessages.append(formattedmessage);
-
+    // check if error message popup is enabled
+    if(_parameterManager->parameterExists(_defaultComponentId,"R10_COMP_EN_MSK")){
+        if (formattedmessage->severityIsError() && _parameterManager->getParameter(_defaultComponentId,"R10_COMP_EN_MSK")->rawValue().toInt() & dlb_mask) {
+            qgcApp()->showCriticalVehicleMessage(formattedmessage->getText());
+        }
+    }
+    // send message receive signal
     emit newComponentMessage(formattedmessage->getFormatedText());
 }
 
@@ -2047,10 +2055,17 @@ void Vehicle::clearMessages()
 }
 void Vehicle::clearComponentMessages()
 {
+    // remove all message from list
     while(_compMessages.count()) {
         delete _compMessages.last();
         _compMessages.pop_back();
     }
+    // reset counter and severity level
+    _compMessageCount = 0;
+    _currentCompMessageType = MessageNone;
+    // send variable change signal
+    emit compMessageTypeChanged();
+    emit compMessageCountChanged();
 }
 
 void Vehicle::_handletextMessageReceived(UASMessage* message)
@@ -2145,20 +2160,9 @@ void Vehicle::resetMessages()
 
 void Vehicle::resetComponentMessages()
 {
-    // Reset Counts
-    int count = _currentMessageCount;
-    MessageType_t type = _currentMessageType;
-    _currentErrorCount   = 0;
-    _currentWarningCount = 0;
-    _currentNormalCount  = 0;
-    _currentMessageCount = 0;
-    _currentMessageType = MessageNone;
-    if(count != _currentMessageCount) {
-        emit newMessageCountChanged();
-    }
-    if(type != _currentMessageType) {
-        emit messageTypeChanged();
-    }
+    // Reset Severi level after user have chacked messages
+    _currentCompMessageType = MessageNone;
+    emit compMessageTypeChanged();
 }
 
 void Vehicle::_loadSettings()
