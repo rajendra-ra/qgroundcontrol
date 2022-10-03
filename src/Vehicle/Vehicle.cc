@@ -479,7 +479,8 @@ void Vehicle::_commonInit()
             _addFactGroup(i.value(), i.key());
         }
     }
-    // load DLB Meta Data such as ERROR code description
+    // load DLB Meta Data
+    // { ERROR_CODE: description }
     _loadDLBMetaData();
 
 
@@ -1037,7 +1038,7 @@ CompMessage* Vehicle::_formatTextMessage(int compId, int severity, QString text)
     // send signal of severity level change
     emit compMessageTypeChanged();
 
-    // And determine the text for the severitie
+    // And determine the text for the severity
     QString severityText;
     switch (severity)
     {
@@ -1088,8 +1089,6 @@ void Vehicle::_handleComponentMessage(mavlink_message_t& message)
     QString s = "[%1]: %2";                 // template string to display on notice board
     int severity = MAV_SEVERITY_WARNING;    // severity level of error
     const uint8_t dlb_mask = 0b001;         // dlb enable bitmask
-//    const uint8_t obc_mask = 0b010;       // obc enable bitmask
-//    const uint8_t esc_mask = 0b100;       // esc enable bitmask
     uint16_t err = 0;
     switch(message.msgid)
     {
@@ -2160,7 +2159,7 @@ void Vehicle::resetMessages()
 
 void Vehicle::resetComponentMessages()
 {
-    // Reset Severi level after user have chacked messages
+    // Reset Severity level after user have chacked messages
     _currentCompMessageType = MessageNone;
     emit compMessageTypeChanged();
 }
