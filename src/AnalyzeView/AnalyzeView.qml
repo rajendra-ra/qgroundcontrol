@@ -40,6 +40,7 @@ Rectangle {
         id: logController
     }
 
+    // file downloader handler class
     FileDownloader {
         id: fileDownloader
     }

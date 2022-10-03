@@ -19,12 +19,14 @@ class FileDownloader : public QObject
 public:
     explicit FileDownloader();
     virtual ~FileDownloader();
+    //
     Q_PROPERTY(bool isBusy READ isBusy NOTIFY isBusyChanged)
     Q_PROPERTY(LogListModel* indexList READ indexList NOTIFY indexListChanged)
     // download file trigger
     Q_INVOKABLE void startDownload(QUrl url, QString fileName);
     // download index trigger
     Q_INVOKABLE void startDownloadIndex(QUrl url);
+    // download abort trigger
     Q_INVOKABLE void abortDownload();
     // getter files list
     LogListModel* indexList(){return &_indexList;}
@@ -51,12 +53,17 @@ private:
     //private function, cleans things up when the download is aborted
     //(due to an error or user interaction)
     void a_abortDownload();
-
+    // network access menager
     QNetworkAccessManager* nam;
+    // url to brows
     QUrl baseUrl;
+    // download file
     QFile destinationFile;
+    // response or network requests
     QPointer<QNetworkReply> networkReply;
+    // if request is in pregress
     bool _busy = false;
+    // list of links of file/directories
     LogListModel _indexList;
 
 };

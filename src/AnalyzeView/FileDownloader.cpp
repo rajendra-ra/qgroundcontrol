@@ -51,22 +51,23 @@ void FileDownloader::finishDownload(){
     emit backReady();
 }
 void FileDownloader::finishIndexing(){
-//    return;
     if(networkReply->error() != QNetworkReply::NoError){
-        //failed download
+        //if failed to download index file
         networkReply->abort();
         networkReply->deleteLater();
         emit downloadError(networkReply->errorString());
     } else {
-        //successful download
+        //if successfully downloaded index file
         QByteArray data= networkReply->readAll();
         QString html = QString(data);
-
+        // regex to detect file links
         QRegularExpression re("<td><a href=\"(.*?)\">(.*?)</a></td>");
         QRegularExpressionMatchIterator i = re.globalMatch(html);
+        // clear previous index list
         _indexList.clear();
         QString base = networkReply->url().toString();
         baseUrl.setUrl(base);
+        // append all files to list
         while (i.hasNext()) {
             QRegularExpressionMatch match = i.next();
             QString name = match.captured(1);
@@ -85,25 +86,32 @@ void FileDownloader::finishIndexing(){
     emit backReady();
 }
 void FileDownloader::a_abortDownload(){
+    // close connection
     networkReply->abort();
     networkReply->deleteLater();
+    // close file
     destinationFile.close();
     destinationFile.remove();
 }
 void FileDownloader::startDownload(QUrl url, QString fileName){
-    if(isBusy()) return;
+    if(isBusy()) return; // do nothin if busy
+    // get parent directory of file
     QStringList _list =  fileName.split("/");
     _list.removeLast();
     QDir dir(_list.join("/"));
+    // check if directory exists else make it
     if (!dir.exists())
         dir.mkpath(".");
+    // ready file to store download data
     destinationFile.setFileName(fileName);
     if(!destinationFile.open(QIODevice::WriteOnly)) return;
-    emit goingBusy();
-    QNetworkRequest request(url);
-    networkReply= nam->get(request);
-    if(!networkReply) return;
+    emit goingBusy(); // set status busy
+    QNetworkRequest request(url); // make download request
+    networkReply= nam->get(request); //  send request
+    if(!networkReply) return; // todo: need to notify used of failure
+
     connect(networkReply, &QIODevice::readyRead, this, &FileDownloader::readData);
+    // monitor download progress
     connect(networkReply, &QNetworkReply::downloadProgress,
             this, &FileDownloader::downloadProgress);
     connect(networkReply, &QNetworkReply::finished,
@@ -111,13 +119,14 @@ void FileDownloader::startDownload(QUrl url, QString fileName){
 }
 void FileDownloader::startDownloadIndex(QUrl url){
     if(!nam){
-        nam = new QNetworkAccessManager();
+        nam = new QNetworkAccessManager(); // int network manager if not already
     }
-    if(isBusy()) return;
-    emit goingBusy();
-    QNetworkRequest request(url);
-    networkReply= nam->get(request);
-    if(!networkReply) return;
+    if(isBusy()) return; // do nothing if already busy
+    emit goingBusy(); // set busy
+    QNetworkRequest request(url); // make request
+    networkReply= nam->get(request); // send request
+    if(!networkReply) return; // check if got response
+    // setup signal and callbacks
     connect(networkReply, &QNetworkReply::downloadProgress,
             this, &FileDownloader::downloadProgress);
     connect(networkReply, &QNetworkReply::finished,

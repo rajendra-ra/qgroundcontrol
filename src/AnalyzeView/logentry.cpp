@@ -10,7 +10,8 @@ LogEntry::LogEntry(QString baseUrl, QString name, bool isDir)
 }
 QString
 LogEntry::url()
-{
+{   // get file's url
+    // if url is for directory then append `/` to end of url
     QString _sep = "";
     if(_isDir){
         _sep = "/";

@@ -58,7 +58,6 @@ LogListModel::data(const QModelIndex & index, int role) const {
     if (role == PathRole){
         auto entry = _logEntries[index.row()];
         return QVariant(entry->fullname());
-//        return QVariant::fromValue(_logEntries[index.row()]);
     }
     return QVariant();
 }
