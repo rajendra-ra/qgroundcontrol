@@ -394,6 +394,9 @@ public:
     /// Reboot vehicle
     Q_INVOKABLE void rebootVehicle();
 
+    /// Reboot Component
+    Q_INVOKABLE void rebootComponent(int compId);
+
     /// Clear Messages
     Q_INVOKABLE void clearMessages();
 
@@ -1058,8 +1061,11 @@ private:
     void _chunkedStatusTextCompleted    (uint8_t compId);
     void _setMessageInterval            (int messageId, int rate);
     EventHandler& _eventHandler         (uint8_t compid);
+    // load meta data (DLB Error code Description)
+    void _loadDLBMetaData();
 
     static void _rebootCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
+    static void _rebootCompCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
 
     int     _id;                    ///< Mavlink system id
     int     _defaultComponentId;
@@ -1309,6 +1315,18 @@ private:
 
     QMap<uint8_t /* batteryId */, uint8_t /* MAV_BATTERY_CHARGE_STATE_OK */> _lowestBatteryChargeStateAnnouncedMap;
 
+    // DLB Error Code Mapping
+    // `ERROR_CODE -> Description`
+    QMap<uint16_t, QString> _dlbErrorCodeMetaDataMap;
+    
+    // Enum for XMLParser to check state
+    // to check which element it is reading
+    enum {
+        XmlRoot,
+        XmlEnums,
+        XmlEnum,
+        XmlEntry
+    };
     float _altitudeTuningOffset = qQNaN(); // altitude offset, so the plotted value is around 0
 
     // FactGroup facts

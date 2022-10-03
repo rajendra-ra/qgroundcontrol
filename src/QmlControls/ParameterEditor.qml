@@ -142,6 +142,10 @@ Item {
             text:           qsTr("Reboot Vehicle")
             onTriggered:    mainWindow.showComponentDialog(rebootVehicleConfirmComponent, qsTr("Reboot Vehicle"), mainWindow.showDialogDefaultWidth, StandardButton.Cancel | StandardButton.Ok)
         }
+        QGCMenuItem {
+            text:           qsTr("Reboot Component")
+            onTriggered:    mainWindow.showComponentDialog(rebootComponentConfirmComponent, qsTr("Reboot Component"), mainWindow.showDialogDefaultWidth, StandardButton.Cancel)
+        }
     }
 
     /// Group buttons
@@ -358,6 +362,57 @@ Item {
                 width:              parent.width
                 wrapMode:           Text.WordWrap
                 text:               qsTr("Select Ok to reboot vehicle.")
+            }
+        }
+    }
+
+    Component {
+        id: rebootComponentConfirmComponent
+
+        QGCViewDialog {
+            function accept() {
+                hideDialog()
+                _activeVehicle.rebootVehicle()
+            }
+            QGCFlickable {
+                anchors.fill:   parent
+                contentHeight:      _column.y + _column.height
+                flickableDirection: Flickable.VerticalFlick
+                Column {
+                    id:             _column
+                    spacing:        globals.defaultTextHeight
+                    anchors.left:   parent.left
+                    anchors.right:  parent.right
+                    QGCLabel {
+                        width:              parent.width
+                        wrapMode:           Text.WordWrap
+                        text:               qsTr("Component ID")
+                    }
+                    RowLayout {
+                        spacing:        ScreenTools.defaultFontPixelWidth
+                        anchors.left:   parent.left
+                        anchors.right:  parent.right
+
+                        QGCTextField {
+                            id:                 valueField
+                            text:               "191"
+                            visible:            true
+                            Layout.fillWidth:   true
+                            focus:              true
+                            inputMethodHints:   Qt.ImhFormattedNumbersOnly
+                        }
+
+                        QGCButton {
+                            visible:    true
+                            text:       qsTr("Reboot")
+
+                            onClicked: {
+                                _activeVehicle.rebootComponent(parseInt(valueField.text))
+                                hideDialog()
+                            }
+                        }
+                    }
+                }
             }
         }
     }

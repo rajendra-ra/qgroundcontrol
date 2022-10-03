@@ -473,6 +473,9 @@ void Vehicle::_commonInit()
             _addFactGroup(i.value(), i.key());
         }
     }
+    // load DLB Meta Data such as ERROR code description
+    _loadDLBMetaData();
+
 
     _flightDistanceFact.setRawValue(0);
     _flightTimeFact.setRawValue(0);
@@ -771,7 +774,54 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     case MAVLINK_MSG_ID_RPM:
         _handleRPM(message);
         break;
+    case MAVLINK_MSG_ID_R10_DLB_ERROR:
+    {
+        // dlb error message send via dlb
 
+        mavlink_message_t msg;
+        mavlink_r10_dlb_error_t dlb_error;
+        mavlink_statustext_t st;
+        mavlink_msg_r10_dlb_error_decode(&message,&dlb_error);
+        QString s = "";
+        if(_dlbErrorCodeMetaDataMap.contains(dlb_error.ERROR_CODE)){
+            s = _dlbErrorCodeMetaDataMap.value(dlb_error.ERROR_CODE); // get Error code description from mapping
+        }
+        strcpy(st.text,s.toUtf8().data());
+        st.id = 0;
+        st.chunk_seq = 0;
+        st.severity = MAV_SEVERITY_WARNING;
+        if (dlb_error.ERROR_CODE < 3000)
+            st.severity = MAV_SEVERITY_EMERGENCY;
+        if (dlb_error.ERROR_CODE > 4000)
+            st.severity = MAV_SEVERITY_INFO;
+        mavlink_msg_statustext_encode(_id,_compID,&msg,&st);
+        _handleStatusText(msg); // send to notice board
+    }
+        break;
+    case MAVLINK_MSG_ID_R10_PSDATA_ERROR:
+    {
+        // psdata  dlb error message send via dlb
+
+        mavlink_message_t msg;
+        mavlink_r10_psdata_error_t psdata_error;
+        mavlink_statustext_t st;
+        mavlink_msg_r10_psdata_error_decode(&message,&psdata_error);
+        QString s = "";
+        if(_dlbErrorCodeMetaDataMap.contains(psdata_error.ERROR_CODE)){
+            s = _dlbErrorCodeMetaDataMap.value(psdata_error.ERROR_CODE); // get Error code description from mapping
+        }
+        strcpy(st.text,s.toUtf8().data());
+        st.id = 0;
+        st.chunk_seq = 0;
+        st.severity = MAV_SEVERITY_WARNING;
+        if (psdata_error.ERROR_CODE < 3000)
+            st.severity = MAV_SEVERITY_EMERGENCY;
+        if (psdata_error.ERROR_CODE > 4000)
+            st.severity = MAV_SEVERITY_INFO;
+        mavlink_msg_statustext_encode(_id,_compID,&msg,&st);
+        _handleStatusText(msg); // send to notice board
+    }
+        break;
     case MAVLINK_MSG_ID_EVENT:
     case MAVLINK_MSG_ID_CURRENT_EVENT_SEQUENCE:
     case MAVLINK_MSG_ID_RESPONSE_EVENT_ERROR:
@@ -3308,6 +3358,31 @@ void Vehicle::rebootVehicle()
     sendMavCommandWithHandler(_rebootCommandResultHandler, this, _defaultComponentId, MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN, 1);
 }
 
+void Vehicle::_rebootCompCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode)
+{
+    Q_UNUSED(progress)
+
+    if (commandResult != MAV_RESULT_ACCEPTED) {
+        switch (failureCode) {
+        case MavCmdResultCommandResultOnly:
+            qCDebug(VehicleLog) << QStringLiteral("MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN error(%1)").arg(commandResult);
+            break;
+        case MavCmdResultFailureNoResponseToCommand:
+            qCDebug(VehicleLog) << "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN failed: no response from component";
+            break;
+        case MavCmdResultFailureDuplicateCommand:
+            qCDebug(VehicleLog) << "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN failed: duplicate command";
+            break;
+        }
+        qgcApp()->showAppMessage(tr("Component reboot failed."));
+    }
+}
+
+void Vehicle::rebootComponent(int compId)
+{
+    sendMavCommandWithHandler(_rebootCompCommandResultHandler, this, compId, MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN, 0,0,1,compId);
+}
+
 void Vehicle::startCalibration(Vehicle::CalibrationType calType)
 {
     SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();
@@ -3964,7 +4039,52 @@ void Vehicle::_setMessageInterval(int messageId, int rate)
                    messageId,
                    rate);
 }
-
+/*
+* method to load dlb error description
+*/
+void Vehicle::_loadDLBMetaData()
+{
+    QString metaDataFile = QStringLiteral(":/mavlink/R10_HMS.xml"); // meta data file
+    QFile xmlFile(metaDataFile); //
+    Q_ASSERT(xmlFile.exists());
+    bool success = xmlFile.open(QIODevice::ReadOnly);
+    Q_UNUSED(success);
+    Q_ASSERT(success);
+    QXmlStreamReader xml(xmlFile.readAll()); // initialise
+    xmlFile.close();
+    if (xml.hasError()) {
+        qCWarning(VehicleLog) << "Badly formed XML, reading failed: " << xml.errorString();
+        return;
+    }
+    QStack<int>     xmlState; // stack for xml parser state
+    uint16_t        i;
+    while (!xml.atEnd()) {
+        if (xml.isStartElement() && xml.name() == QLatin1String("mavlink")){
+            xmlState.push(XmlRoot);
+        }
+        else if (xml.isStartElement() && xml.name() == QLatin1String("enums")){
+            if(xmlState.top() == XmlRoot)
+                xmlState.push(XmlEnums);
+        }
+        else if (xml.isStartElement() && xml.name() == QLatin1String("enum")){
+            if(xmlState.top() == XmlEnums)
+                xmlState.push(XmlEnum);
+        }
+        else if (xml.isStartElement() && xml.name() == QLatin1String("entry")){
+            if(xmlState.top() == XmlEnum)
+                xmlState.push(XmlEntry);
+            i = xml.attributes().value("value").toUShort();
+        }
+        else if (xml.isStartElement() && xml.name() == QLatin1String("description")){
+            if(xmlState.top() == XmlEntry){
+                _dlbErrorCodeMetaDataMap.insert(i, xml.readElementText()); // add to meta data mapping
+                xmlState.pop();
+            }
+        }
+        xml.readNext();
+    }
+    xmlState.clear();
+}
 bool Vehicle::isInitialConnectComplete() const
 {
     return !_initialConnectStateMachine->active();
