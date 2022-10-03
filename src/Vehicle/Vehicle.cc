@@ -3308,6 +3308,31 @@ void Vehicle::rebootVehicle()
     sendMavCommandWithHandler(_rebootCommandResultHandler, this, _defaultComponentId, MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN, 1);
 }
 
+void Vehicle::_rebootCompCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode)
+{
+    Q_UNUSED(progress)
+
+    if (commandResult != MAV_RESULT_ACCEPTED) {
+        switch (failureCode) {
+        case MavCmdResultCommandResultOnly:
+            qCDebug(VehicleLog) << QStringLiteral("MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN error(%1)").arg(commandResult);
+            break;
+        case MavCmdResultFailureNoResponseToCommand:
+            qCDebug(VehicleLog) << "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN failed: no response from component";
+            break;
+        case MavCmdResultFailureDuplicateCommand:
+            qCDebug(VehicleLog) << "MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN failed: duplicate command";
+            break;
+        }
+        qgcApp()->showAppMessage(tr("Component reboot failed."));
+    }
+}
+
+void Vehicle::rebootComponent(int compId)
+{
+    sendMavCommandWithHandler(_rebootCompCommandResultHandler, this, compId, MAV_CMD_PREFLIGHT_REBOOT_SHUTDOWN, 0,0,1,compId);
+}
+
 void Vehicle::startCalibration(Vehicle::CalibrationType calType)
 {
     SharedLinkInterfacePtr sharedLink = vehicleLinkManager()->primaryLink().lock();
