@@ -194,13 +194,13 @@ AnalyzePage {
                     rowDelegate: Rectangle {
                         height: 30
                         SystemPalette {
-                              id: myPalette;
-                              colorGroup: SystemPalette.Active
-                       }
-                       color: {
-                          var baseColor = styleData.alternate?myPalette.alternateBase:myPalette.base
-                          return styleData.selected?myPalette.highlight:baseColor
-                       }
+                            id: myPalette;
+                            colorGroup: SystemPalette.Active
+                        }
+                        color: {
+                            var baseColor = styleData.alternate?myPalette.alternateBase:myPalette.base
+                            return styleData.selected?myPalette.highlight:baseColor
+                        }
                     }
 
                     TableViewColumn {
@@ -214,10 +214,9 @@ AnalyzePage {
                             font.pointSize: 13
                             text: modelData?decodeURIComponent(modelData):""
                         }
-
                     }
                     onDoubleClicked: {
-                       let s = listView1.model.get(row)
+                        let s = listView1.model.get(row)
                         if(s.isDir){
                             let x = ""
                             if(addressField.text.endsWith("/")){

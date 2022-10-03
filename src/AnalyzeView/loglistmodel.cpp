@@ -8,6 +8,7 @@ LogListModel::LogListModel(QObject *parent)
 LogEntry*
 LogListModel::get(int index)
 {
+    // return entry; if out of index then return null
     if (index < 0 || index >= _logEntries.count()) {
         return nullptr;
     }
@@ -16,20 +17,24 @@ LogListModel::get(int index)
 int
 LogListModel::count() const
 {
+    // return entries count
     return _logEntries.count();
 }
 void
 LogListModel::append(LogEntry* object)
 {
+    // inser entries to model
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     QQmlEngine::setObjectOwnership(object, QQmlEngine::CppOwnership);
     _logEntries.append(object);
     endInsertRows();
+    // notify of change
     emit countChanged();
 }
 void
 LogListModel::clear(void)
 {
+    // clear all entries from model
     if(!_logEntries.isEmpty()) {
         beginRemoveRows(QModelIndex(), 0, _logEntries.count());
         while (_logEntries.count()) {
@@ -44,6 +49,7 @@ LogListModel::clear(void)
 LogEntry*
 LogListModel::operator[](int index)
 {
+    // operator overload to get entry
     return get(index);
 }
 int
@@ -53,6 +59,7 @@ LogListModel::rowCount(const QModelIndex& /*parent*/) const
 }
 QVariant
 LogListModel::data(const QModelIndex & index, int role) const {
+    // data to display in list
     if (index.row() < 0 || index.row() >= _logEntries.count())
         return QVariant();
     if (role == PathRole){
