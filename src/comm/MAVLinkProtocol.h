@@ -63,6 +63,15 @@ public:
     unsigned getCurrentVersion() const{
         return _current_version;
     }
+    /** @brief store link signing info */
+    mavlink_signing_streams_t signing_streams;
+    
+    /** @brief callback to ignore signing on specific messages */
+    static bool accept_unsigned_callback(const mavlink_status_t *status, uint32_t msgId)
+    {
+        Q_UNUSED(status);
+        return msgId == MAVLINK_MSG_ID_RADIO_STATUS || msgId == MAVLINK_MSG_ID_HEARTBEAT || msgId == MAVLINK_MSG_ID_PARAM_VALUE;
+    }
     /**
      * Reset the counters for all metadata for this link.
      */

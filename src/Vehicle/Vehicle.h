@@ -271,6 +271,7 @@ public:
     Q_PROPERTY(bool     roiModeSupported        READ roiModeSupported                               CONSTANT)                   ///< Orbit mode is supported by this vehicle
     Q_PROPERTY(bool     takeoffVehicleSupported READ takeoffVehicleSupported                        CONSTANT)                   ///< Guided takeoff supported
     Q_PROPERTY(QString  gotoFlightMode          READ gotoFlightMode                                 CONSTANT)                   ///< Flight mode vehicle is in while performing goto
+    Q_PROPERTY(QString  keyFile                 READ keyFile                                        NOTIFY keyFileChanged)      ///< key file changed
 
     Q_PROPERTY(ParameterManager*        parameterManager    READ parameterManager   CONSTANT)
     Q_PROPERTY(VehicleLinkManager*      vehicleLinkManager  READ vehicleLinkManager CONSTANT)
@@ -433,6 +434,18 @@ public:
     /// Trigger camera using MAV_CMD_DO_DIGICAM_CONTROL command
     Q_INVOKABLE void triggerSimpleCamera(void);
 
+    /// setup signing using SETUP_SIGNING message
+    Q_INVOKABLE void setupSigning(void);
+
+    /// enable signing
+    Q_INVOKABLE void enableSigning(void);
+
+    /// reset signing
+    Q_INVOKABLE void resetSigning(void);
+
+    /// choose file
+    Q_INVOKABLE void chooseFile(const QUrl& url);
+
 #if !defined(NO_ARDUPILOT_DIALECT)
     Q_INVOKABLE void flashBootloader();
 #endif
@@ -444,6 +457,7 @@ public:
     bool    roiModeSupported        () const;
     bool    takeoffVehicleSupported () const;
     QString gotoFlightMode          () const;
+    QString keyFile                 () const; // getter for key file path
 
     // Property accessors
 
@@ -944,6 +958,7 @@ signals:
     void initialConnectComplete         ();
 
     void sensorsParametersResetAck      (bool success);
+    void keyFileChanged                 (QString keyFile); // key file change signal
 
 private slots:
     void _mavlinkMessageReceived            (LinkInterface* link, mavlink_message_t message);
@@ -1038,7 +1053,12 @@ private:
     int     _id;                    ///< Mavlink system id
     int     _defaultComponentId;
     bool    _offlineEditingVehicle = false; ///< true: This Vehicle is a "disconnected" vehicle for ui use while offline editing
-
+    typedef struct __secret_key_t {
+     QString value; /*<  key*/
+    } secret_key_t;
+    secret_key_t _key;
+    QString _keyFile; // key file path
+    mavlink_setup_signing_t _setupSigning; // intermidiate variable to store key and timestamp
     MAV_AUTOPILOT       _firmwareType;
     MAV_TYPE            _vehicleType;
     FirmwarePlugin*     _firmwarePlugin = nullptr;
