@@ -304,6 +304,10 @@ public:
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
     Q_PROPERTY(Fact* throttlePct        READ throttlePct        CONSTANT)
 
+//    Q_PROPERTY(Fact* fuelLevel          READ fuelLevel          CONSTANT)
+    Q_PROPERTY(Fact* engineRPM          READ engineRPM          CONSTANT)
+    Q_PROPERTY(Fact* rotorRPM           READ rotorRPM           CONSTANT)
+
     Q_PROPERTY(FactGroup*           gps             READ gpsFactGroup               CONSTANT)
     Q_PROPERTY(FactGroup*           gps2            READ gps2FactGroup              CONSTANT)
     Q_PROPERTY(FactGroup*           wind            READ windFactGroup              CONSTANT)
@@ -663,6 +667,11 @@ public:
     Fact* distanceToGCS                     () { return &_distanceToGCSFact; }
     Fact* hobbs                             () { return &_hobbsFact; }
     Fact* throttlePct                       () { return &_throttlePctFact; }
+    /// fuel level
+//    Fact* fuelLevel                      () { return &_fuelLevelFact; }
+    /// rpm
+    Fact* engineRPM                      () { return &_engineRPMFact; }
+    Fact* rotorRPM                      () { return &_rotorRPMFact; }
 
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
     FactGroup* gps2FactGroup                () { return &_gps2FactGroup; }
@@ -1021,6 +1030,8 @@ private:
     void _handleObstacleDistance        (const mavlink_message_t& message);
     void _handleEvent(uint8_t comp_id, std::unique_ptr<events::parser::ParsedEvent> event);
     // ArduPilot dialect messages
+    void _handleRPM                     (mavlink_message_t& message);
+
 #if !defined(NO_ARDUPILOT_DIALECT)
     void _handleCameraFeedback          (const mavlink_message_t& message);
 #endif
@@ -1326,6 +1337,9 @@ private:
     Fact _distanceToGCSFact;
     Fact _hobbsFact;
     Fact _throttlePctFact;
+//    Fact _fuelLevelFact;
+    Fact _engineRPMFact;
+    Fact _rotorRPMFact;
 
     VehicleGPSFactGroup             _gpsFactGroup;
     VehicleGPS2FactGroup            _gps2FactGroup;
@@ -1378,6 +1392,10 @@ private:
     static const char* _distanceToGCSFactName;
     static const char* _hobbsFactName;
     static const char* _throttlePctFactName;
+
+//    static const char*  _fuelLevelFactName;
+    static const char*  _engineRPMFactName;
+    static const char*  _rotorRPMFactName;
 
     static const char* _gpsFactGroupName;
     static const char* _gps2FactGroupName;

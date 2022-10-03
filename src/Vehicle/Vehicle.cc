@@ -96,6 +96,9 @@ const char* Vehicle::_distanceToGCSFactName =       "distanceToGCS";
 const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
 
+const char*  Vehicle::_engineRPMFactName =          "engineRPM";
+const char*  Vehicle::_rotorRPMFactName =           "rotorRPM";
+
 const char* Vehicle::_gpsFactGroupName =                "gps";
 const char* Vehicle::_gps2FactGroupName =               "gps2";
 const char* Vehicle::_windFactGroupName =               "wind";
@@ -156,6 +159,10 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _distanceToGCSFact            (0, _distanceToGCSFactName,     FactMetaData::valueTypeDouble)
     , _hobbsFact                    (0, _hobbsFactName,             FactMetaData::valueTypeString)
     , _throttlePctFact              (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
+
+//    , _fuelLevelFact                    (0, _fuelLevelFactName,         FactMetaData::valueTypeInt32)
+    , _engineRPMFact                    (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
+    , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)
     , _gpsFactGroup                 (this)
     , _gps2FactGroup                (this)
     , _windFactGroup                (this)
@@ -310,6 +317,9 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _distanceToGCSFact                (0, _distanceToGCSFactName,     FactMetaData::valueTypeDouble)
     , _hobbsFact                        (0, _hobbsFactName,             FactMetaData::valueTypeString)
     , _throttlePctFact                  (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
+//    , _fuelLevelFact                    (0, _fuelLevelFactName,         FactMetaData::valueTypeInt32)
+    , _engineRPMFact                    (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
+    , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)
     , _gpsFactGroup                     (this)
     , _gps2FactGroup                    (this)
     , _windFactGroup                    (this)
@@ -431,6 +441,10 @@ void Vehicle::_commonInit()
     _addFact(&_headingToHomeFact,       _headingToHomeFactName);
     _addFact(&_distanceToGCSFact,       _distanceToGCSFactName);
     _addFact(&_throttlePctFact,         _throttlePctFactName);
+
+//    _addFact(&_fuelLevelFact,           _fuelLevelFactName);
+    _addFact(&_rotorRPMFact,            _rotorRPMFactName);
+    _addFact(&_engineRPMFact,           _engineRPMFactName);
 
     _hobbsFact.setRawValue(QVariant(QString("0000:00:00")));
     _addFact(&_hobbsFact,               _hobbsFactName);
@@ -754,6 +768,9 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
     case MAVLINK_MSG_ID_OBSTACLE_DISTANCE:
         _handleObstacleDistance(message);
         break;
+    case MAVLINK_MSG_ID_RPM:
+        _handleRPM(message);
+        break;
 
     case MAVLINK_MSG_ID_EVENT:
     case MAVLINK_MSG_ID_CURRENT_EVENT_SEQUENCE:
@@ -1040,6 +1057,15 @@ void Vehicle::_handleAttitudeWorker(double rollRadians, double pitchRadians, dou
     _rollFact.setRawValue(roll);
     _pitchFact.setRawValue(pitch);
     _headingFact.setRawValue(yaw);
+}
+
+// RPM message handler: parse RPM message and update stored rmp values.
+void Vehicle::_handleRPM(mavlink_message_t& message)
+{
+    mavlink_rpm_t rpm;
+    mavlink_msg_rpm_decode(&message, &rpm);
+    _engineRPMFact.setRawValue(rpm.rpm2);
+    _rotorRPMFact.setRawValue(rpm.rpm1);
 }
 
 void Vehicle::_handleAttitude(mavlink_message_t& message)
