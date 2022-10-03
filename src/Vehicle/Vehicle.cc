@@ -2038,7 +2038,7 @@ QString Vehicle::formattedMessages()
     }
     return messages;
 }
-
+// getter for all component messages accessible from ui..
 QString Vehicle::componentMessages()
 {
     QString messages;
