@@ -1075,7 +1075,7 @@ CompMessage* Vehicle::_formatTextMessage(int compId, int severity, QString text)
     CompMessage* message = new CompMessage(compId, severity, text);
 
     // prepare formatted string to display
-    message->_setFormatedText(QString("<font style=\"%1\">[%2]%4 %5</font><br/>").arg(style).arg(dateString).arg(severityText).arg(text));
+    message->_setFormatedText(QString("<font style=\"%1\">[%2]%3 %4</font><br/>").arg(style).arg(dateString).arg(severityText).arg(text));
 
     // increment component message count and signal its change
     _compMessageCount++;
