@@ -33,12 +33,6 @@
         </values>
         <field name="Bitmask">0:Feedback from mid stick,1:High throttle cancels landing,2:Disarm on land detection</field>
       </param>
-      <param humanName="Telemetry startup delay" name="ArduCopter:TELEM_DELAY" documentation="The amount of time (in seconds) to delay radio telemetry to prevent an Xbee bricking on power up" user="Advanced">
-        <field name="Units">s</field>
-        <field name="UnitText">seconds</field>
-        <field name="Range">0 30</field>
-        <field name="Increment">1</field>
-      </param>
       <param humanName="GCS PID tuning mask" name="ArduCopter:GCS_PID_MASK" documentation="bitmask of PIDs to send MAVLink PID_TUNING messages for" user="Advanced">
         <values>
           <value code="0">None</value>
@@ -725,6 +719,11 @@
     </parameters>
   </vehicles>
   <libraries>
+    <parameters name="R10">
+      <param humanName="Bitmask to set R10 component usage" name="R10_COMP_EN_MSK" documentation="Set r10 use using the bitmask" user="Advanced">
+        <field name="Bitmask">0:DLB,1:OBC,2:ESP</field>
+      </param>
+    </parameters>
     <parameters name="ADSB_">
       <param humanName="ADSB Type" name="ADSB_TYPE" documentation="Type of ADS-B hardware for ADSB-in and ADSB-out configuration and operation. If any type is selected then MAVLink based ADSB-in messages will always be enabled" user="Standard">
         <values>
@@ -826,7 +825,7 @@
         <field name="UnitText">meters</field>
       </param>
       <param humanName="ICAO_ID of special vehicle" name="ADSB_ICAO_SPECL" documentation="ICAO_ID of special vehicle that ignores ADSB_LIST_RADIUS and ADSB_LIST_ALT. The vehicle is always tracked. Use 0 to disable." user="Advanced">
-</param>
+      </param>
       <param humanName="ADS-B logging" name="ADSB_LOG" documentation="0: no logging, 1: log only special ID, 2:log all" user="Advanced">
         <values>
           <value code="0">no logging</value>
@@ -840,9 +839,9 @@
     </parameters>
     <parameters name="AFS_">
       <param humanName="Enable Advanced Failsafe" name="AFS_ENABLE" documentation="This enables the advanced failsafe system. If this is set to zero (disable) then all the other AFS options have no effect" user="Advanced">
-</param>
+      </param>
       <param humanName="Manual Pin" name="AFS_MAN_PIN" documentation="This sets a digital output pin to set high when in manual mode" user="Advanced">
-</param>
+      </param>
       <param humanName="Heartbeat Pin" name="AFS_HB_PIN" documentation="This sets a digital output pin which is cycled at 10Hz when termination is not activated. Note that if a FS_TERM_PIN is set then the heartbeat pin will continue to cycle at 10Hz when termination is activated, to allow the termination board to distinguish between autopilot crash and termination." user="Advanced">
         <values>
           <value code="-1">Disabled</value>
@@ -859,13 +858,13 @@
         </values>
       </param>
       <param humanName="Comms Waypoint" name="AFS_WP_COMMS" documentation="Waypoint number to navigate to on comms loss" user="Advanced">
-</param>
+      </param>
       <param humanName="GPS Loss Waypoint" name="AFS_WP_GPS_LOSS" documentation="Waypoint number to navigate to on GPS lock loss" user="Advanced">
-</param>
+      </param>
       <param humanName="Force Terminate" name="AFS_TERMINATE" documentation="Can be set in flight to force termination of the heartbeat signal" user="Advanced">
-</param>
+      </param>
       <param humanName="Terminate action" name="AFS_TERM_ACTION" documentation="This can be used to force an action on flight termination. Normally this is handled by an external failsafe board, but you can setup ArduPilot to handle it here. Please consult the wiki for more information on the possible values of the parameter" user="Advanced">
-</param>
+      </param>
       <param humanName="Terminate Pin" name="AFS_TERM_PIN" documentation="This sets a digital output pin to set high on flight termination" user="Advanced">
         <values>
           <value code="-1">Disabled</value>
@@ -894,17 +893,17 @@
         <field name="UnitText">hectopascal</field>
       </param>
       <param humanName="Maximum number of GPS loss events" name="AFS_MAX_GPS_LOSS" documentation="Maximum number of GPS loss events before the aircraft stops returning to mission on GPS recovery. Use zero to allow for any number of GPS loss events." user="Advanced">
-</param>
+      </param>
       <param humanName="Maximum number of comms loss events" name="AFS_MAX_COM_LOSS" documentation="Maximum number of comms loss events before the aircraft stops returning to mission on comms recovery. Use zero to allow for any number of comms loss events." user="Advanced">
-</param>
+      </param>
       <param humanName="Enable geofence Advanced Failsafe" name="AFS_GEOFENCE" documentation="This enables the geofence part of the AFS. Will only be in effect if AFS_ENABLE is also 1" user="Advanced">
-</param>
+      </param>
       <param humanName="Enable RC Advanced Failsafe" name="AFS_RC" documentation="This enables the RC part of the AFS. Will only be in effect if AFS_ENABLE is also 1" user="Advanced">
-</param>
+      </param>
       <param humanName="Enable RC Termination only in manual control modes" name="AFS_RC_MAN_ONLY" documentation="If this parameter is set to 1, then an RC loss will only cause the plane to terminate in manual control modes. If it is 0, then the plane will terminate in any flight mode." user="Advanced">
-</param>
+      </param>
       <param humanName="Enable dual loss terminate due to failure of both GCS and GPS simultaneously" name="AFS_DUAL_LOSS" documentation="This enables the dual loss termination part of the AFS system. If this parameter is 1 and both GPS and the ground control station fail simultaneously, this will be considered a &quot;dual loss&quot; and cause termination." user="Advanced">
-</param>
+      </param>
       <param humanName="RC failure time" name="AFS_RC_FAIL_TIME" documentation="This is the time in seconds in manual mode that failsafe termination will activate if RC input is lost. For the OBC rules this should be (1.5). Use 0 to disable." user="Advanced">
         <field name="Units">s</field>
         <field name="UnitText">seconds</field>
@@ -7015,79 +7014,6 @@
         <field name="Units">%</field>
         <field name="UnitText">percent</field>
         <field name="Increment">1</field>
-      </param>
-    </parameters>
-    <parameters name="ICE_">
-      <param humanName="Enable ICEngine control" name="ICE_ENABLE" documentation="This enables internal combustion engine control" user="Advanced">
-        <values>
-          <value code="0">Disabled</value>
-          <value code="1">Enabled</value>
-        </values>
-      </param>
-      <param humanName="Input channel for engine start" name="ICE_START_CHAN" documentation="This is an RC input channel for requesting engine start. Engine will try to start when channel is at or above 1700. Engine will stop when channel is at or below 1300. Between 1301 and 1699 the engine will not change state unless a MAVLink command or mission item commands a state change, or the vehicle is disarmed. See ICE_STARTCHN_MIN parameter to change engine stop PWM value and/or to enable debouncing of the START_CH to avoid accidental engine kills due to noise on channel." user="Standard">
-        <values>
-          <value code="0">None</value>
-          <value code="1">Chan1</value>
-          <value code="2">Chan2</value>
-          <value code="3">Chan3</value>
-          <value code="4">Chan4</value>
-          <value code="5">Chan5</value>
-          <value code="6">Chan6</value>
-          <value code="7">Chan7</value>
-          <value code="8">Chan8</value>
-          <value code="9">Chan9</value>
-          <value code="10">Chan10</value>
-          <value code="11">Chan11</value>
-          <value code="12">Chan12</value>
-          <value code="13">Chan13</value>
-          <value code="14">Chan14</value>
-          <value code="15">Chan15</value>
-          <value code="16">Chan16</value>
-        </values>
-      </param>
-      <param humanName="Time to run starter" name="ICE_STARTER_TIME" documentation="This is the number of seconds to run the starter when trying to start the engine" user="Standard">
-        <field name="Units">s</field>
-        <field name="UnitText">seconds</field>
-        <field name="Range">0.1 5</field>
-      </param>
-      <param humanName="Time to wait between starts" name="ICE_START_DELAY" documentation="Delay between start attempts" user="Standard">
-        <field name="Units">s</field>
-        <field name="UnitText">seconds</field>
-        <field name="Range">1 10</field>
-      </param>
-      <param humanName="RPM threshold" name="ICE_RPM_THRESH" documentation="This is the measured RPM above which the engine is considered to be running" user="Standard">
-        <field name="Range">100 100000</field>
-      </param>
-      <param humanName="RPM instance channel to use" name="ICE_RPM_CHAN" documentation="This is which of the RPM instances to use for detecting the RPM of the engine" user="Standard">
-        <values>
-          <value code="0">None</value>
-          <value code="1">RPM1</value>
-          <value code="2">RPM2</value>
-        </values>
-      </param>
-      <param humanName="Throttle percentage for engine start" name="ICE_START_PCT" documentation="This is the percentage throttle output for engine start" user="Standard">
-        <field name="Range">0 100</field>
-      </param>
-      <param humanName="Throttle percentage for engine idle" name="ICE_IDLE_PCT" documentation="This is the minimum percentage throttle output while running, this includes being disarmed, but not safe" user="Standard">
-        <field name="Range">0 100</field>
-      </param>
-      <param humanName="RPM Setpoint for Idle Governor" name="ICE_IDLE_RPM" documentation="This configures the RPM that will be commanded by the idle governor. Set to -1 to disable" user="Advanced">
-</param>
-      <param humanName="Deadband for Idle Governor" name="ICE_IDLE_DB" documentation="This configures the deadband that is tolerated before adjusting the idle setpoint">
-</param>
-      <param humanName="Slew Rate for idle control" name="ICE_IDLE_SLEW" documentation="This configures the slewrate used to adjust the idle setpoint in percentage points per second">
-</param>
-      <param humanName="ICE options" name="ICE_OPTIONS" documentation="Options for ICE control">
-        <field name="Bitmask">0:DisableIgnitionRCFailsafe</field>
-      </param>
-      <param humanName="Input channel for engine start minimum PWM" name="ICE_STARTCHN_MIN" documentation="This is a minimum PWM value for engine start channel for an engine stop to be commanded. Setting this value will avoid RC input glitches with low PWM values from causing an unwanted engine stop. A value of zero means any PWM below 1300 triggers an engine stop." user="Standard">
-        <field name="Range">0 1300</field>
-      </param>
-      <param humanName="GPIO pin for Starter trigger" name="ICE_STARTER_GPIO" documentation="This configures the GPIO to be used to trigger the Starter" user="Standard">
-        <field name="Range">101 108</field>
-      </param>
-      <param humanName="GPIO pin for Ignition trigger" name="ICE_IGNTN_GPIO" documentation="This configures the GPIO to be used to trigger the Starter" user="Standard">
-        <field name="Range">101 108</field>
       </param>
     </parameters>
     <parameters name="IM_">

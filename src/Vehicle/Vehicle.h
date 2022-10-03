@@ -85,6 +85,43 @@ class ParsedEvent;
 
 Q_DECLARE_LOGGING_CATEGORY(VehicleLog)
 
+/**
+ * @brief The CompMessage class to store component error message data
+ */
+class CompMessage
+{
+    friend class Vehicle;
+public:
+    /**
+     * @brief Get message source component ID
+     */
+    int getComponentID() const       { return _compId; }
+    /**
+     * @brief Get message severity (from MAV_SEVERITY_XXX enum)
+     */
+    int getSeverity() const          { return _severity; }
+    /**
+     * @brief Get message text (e.g. "[pm] sending list")
+     */
+    QString getText()           { return _text; }
+    /**
+     * @brief Get (html) formatted text (in the form: "[11:44:21.137 - COMP:50] Info: [pm] sending list")
+     */
+    QString getFormatedText()   { return _formatedText; }
+    /**
+     * @return true: This message is a of a severity which is considered an error
+     */
+    bool severityIsError() const;
+
+private:
+    CompMessage(int componentid, int severity, QString text);
+    void _setFormatedText(const QString formatedText) { _formatedText = formatedText; }
+    int _compId;
+    int _severity;
+    QString _text;
+    QString _formatedText;
+};
+
 class Vehicle : public FactGroup
 {
     Q_OBJECT
@@ -175,9 +212,12 @@ public:
     Q_PROPERTY(bool                 messageTypeNormal           READ messageTypeNormal                                              NOTIFY messageTypeChanged)
     Q_PROPERTY(bool                 messageTypeWarning          READ messageTypeWarning                                             NOTIFY messageTypeChanged)
     Q_PROPERTY(bool                 messageTypeError            READ messageTypeError                                               NOTIFY messageTypeChanged)
+    Q_PROPERTY(int                  compMessageType             READ compMessageType                                                NOTIFY compMessageTypeChanged)
     Q_PROPERTY(int                  newMessageCount             READ newMessageCount                                                NOTIFY newMessageCountChanged)
     Q_PROPERTY(int                  messageCount                READ messageCount                                                   NOTIFY messageCountChanged)
     Q_PROPERTY(QString              formattedMessages           READ formattedMessages                                              NOTIFY formattedMessagesChanged)
+    Q_PROPERTY(int                  compMessageCount            READ compMessageCount                                               NOTIFY compMessageCountChanged)
+    Q_PROPERTY(QString              componentMessages           READ componentMessages                                              NOTIFY componentMessagesChanged)
     Q_PROPERTY(QString              latestError                 READ latestError                                                    NOTIFY latestErrorChanged)
     Q_PROPERTY(bool                 joystickEnabled             READ joystickEnabled            WRITE setJoystickEnabled            NOTIFY joystickEnabledChanged)
     Q_PROPERTY(int                  flowImageIndex              READ flowImageIndex                                                 NOTIFY flowImageIndexChanged)
@@ -344,6 +384,9 @@ public:
     // Called when the message drop-down is invoked to clear current count
     Q_INVOKABLE void resetMessages();
 
+    // Called when the message drop-down is invoked to clear current count
+    Q_INVOKABLE void resetComponentMessages();
+
     Q_INVOKABLE void virtualTabletJoystickValue(double roll, double pitch, double yaw, double thrust);
 
     /// Command vehicle to return to launch
@@ -400,6 +443,9 @@ public:
 
     /// Clear Messages
     Q_INVOKABLE void clearMessages();
+
+    /// Clear Component Messages
+    Q_INVOKABLE void clearComponentMessages();
 
     Q_INVOKABLE void sendPlan(QString planFile);
 
@@ -565,9 +611,12 @@ public:
     bool            messageTypeNormal           () { return _currentMessageType == MessageNormal; }
     bool            messageTypeWarning          () { return _currentMessageType == MessageWarning; }
     bool            messageTypeError            () { return _currentMessageType == MessageError; }
+    int             compMessageType             () { return _currentCompMessageType; }
     int             newMessageCount             () const{ return _currentMessageCount; }
     int             messageCount                () const{ return _messageCount; }
+    int             compMessageCount            () const{ return _compMessageCount; }
     QString         formattedMessages           ();
+    QString         componentMessages           ();
     QString         latestError                 () { return _latestError; }
     float           latitude                    () { return static_cast<float>(_coordinate.latitude()); }
     float           longitude                   () { return static_cast<float>(_coordinate.longitude()); }
@@ -899,10 +948,14 @@ signals:
     void messagesSentChanged            ();
     void messagesLostChanged            ();
     void messageTypeChanged             ();
+    void compMessageTypeChanged         ();
     void newMessageCountChanged         ();
+    void compMessageCountChanged        ();
     void messageCountChanged            ();
     void formattedMessagesChanged       ();
+    void componentMessagesChanged       ();
     void newFormattedMessage            (QString formattedMessage);
+    void newComponentMessage            (QString formattedMessage);
     void latestErrorChanged             ();
     void longitudeChanged               ();
     void currentConfigChanged           ();
@@ -1031,6 +1084,7 @@ private:
     void _handleAttitude                (mavlink_message_t& message);
     void _handleAttitudeQuaternion      (mavlink_message_t& message);
     void _handleStatusText              (mavlink_message_t& message);
+    void _handleComponentMessage        (mavlink_message_t& message); // handler to handle dlb error messages
     void _handleOrbitExecutionStatus    (const mavlink_message_t& message);
     void _handleGimbalOrientation       (const mavlink_message_t& message);
     void _handleObstacleDistance        (const mavlink_message_t& message);
@@ -1070,6 +1124,11 @@ private:
     int _obcHeartbeatCount = 0; // obc missed heartbeat counter
     int _dlbHeartbeatCount = 0; // dlb missed heartbeat counter
 
+    // store all dlb error messages
+    QVector<CompMessage*>    _compMessages;
+    // formatting dlb error messages
+    CompMessage* _formatTextMessage                  (int compId, int severity, QString text);
+
     static void _rebootCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
     static void _rebootCompCommandResultHandler(void* resultHandlerData, int compId, MAV_RESULT commandResult, uint8_t progress, MavCmdResultFailureCode_t failureCode);
 
@@ -1106,10 +1165,12 @@ private:
     UASInterface*   _mav = nullptr;
     int             _currentMessageCount = 0;
     int             _messageCount = 0;
+    int             _compMessageCount = 0;
     int             _currentErrorCount = 0;
     int             _currentWarningCount = 0;
     int             _currentNormalCount = 0;
     MessageType_t   _currentMessageType = MessageNone;
+    MessageType_t   _currentCompMessageType = MessageNone;
     QString         _latestError;
     int             _updateCount = 0;
     int             _rcRSSI = 255;
