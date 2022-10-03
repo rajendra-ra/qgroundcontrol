@@ -170,6 +170,7 @@
         <file alias="Signal40.svg">src/ui/toolbar/Images/Signal40.svg</file>
         <file alias="Signal60.svg">src/ui/toolbar/Images/Signal60.svg</file>
         <file alias="Signal80.svg">src/ui/toolbar/Images/Signal80.svg</file>
+        <file alias="Soundwave.svg">src/ui/toolbar/Images/Soundwave.svg</file>
         <file alias="StationMode.svg">src/AutoPilotPlugins/Common/Images/StationMode.svg</file>
         <file alias="SubFrameComponentIcon.png">src/AutoPilotPlugins/APM/Images/SubFrameComponentIcon.png</file>
         <file alias="subMenuButtonImage.png">resources/CogWheels.png</file>

@@ -25,6 +25,8 @@ public:
     Q_PROPERTY(Fact* clipCount1 READ clipCount1 CONSTANT)
     Q_PROPERTY(Fact* clipCount2 READ clipCount2 CONSTANT)
     Q_PROPERTY(Fact* clipCount3 READ clipCount3 CONSTANT)
+    // vibration threshold interface to ui
+    Q_PROPERTY(Fact* vibeThreshold      READ vibeThreshold      CONSTANT)
 
     Fact* xAxis         () { return &_xAxisFact; }
     Fact* yAxis         () { return &_yAxisFact; }
@@ -32,6 +34,8 @@ public:
     Fact* clipCount1    () { return &_clipCount1Fact; }
     Fact* clipCount2    () { return &_clipCount2Fact; }
     Fact* clipCount3    () { return &_clipCount3Fact; }
+    // getter: vibration threshold
+    Fact* vibeThreshold         () { return &_vibeThresholdFact; }
 
     // Overrides from FactGroup
     void handleMessage(Vehicle* vehicle, mavlink_message_t& message) override;
@@ -42,6 +46,8 @@ public:
     static const char* _clipCount1FactName;
     static const char* _clipCount2FactName;
     static const char* _clipCount3FactName;
+    // vibration threshold fact name variable
+    static const char* _vibeThresholdFactName;
 
 private:
     Fact        _xAxisFact;
@@ -50,4 +56,6 @@ private:
     Fact        _clipCount1Fact;
     Fact        _clipCount2Fact;
     Fact        _clipCount3Fact;
+    // vibration threshold fact variable
+    Fact        _vibeThresholdFact;
 };
