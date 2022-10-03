@@ -5113,79 +5113,6 @@
         <field name="UnitText">hertz</field>
       </param>
     </parameters>
-    <parameters name="DLB_">
-      <param humanName="Enables IMU 1 module" name="DLB_IMU1_ENB" documentation="Enables IMU 1 module" user="Advanced">
-        <values>
-          <value code="0">Disabled</value>
-          <value code="1">Enabled</value>
-        </values>
-        <field name="Bitmask">0:Enable</field>
-      </param>
-      <param humanName="IMU1 Accelerometer Range" name="DLB_IMU1_ACC_RNG" documentation="Select range of accelerometer in terms of g(acceleration due to gravity)" user="Advanced">
-        <values>
-          <value code="2">2</value>
-          <value code="4">4</value>
-          <value code="8">8</value>
-          <value code="16">16</value>
-        </values>
-        <field name="Units">g</field>
-      </param>
-      <param humanName="IMU1 Sampling Rate" name="DLB_IMU1_SMPLRT" documentation="Change sampling rate of IMU 1" user="Advanced">
-        <values>
-          <value code="1">1</value>
-          <value code="4">4</value>
-        </values>
-        <field name="Units">kHz</field>
-      </param>
-      <param humanName="Enables IMU 2 module" name="DLB_IMU2_ENB" documentation="Enables IMU 2 module" user="Advanced">
-        <values>
-          <value code="0">Disabled</value>
-          <value code="1">Enabled</value>
-        </values>
-        <field name="Bitmask">0:Enable</field>
-      </param>
-      <param humanName="IMU2 Accelerometer Range" name="DLB_IMU2_ACC_RNG" documentation="Select range of accelerometer in terms of g(acceleration due to gravity)" user="Advanced">
-        <values>
-          <value code="2">2</value>
-          <value code="4">4</value>
-          <value code="8">8</value>
-          <value code="16">16</value>
-        </values>
-        <field name="Units">g</field>
-      </param>
-      <param humanName="IMU2 Sampling Rate" name="DLB_IMU2_SMPLRT" documentation="Change sampling rate of IMU 2" user="Advanced">
-        <values>
-          <value code="1">1</value>
-          <value code="4">4</value>
-        </values>
-        <field name="Units">kHz</field>
-      </param>
-      <param humanName="Enables Debug Mode" name="DLB_DEBUG_MODE" documentation="Enables Debug Mode" user="Advanced">
-        <values>
-          <value code="0">Disabled</value>
-          <value code="1">Enabled</value>
-        </values>
-        <field name="Bitmask">0:Enable</field>
-      </param>
-      <param humanName="DLB Baud Rate" name="DLB_UART_BAUD" documentation="DLB Baud Rate" user="Advanced">
-          <values>
-            <value code="2400">2400</value>
-            <value code="4800">4800</value>
-            <value code="9600">9600</value>
-            <value code="19200">19200</value>
-            <value code="38400">38400</value>
-            <value code="57600">57600</value>
-            <value code="111100">111100</value>
-            <value code="115200">115200</value>
-            <value code="230400">230400</value>
-            <value code="256000">256000</value>
-            <value code="460800">460800</value>
-            <value code="500000">500000</value>
-            <value code="921600">921600</value>
-            <value code="1500000">1500000</value>
-          </values>
-      </param>
-    </parameters>
     <parameters name="EFI">
       <param humanName="EFI communication type" name="EFI_TYPE" documentation="What method of communication is used for EFI #1" user="Advanced">
         <values>
@@ -7088,6 +7015,79 @@
         <field name="Units">%</field>
         <field name="UnitText">percent</field>
         <field name="Increment">1</field>
+      </param>
+    </parameters>
+    <parameters name="ICE_">
+      <param humanName="Enable ICEngine control" name="ICE_ENABLE" documentation="This enables internal combustion engine control" user="Advanced">
+        <values>
+          <value code="0">Disabled</value>
+          <value code="1">Enabled</value>
+        </values>
+      </param>
+      <param humanName="Input channel for engine start" name="ICE_START_CHAN" documentation="This is an RC input channel for requesting engine start. Engine will try to start when channel is at or above 1700. Engine will stop when channel is at or below 1300. Between 1301 and 1699 the engine will not change state unless a MAVLink command or mission item commands a state change, or the vehicle is disarmed. See ICE_STARTCHN_MIN parameter to change engine stop PWM value and/or to enable debouncing of the START_CH to avoid accidental engine kills due to noise on channel." user="Standard">
+        <values>
+          <value code="0">None</value>
+          <value code="1">Chan1</value>
+          <value code="2">Chan2</value>
+          <value code="3">Chan3</value>
+          <value code="4">Chan4</value>
+          <value code="5">Chan5</value>
+          <value code="6">Chan6</value>
+          <value code="7">Chan7</value>
+          <value code="8">Chan8</value>
+          <value code="9">Chan9</value>
+          <value code="10">Chan10</value>
+          <value code="11">Chan11</value>
+          <value code="12">Chan12</value>
+          <value code="13">Chan13</value>
+          <value code="14">Chan14</value>
+          <value code="15">Chan15</value>
+          <value code="16">Chan16</value>
+        </values>
+      </param>
+      <param humanName="Time to run starter" name="ICE_STARTER_TIME" documentation="This is the number of seconds to run the starter when trying to start the engine" user="Standard">
+        <field name="Units">s</field>
+        <field name="UnitText">seconds</field>
+        <field name="Range">0.1 5</field>
+      </param>
+      <param humanName="Time to wait between starts" name="ICE_START_DELAY" documentation="Delay between start attempts" user="Standard">
+        <field name="Units">s</field>
+        <field name="UnitText">seconds</field>
+        <field name="Range">1 10</field>
+      </param>
+      <param humanName="RPM threshold" name="ICE_RPM_THRESH" documentation="This is the measured RPM above which the engine is considered to be running" user="Standard">
+        <field name="Range">100 100000</field>
+      </param>
+      <param humanName="RPM instance channel to use" name="ICE_RPM_CHAN" documentation="This is which of the RPM instances to use for detecting the RPM of the engine" user="Standard">
+        <values>
+          <value code="0">None</value>
+          <value code="1">RPM1</value>
+          <value code="2">RPM2</value>
+        </values>
+      </param>
+      <param humanName="Throttle percentage for engine start" name="ICE_START_PCT" documentation="This is the percentage throttle output for engine start" user="Standard">
+        <field name="Range">0 100</field>
+      </param>
+      <param humanName="Throttle percentage for engine idle" name="ICE_IDLE_PCT" documentation="This is the minimum percentage throttle output while running, this includes being disarmed, but not safe" user="Standard">
+        <field name="Range">0 100</field>
+      </param>
+      <param humanName="RPM Setpoint for Idle Governor" name="ICE_IDLE_RPM" documentation="This configures the RPM that will be commanded by the idle governor. Set to -1 to disable" user="Advanced">
+</param>
+      <param humanName="Deadband for Idle Governor" name="ICE_IDLE_DB" documentation="This configures the deadband that is tolerated before adjusting the idle setpoint">
+</param>
+      <param humanName="Slew Rate for idle control" name="ICE_IDLE_SLEW" documentation="This configures the slewrate used to adjust the idle setpoint in percentage points per second">
+</param>
+      <param humanName="ICE options" name="ICE_OPTIONS" documentation="Options for ICE control">
+        <field name="Bitmask">0:DisableIgnitionRCFailsafe</field>
+      </param>
+      <param humanName="Input channel for engine start minimum PWM" name="ICE_STARTCHN_MIN" documentation="This is a minimum PWM value for engine start channel for an engine stop to be commanded. Setting this value will avoid RC input glitches with low PWM values from causing an unwanted engine stop. A value of zero means any PWM below 1300 triggers an engine stop." user="Standard">
+        <field name="Range">0 1300</field>
+      </param>
+      <param humanName="GPIO pin for Starter trigger" name="ICE_STARTER_GPIO" documentation="This configures the GPIO to be used to trigger the Starter" user="Standard">
+        <field name="Range">101 108</field>
+      </param>
+      <param humanName="GPIO pin for Ignition trigger" name="ICE_IGNTN_GPIO" documentation="This configures the GPIO to be used to trigger the Starter" user="Standard">
+        <field name="Range">101 108</field>
       </param>
     </parameters>
     <parameters name="IM_">
