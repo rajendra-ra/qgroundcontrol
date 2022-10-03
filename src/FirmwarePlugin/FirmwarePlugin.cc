@@ -319,6 +319,7 @@ const QVariantList& FirmwarePlugin::toolIndicators(const Vehicle*)
             QVariant::fromValue(QUrl::fromUserInput("qrc:/toolbar/RCRSSIIndicator.qml")),
             QVariant::fromValue(QUrl::fromUserInput("qrc:/toolbar/BatteryIndicator.qml")),
             QVariant::fromValue(QUrl::fromUserInput("qrc:/toolbar/VibrationIndicator.qml")),
+            QVariant::fromValue(QUrl::fromUserInput("qrc:/toolbar/NetworkStatusIndicator.qml")),
         });
     }
     return _toolIndicatorList;
