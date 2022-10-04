@@ -5105,6 +5105,79 @@
       <param humanName="Compass per-motor4 Z" name="COMPASS_PMOT4_Z" documentation="Compensation for Z axis of motor4" user="Advanced">
 </param>
     </parameters>
+    <parameters name="DLB_">
+      <param humanName="Enables IMU 1 module" name="DLB_IMU1_ENB" documentation="Enables IMU 1 module" user="Advanced">
+        <values>
+          <value code="0">Disabled</value>
+          <value code="1">Enabled</value>
+        </values>
+        <field name="Bitmask">0:Enable</field>
+      </param>
+      <param humanName="IMU1 Accelerometer Range" name="DLB_IMU1_ACC_RNG" documentation="Select range of accelerometer in terms of g(acceleration due to gravity)" user="Advanced">
+        <values>
+          <value code="2">2</value>
+          <value code="4">4</value>
+          <value code="8">8</value>
+          <value code="16">16</value>
+        </values>
+        <field name="Units">g</field>
+      </param>
+      <param humanName="IMU1 Sampling Rate" name="DLB_IMU1_SMPLRT" documentation="Change sampling rate of IMU 1" user="Advanced">
+        <values>
+          <value code="1">1</value>
+          <value code="4">4</value>
+        </values>
+        <field name="Units">kHz</field>
+      </param>
+      <param humanName="Enables IMU 2 module" name="DLB_IMU2_ENB" documentation="Enables IMU 2 module" user="Advanced">
+        <values>
+          <value code="0">Disabled</value>
+          <value code="1">Enabled</value>
+        </values>
+        <field name="Bitmask">0:Enable</field>
+      </param>
+      <param humanName="IMU2 Accelerometer Range" name="DLB_IMU2_ACC_RNG" documentation="Select range of accelerometer in terms of g(acceleration due to gravity)" user="Advanced">
+        <values>
+          <value code="2">2</value>
+          <value code="4">4</value>
+          <value code="8">8</value>
+          <value code="16">16</value>
+        </values>
+        <field name="Units">g</field>
+      </param>
+      <param humanName="IMU2 Sampling Rate" name="DLB_IMU2_SMPLRT" documentation="Change sampling rate of IMU 2" user="Advanced">
+        <values>
+          <value code="1">1</value>
+          <value code="4">4</value>
+        </values>
+        <field name="Units">kHz</field>
+      </param>
+      <param humanName="Enables Debug Mode" name="DLB_DEBUG_MODE" documentation="Enables Debug Mode" user="Advanced">
+        <values>
+          <value code="0">Disabled</value>
+          <value code="1">Enabled</value>
+        </values>
+        <field name="Bitmask">0:Enable</field>
+      </param>
+      <param humanName="DLB Baud Rate" name="DLB_UART_BAUD" documentation="DLB Baud Rate" user="Advanced">
+          <values>
+            <value code="2400">2400</value>
+            <value code="4800">4800</value>
+            <value code="9600">9600</value>
+            <value code="19200">19200</value>
+            <value code="38400">38400</value>
+            <value code="57600">57600</value>
+            <value code="111100">111100</value>
+            <value code="115200">115200</value>
+            <value code="230400">230400</value>
+            <value code="256000">256000</value>
+            <value code="460800">460800</value>
+            <value code="500000">500000</value>
+            <value code="921600">921600</value>
+            <value code="1500000">1500000</value>
+          </values>
+      </param>
+    </parameters>
     <parameters name="EAHRS">
       <param humanName="AHRS type" name="EAHRS_TYPE" documentation="Type of AHRS device" user="Standard">
         <values>
