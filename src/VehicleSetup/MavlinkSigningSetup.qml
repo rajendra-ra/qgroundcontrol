@@ -2,6 +2,7 @@ import QtQuick                      2.11
 import QtQuick.Controls             2.4
 import QtQuick.Dialogs              1.3
 import QtQuick.Layouts              1.11
+import QtQuick.Extras               1.4
 
 import QGroundControl               1.0
 import QGroundControl.Palette       1.0
@@ -17,6 +18,7 @@ SetupPage {
     pageComponent:      pageComponent
     pageName:           qsTr("Mavlink Signing")
     pageDescription:    "" // qsTr("Joystick Setup is used to configure and calibrate joysticks.")
+    QGCPalette { id: qgcPal }
     FileDialog {
         id: fileDialog
         title: "Please choose a file"
@@ -24,15 +26,11 @@ SetupPage {
         nameFilters: [ "Key file (*.key)" ]
         onAccepted: {
             console.log("You chose: " + fileDialog.fileUrl)
-//            Qt.quit()
             globals.activeVehicle.chooseFile(fileDialog.fileUrl);
-//            fileLabel.text = fileDialog.fileUrl;
         }
         onRejected: {
             console.log("Canceled")
-//            Qt.quit()
         }
-//        Component.onCompleted: visible = true
     }
     Component {
         id: pageComponent
@@ -45,7 +43,7 @@ SetupPage {
                     id: secretKeyInput
                     text:           qsTr("Choose key file")
                     Layout.alignment: Qt.AlignTop
-                    visible:        true//feature ? (feature.type !== AirspaceRuleFeature.Boolean) : false
+                    visible:        true
                     height: setupSigningButton.height
                     onClicked:  {
                         console.log('choose file');
@@ -61,18 +59,72 @@ SetupPage {
                     padding: 5
                     font.pixelSize: ScreenTools.defaultFontPixelHeight
                 }
+                QGCCheckBox {
+                    id:         signingSetupChecked
+                    text:       qsTr("Enable Auto Signing")
+                    height: setupSigningButton.height
+                    onClicked:    globals.activeVehicle.autoSigning = checked
+                    Component.onCompleted: checked = globals.activeVehicle.autoSigning
+                    Connections {
+                        target: globals.activeVehicle
+                        onAutoSigningChanged: signingSetupChecked.checked = globals.activeVehicle.autoSigning
+                    }
+                }
             }
 
+            Row {
+                spacing: 1
+                Label {
+                    id: autopilotSigningLabel
+                    text: qsTr("Autopilot Signing Status:")
+                    height: setupSigningButton.height
+                    color: "white"
+                    font.family: "Helvetica"
+                    padding: 5
+                    font.pixelSize: ScreenTools.defaultFontPixelHeight
+                }
+                StatusIndicator {
+                    id: autopilotSigningStatus
+                    height: setupSigningButton.height
+                    color: "green"
+                    active: globals.activeVehicle.autopilotSigningEnabled
+                }
+                Label {
+                    id: gcsSigningLabel
+                    text: qsTr("GCS Signing Status:")
+                    height: setupSigningButton.height
+                    color: "white"
+                    font.family: "Helvetica"
+                    padding: 5
+                    font.pixelSize: ScreenTools.defaultFontPixelHeight
+                }
+                StatusIndicator {
+                    id: gcsSigningStatus
+                    height: setupSigningButton.height
+                    color: "green"
+                    active: globals.activeVehicle.gcsSigningEnabled
+                }
+            }
             Row {
                 spacing: 1
                 QGCButton {
                     id:         enableSigningButton
                     text:       qsTr("Enable Signing")
                     width: setupSigningButton.width
-                    visible:    !globals.activeVehicle.armed
+                    visible:    true
                     onClicked:  {
 //                        console.log('EnableSigning KEY: ',secretKeyInput.text);
                         globals.activeVehicle.enableSigning();
+                    }
+                }
+                QGCButton {
+                    id:         disableSigningButton
+                    text:       qsTr("Disable Signing")
+                    width:      setupSigningButton.width
+                    visible:    true
+                    onClicked:  {
+//                        console.log('EnableSigning KEY: ',secretKeyInput.text);
+                        globals.activeVehicle.disableSigning();
                     }
                 }
                 QGCButton {

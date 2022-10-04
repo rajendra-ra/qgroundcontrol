@@ -1843,7 +1843,14 @@ void Vehicle::_handleHeartbeat(mavlink_message_t& message)
         // Non-ArduPilot always updates from armed state in heartbeat
         _updateArmed(newArmed);
     }
-
+    // Check if incoming packets are signed
+    if(message.incompat_flags & MAVLINK_IFLAG_SIGNED){
+        // set signing status active
+        setAutopilotSigningEnabled(true);
+    } else {
+        // set signing status inactive
+        setAutopilotSigningEnabled(false);
+    }
     if (heartbeat.base_mode != _base_mode || heartbeat.custom_mode != _custom_mode) {
         QString previousFlightMode;
         if (_base_mode != 0 || _custom_mode != 0){
@@ -2237,8 +2244,14 @@ void Vehicle::_loadSettings()
     }
     // load key file path set from last session
     _keyFile = settings.value("MAVLINK_SIGNING_KEY_FILE","").toString();
+    // load auto signing setting
+    _autoSigning = settings.value("MAVLINK_SIGNING_AUTO","").toBool();
     // emit signal for keyfile path change
     emit keyFileChanged(_keyFile);
+    // if there is signing key availabl e and auto signing is enabled then enable packet signing
+    if(!_keyFile.isEmpty() && _autoSigning){
+        enableSigning();
+    }
 }
 
 void Vehicle::_saveSettings()
@@ -3736,7 +3749,33 @@ void Vehicle::_ackMavlinkLogData(uint16_t sequence)
                 &ack);
     sendMessageOnLinkThreadSafe(sharedLink.get(), msg);
 }
-
+/**
+*  helper function to set auto signing setting
+*/
+void Vehicle::setAutoSigning(bool checked)
+{
+    QSettings _setting;
+    _setting.beginGroup(QString(_settingsGroup).arg(_id));
+    _autoSigning = checked;
+    _setting.setValue("MAVLINK_SIGNING_AUTO",_autoSigning);
+    emit autoSigningChanged(_autoSigning);
+}
+/**
+*  helper function to set vehicle signing status
+*/
+void Vehicle::setAutopilotSigningEnabled(bool checked)
+{
+    _autopilotSigningEnabled = checked;
+    emit autopilotSigningEnabledChanged();
+}
+/**
+*  helper function to set gcs signing status
+*/
+void Vehicle::setGCSSigningEnabled(bool checked)
+{
+    _gcsSigningEnabled = checked;
+    emit gcsSigningEnabledChanged();
+}
 /**
 *  helper function to setup signing on vehicle 
 */
@@ -3830,6 +3869,26 @@ void Vehicle::enableSigning(void)
     status->signing_streams = &_mavlink->signing_streams;
 
     _mavlink->setVersion(200);
+    // set GCS signing status active
+    setGCSSigningEnabled(true);
+}
+
+/**
+*  helper function to disable message signing on qgc
+*/
+void Vehicle::disableSigning(void)
+{
+    SharedLinkInterfacePtr  sharedLink = vehicleLinkManager()->primaryLink().lock();
+    if (!sharedLink) {
+        qCDebug(VehicleLog) << "enableSigning: primary link gone!";
+        return;
+    }
+
+    mavlink_status_t *status = mavlink_get_channel_status(sharedLink->mavlinkChannel());
+    status->signing = nullptr;
+    status->signing_streams = &_mavlink->signing_streams;
+    // set GCS signing status active
+    setGCSSigningEnabled(false);
 }
 
 /**
@@ -3860,8 +3919,6 @@ void Vehicle::resetSigning(void)
                 _setupSigning.secret_key,
                 _setupSigning.initial_timestamp);
     sendMessageOnLinkThreadSafe(sharedLink.get(), msg);
-//    enableSigning(key);
-
 }
 
 /**

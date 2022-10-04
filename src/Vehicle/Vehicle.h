@@ -311,12 +311,15 @@ public:
     Q_PROPERTY(bool     roiModeSupported        READ roiModeSupported                               CONSTANT)                   ///< Orbit mode is supported by this vehicle
     Q_PROPERTY(bool     takeoffVehicleSupported READ takeoffVehicleSupported                        CONSTANT)                   ///< Guided takeoff supported
     Q_PROPERTY(QString  gotoFlightMode          READ gotoFlightMode                                 CONSTANT)                   ///< Flight mode vehicle is in while performing goto
-    Q_PROPERTY(QString  keyFile                 READ keyFile                                        NOTIFY keyFileChanged)      ///< key file changed
+    Q_PROPERTY(QString  keyFile                 READ keyFile                                        NOTIFY keyFileChanged)      ///< key file property
+    Q_PROPERTY(bool     autoSigning             READ autoSigning               WRITE setAutoSigning NOTIFY autoSigningChanged)  ///< auto signing setting property
 
     Q_PROPERTY(ParameterManager*        parameterManager    READ parameterManager   CONSTANT)
     Q_PROPERTY(VehicleLinkManager*      vehicleLinkManager  READ vehicleLinkManager CONSTANT)
     Q_PROPERTY(VehicleObjectAvoidance*  objectAvoidance     READ objectAvoidance    CONSTANT)
     Q_PROPERTY(Autotune*                autotune            READ autotune           CONSTANT)
+    Q_PROPERTY(bool                     autopilotSigningEnabled     READ autopilotSigningEnabled            WRITE setAutopilotSigningEnabled    NOTIFY autopilotSigningEnabledChanged)  ///< vehicle signing status property
+    Q_PROPERTY(bool                     gcsSigningEnabled           READ gcsSigningEnabled                  WRITE setGCSSigningEnabled          NOTIFY gcsSigningEnabledChanged)        ///< GCS signing status property
 
     // FactGroup object model properties
 
@@ -494,6 +497,9 @@ public:
     /// enable signing
     Q_INVOKABLE void enableSigning(void);
 
+    /// disable signing
+    Q_INVOKABLE void disableSigning(void);
+
     /// reset signing
     Q_INVOKABLE void resetSigning(void);
 
@@ -512,11 +518,19 @@ public:
     bool    takeoffVehicleSupported () const;
     QString gotoFlightMode          () const;
     QString keyFile                 () const; // getter for key file path
+    bool autoSigning                () { return _autoSigning;}; // getter for auto signing setting
 
     // Property accessors
 
     QGeoCoordinate coordinate() { return _coordinate; }
     QGeoCoordinate armedPosition    () { return _armedPosition; }
+
+    // set auto signing setting
+    void setAutoSigning(bool checked);
+    // set Vehicle signing status
+    void setAutopilotSigningEnabled(bool checked);
+    // set GCS signing status
+    void setGCSSigningEnabled(bool checked);
 
     void updateFlightDistance(double distance);
 
@@ -723,8 +737,8 @@ public:
     /// fuel level
 //    Fact* fuelLevel                      () { return &_fuelLevelFact; }
     /// rpm
-    Fact* engineRPM                      () { return &_engineRPMFact; }
-    Fact* rotorRPM                      () { return &_rotorRPMFact; }
+    Fact* engineRPM                         () { return &_engineRPMFact; }
+    Fact* rotorRPM                          () { return &_rotorRPMFact; }
     Fact* networkStatus                     () { return &_networkStatusFact; } // getter for network status
 
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
@@ -753,6 +767,8 @@ public:
     ComponentInformationManager*    compInfoManager     () { return _componentInformationManager; }
     VehicleObjectAvoidance*         objectAvoidance     () { return _objectAvoidance; }
     Autotune*                       autotune            () const { return _autotune; }
+    bool                            autopilotSigningEnabled      () const { return _autopilotSigningEnabled; }  // get vehicle signing status
+    bool                            gcsSigningEnabled            () const { return _gcsSigningEnabled; }        // get GCS signing status
 
     static const int cMaxRcChannels = 18;
 
@@ -1025,7 +1041,10 @@ signals:
     void initialConnectComplete         ();
 
     void sensorsParametersResetAck      (bool success);
-    void keyFileChanged                 (QString keyFile); // key file change signal
+    void keyFileChanged                 (QString keyFile);  // key file change signal
+    void autoSigningChanged             (bool autoSigning); // auto signing setting change signal
+    void autopilotSigningEnabledChanged ();                 // vehicle signing status change signal
+    void gcsSigningEnabledChanged       ();                 // GCS signing status change signal
 
 private slots:
     void _mavlinkMessageReceived            (LinkInterface* link, mavlink_message_t message);
@@ -1140,6 +1159,7 @@ private:
     } secret_key_t;
     secret_key_t _key;
     QString _keyFile; // key file path
+    bool _autoSigning = false; // auto mavlink signing
     mavlink_setup_signing_t _setupSigning; // intermidiate variable to store key and timestamp
     MAV_AUTOPILOT       _firmwareType;
     MAV_TYPE            _vehicleType;
@@ -1223,6 +1243,8 @@ private:
     ComponentInformationManager*    _componentInformationManager    = nullptr;
     VehicleObjectAvoidance*         _objectAvoidance                = nullptr;
     Autotune*                       _autotune                       = nullptr;
+    bool                            _autopilotSigningEnabled        = false;    // vehicle signing status
+    bool                            _gcsSigningEnabled              = false;    // gcs signing status
 #if defined(QGC_AIRMAP_ENABLED)
     AirspaceVehicleManager*         _airspaceVehicleManager         = nullptr;
 #endif
