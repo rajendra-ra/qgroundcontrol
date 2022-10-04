@@ -183,9 +183,9 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _throttlePctFact              (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
 
 //    , _fuelLevelFact                    (0, _fuelLevelFactName,         FactMetaData::valueTypeInt32)
+    , _networkStatusFact            (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
     , _engineRPMFact                    (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
-    , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)
-    , _networkStatusFact            (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)  /* init: network status fact  */
+    , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)  /* init: network status fact  */
     , _gpsFactGroup                 (this)
     , _gps2FactGroup                (this)
     , _windFactGroup                (this)
@@ -341,9 +341,9 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _hobbsFact                        (0, _hobbsFactName,             FactMetaData::valueTypeString)
     , _throttlePctFact                  (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
 //    , _fuelLevelFact                    (0, _fuelLevelFactName,         FactMetaData::valueTypeInt32)
+    , _networkStatusFact                (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
     , _engineRPMFact                    (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
     , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)
-    , _networkStatusFact                (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
     , _gpsFactGroup                     (this)
     , _gps2FactGroup                    (this)
     , _windFactGroup                    (this)
