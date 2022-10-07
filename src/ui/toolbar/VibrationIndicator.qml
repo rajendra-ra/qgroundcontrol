@@ -50,7 +50,6 @@ Item {
                 source:             "/qmlimages/Soundwave.svg"
                 sourceSize.height:  height
                 fillMode:           Image.PreserveAspectFit
-                color:              getMessageColor()
                 visible:            true
             }
             MouseArea {
