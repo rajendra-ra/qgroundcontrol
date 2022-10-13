@@ -1104,6 +1104,7 @@ private:
     void _handleAttitudeQuaternion      (mavlink_message_t& message);
     void _handleStatusText              (mavlink_message_t& message);
     void _handleComponentMessage        (mavlink_message_t& message); // handler to handle dlb error messages
+    void _handleComponentMessage2        (mavlink_message_t& message); // handler to handle dlb power data error messages
     void _handleOrbitExecutionStatus    (const mavlink_message_t& message);
     void _handleGimbalOrientation       (const mavlink_message_t& message);
     void _handleObstacleDistance        (const mavlink_message_t& message);

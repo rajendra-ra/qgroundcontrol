@@ -115,7 +115,9 @@ const char* Vehicle::_escStatusFactGroupName =          "escStatus";
 const char* Vehicle::_estimatorStatusFactGroupName =    "estimatorStatus";
 const char* Vehicle::_terrainFactGroupName =            "terrain";
 const char* Vehicle::_hygrometerFactGroupName =         "hygrometer";
-
+const QString r10_dlb_vsens_list[] = {"VSEN_BUCK1","VSEN_BUCK2","VSEN_BUCK3","VSEN_BUCK4","VSEN_BUCK6","VSEN_BUCK_S_AUX","VSEN_28IPS","VSEN_12IPS","VSEN_5IPS","VSEN_OSB","VSEN_OBB","AUX_PIX_VOLT","STM_IN_VOLT"};//voltage sensor names
+const QString r10_dlb_isens_list[] = {"ISEN_S1","ISEN_S2","ISEN_S3","ISEN_S4","ISEN_S6","ISEN_S_AUX","ISEN_28IPS","ISEN_12IPS","ISEN_5IPS","ISENS_OSB","ISENS_OBB"};//current sensor names
+const QString r10_dlb_temp_list[] = {"S1_TEMP","S2_TEMP","S3_TEMP","S4_TEMP","S5_TEMP","S6_TEMP","PMU_TEMP","SG_TEMP","OSB_TEMP","OBB_TEMP","ENG_TEMP1","ENG_TEMP2"};//temperature sensor names
 CompMessage::CompMessage(int componentid, int severity, QString text)
 {
     _compId   = componentid;
@@ -805,9 +807,13 @@ void Vehicle::_mavlinkMessageReceived(LinkInterface* link, mavlink_message_t mes
         _handleRPM(message);
         break;
     case MAVLINK_MSG_ID_R10_DLB_ERROR:
-    case MAVLINK_MSG_ID_R10_PSDATA_ERROR:
-    {
         _handleComponentMessage(message);
+        break;
+    case MAVLINK_MSG_ID_R10_VSENS_ERR:
+    case MAVLINK_MSG_ID_R10_ISENS_ERR:
+    case MAVLINK_MSG_ID_R10_TEMP_ERR:
+    {
+        _handleComponentMessage2(message);
     }
         break;
     case MAVLINK_MSG_ID_EVENT:
@@ -1124,11 +1130,11 @@ void Vehicle::_handleComponentMessage(mavlink_message_t& message)
         err = dlb_error.ERROR_CODE;
         break;
 
-    case MAVLINK_MSG_ID_R10_PSDATA_ERROR:
-        mavlink_r10_psdata_error_t psdata_error;
-        mavlink_msg_r10_psdata_error_decode(&message,&psdata_error);
-        err = psdata_error.ERROR_CODE;
-        break;
+    // case MAVLINK_MSG_ID_R10_VSEN_ERR:
+    //     mavlink_r10_psdata_error_t psdata_error;
+    //     mavlink_msg_r10_psdata_error_decode(&message,&psdata_error);
+    //     err = psdata_error.ERROR_CODE;
+    //     break;
     default:
         break;
     }
@@ -1156,7 +1162,124 @@ void Vehicle::_handleComponentMessage(mavlink_message_t& message)
     // send message receive signal
     emit newComponentMessage(formattedmessage->getFormatedText());
 }
+void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
+{
+    // CompMessage* formattedmessage;          // error message to display
+    QString s = "Sensor Error: [%1]: %2";                 // template string to display on notice board
+    int severity = MAV_SEVERITY_WARNING;    // severity level of error
+    switch(message.msgid)
+    {
+    case MAVLINK_MSG_ID_R10_VSENS_ERR:
+        mavlink_r10_vsens_err_t vsens_err;
+        uint16_t vsens_list[13];
+        mavlink_msg_r10_vsens_err_decode(&message,&vsens_err);
+        if ((vsens_err.error_bitmask&0b0001111111111111)>0) // only proceed if any error is present
+        {
+            //copy error values
+            vsens_list[0] = vsens_err.VSEN_BUCK1;
+            vsens_list[1] = vsens_err.VSEN_BUCK2;
+            vsens_list[2] = vsens_err.VSEN_BUCK3;
+            vsens_list[3] = vsens_err.VSEN_BUCK4;
+            vsens_list[4] = vsens_err.VSEN_BUCK6;
+            vsens_list[5] = vsens_err.VSEN_BUCK_S_AUX;
+            vsens_list[6] = vsens_err.VSEN_28IPS;
+            vsens_list[7] = vsens_err.VSEN_12IPS;
+            vsens_list[8] = vsens_err.VSEN_5IPS;
+            vsens_list[9] = vsens_err.VSEN_OSB;
+            vsens_list[10] = vsens_err.VSEN_OBB;
+            vsens_list[11] = vsens_err.AUX_PIX_VOLT;
+            vsens_list[12] = vsens_err.STM_IN_VOLT;
+            for(uint8_t i=0;i<13;i++)
+            {
+                if((vsens_err.error_bitmask&((0x0001)<<i))>0)// check which sensor value has an error
+                {
+                    CompMessage* formattedmessage;
+                    QString  _s = s.arg(r10_dlb_vsens_list[i]).arg(vsens_list[i]); // assign sensor name and value
+                    //compile error message to display ready text
+                    formattedmessage = _formatTextMessage(message.compid,severity,_s);
+                    // add message to list
+                    _compMessages.append(formattedmessage);
+                    emit newComponentMessage(formattedmessage->getFormatedText());
 
+                }
+            }
+        }
+        break;
+
+    case MAVLINK_MSG_ID_R10_ISENS_ERR:
+        mavlink_r10_isens_err_t isens_err;
+        uint16_t isens_list[11];
+        mavlink_msg_r10_isens_err_decode(&message,&isens_err);
+        if ((isens_err.error_bitmask&0b0000011111111111)>0)
+        {
+            isens_list[0] = isens_err.ISEN_S1;
+            isens_list[1] = isens_err.ISEN_S2;
+            isens_list[2] = isens_err.ISEN_S3;
+            isens_list[3] = isens_err.ISEN_S4;
+            isens_list[4] = isens_err.ISEN_S6;
+            isens_list[5] = isens_err.ISEN_S_AUX;
+            isens_list[6] = isens_err.ISEN_28IPS;
+            isens_list[7] = isens_err.ISEN_12IPS;
+            isens_list[8] = isens_err.ISEN_5IPS;
+            isens_list[9] = isens_err.ISENS_OSB;
+            isens_list[10] =isens_err.ISENS_OBB;
+            for(uint8_t i=0;i<11;i++)
+            {
+                if((isens_err.error_bitmask&((0x0001)<<i))>0)
+                {
+                    CompMessage* formattedmessage;
+                    QString  _s = s.arg(r10_dlb_isens_list[i]).arg(isens_list[i]); // // assign sensor name and value
+                    //compile error message to display ready text
+                    formattedmessage = _formatTextMessage(message.compid,severity,_s);
+                    // add message to list
+                    _compMessages.append(formattedmessage);
+                    emit newComponentMessage(formattedmessage->getFormatedText());
+
+                }
+            }
+        }
+        break;
+    case MAVLINK_MSG_ID_R10_TEMP_ERR:
+        mavlink_r10_temp_err_t temp_err;
+        uint16_t temp_list[12];
+        mavlink_msg_r10_temp_err_decode(&message,&temp_err);
+        if ((temp_err.error_bitmask&0b0000111111111111)>0)
+        {
+            temp_list[0] = temp_err.S1_TEMP;
+            temp_list[1] = temp_err.S2_TEMP;
+            temp_list[2] = temp_err.S3_TEMP;
+            temp_list[3] = temp_err.S4_TEMP;
+            temp_list[4] = temp_err.S5_TEMP;
+            temp_list[5] = temp_err.S6_TEMP;
+            temp_list[6] = temp_err.PMU_TEMP;
+            temp_list[7] = temp_err.SG_TEMP;
+            temp_list[8] = temp_err.OSB_TEMP;
+            temp_list[9] = temp_err.OBB_TEMP;
+            temp_list[10] = temp_err.ENG_TEMP1;
+            temp_list[11] = temp_err.ENG_TEMP2;
+            for(uint8_t i=0;i<12;i++)
+            {
+                if((temp_err.error_bitmask&((0x0001)<<i))>0)
+                {
+                    CompMessage* formattedmessage;
+                    QString  _s = s.arg(r10_dlb_temp_list[i]).arg(temp_list[i]);// assign sensor name and value
+                    //compile error message to display ready text
+                    formattedmessage = _formatTextMessage(message.compid,severity,_s);
+                    // add message to list
+                    _compMessages.append(formattedmessage);
+                    emit newComponentMessage(formattedmessage->getFormatedText());
+
+                }
+            }
+        }
+        break;
+    default:
+        break;
+
+    }
+
+    
+}
 void Vehicle::_handleVfrHud(mavlink_message_t& message)
 {
     mavlink_vfr_hud_t vfrHud;
