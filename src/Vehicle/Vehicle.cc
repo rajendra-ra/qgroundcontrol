@@ -2376,6 +2376,8 @@ void Vehicle::_loadSettings()
     _keyFile = settings.value("MAVLINK_SIGNING_KEY_FILE","").toString();
     // load auto signing setting
     _autoSigning = settings.value("MAVLINK_SIGNING_AUTO","").toBool();
+    // load log server url
+    _logServerUrl = settings.value("LOG_SERVER_URL","").toString();
     // emit signal for keyfile path change
     emit keyFileChanged(_keyFile);
     // if there is signing key availabl e and auto signing is enabled then enable packet signing
@@ -3893,6 +3895,17 @@ void Vehicle::setAutoSigning(bool checked)
     _autoSigning = checked;
     _setting.setValue("MAVLINK_SIGNING_AUTO",_autoSigning);
     emit autoSigningChanged(_autoSigning);
+}
+/**
+*  helper function to set log server url
+*/
+void Vehicle::setLogServerUrl(QString url)
+{
+    QSettings _setting;
+    _setting.beginGroup(QString(_settingsGroup).arg(_id));
+    _logServerUrl = url;
+    _setting.setValue("LOG_SERVER_URL",_logServerUrl);
+    emit logServerUrlChanged(_logServerUrl);
 }
 /**
 *  helper function to set vehicle signing status

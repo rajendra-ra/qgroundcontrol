@@ -313,6 +313,7 @@ public:
     Q_PROPERTY(QString  gotoFlightMode          READ gotoFlightMode                                 CONSTANT)                   ///< Flight mode vehicle is in while performing goto
     Q_PROPERTY(QString  keyFile                 READ keyFile                                        NOTIFY keyFileChanged)      ///< key file property
     Q_PROPERTY(bool     autoSigning             READ autoSigning               WRITE setAutoSigning NOTIFY autoSigningChanged)  ///< auto signing setting property
+    Q_PROPERTY(QString  logServerUrl            READ logServerUrl              WRITE setLogServerUrl NOTIFY logServerUrlChanged)///< log server url
 
     Q_PROPERTY(ParameterManager*        parameterManager    READ parameterManager   CONSTANT)
     Q_PROPERTY(VehicleLinkManager*      vehicleLinkManager  READ vehicleLinkManager CONSTANT)
@@ -520,6 +521,7 @@ public:
     QString gotoFlightMode          () const;
     QString keyFile                 () const; // getter for key file path
     bool autoSigning                () { return _autoSigning;}; // getter for auto signing setting
+    QString logServerUrl            () { return _logServerUrl;}; // getter for log server url
 
     // Property accessors
 
@@ -528,6 +530,8 @@ public:
 
     // set auto signing setting
     void setAutoSigning(bool checked);
+    // set log server url
+    void setLogServerUrl(QString url);
     // set Vehicle signing status
     void setAutopilotSigningEnabled(bool checked);
     // set GCS signing status
@@ -1045,6 +1049,7 @@ signals:
     void sensorsParametersResetAck      (bool success);
     void keyFileChanged                 (QString keyFile);  // key file change signal
     void autoSigningChanged             (bool autoSigning); // auto signing setting change signal
+    void logServerUrlChanged            (QString url);      // log server url change signal
     void autopilotSigningEnabledChanged ();                 // vehicle signing status change signal
     void gcsSigningEnabledChanged       ();                 // GCS signing status change signal
 
@@ -1163,6 +1168,7 @@ private:
     secret_key_t _key;
     QString _keyFile; // key file path
     bool _autoSigning = false; // auto mavlink signing
+    QString _logServerUrl = "http://raspberrypi.local"; // log server url
     mavlink_setup_signing_t _setupSigning; // intermidiate variable to store key and timestamp
     MAV_AUTOPILOT       _firmwareType;
     MAV_TYPE            _vehicleType;

@@ -36,6 +36,9 @@ AnalyzePage {
     property var _downloadListFiles :[]
     property int _totalFiles:0
 
+    property var    _activeVehicle:         QGroundControl.multiVehicleManager.activeVehicle
+
+
     QGCPalette { id: palette; colorGroupEnabled: enabled }
 
     Component {
@@ -119,13 +122,12 @@ AnalyzePage {
 
                 TextField {
                     id:addressField
-                    property string rootUri: "http://localhost:8080/"
-                    text: "http://localhost:8080/"
-                    placeholderText: "http://localhost:8080/"
+                    text: _activeVehicle?_activeVehicle.logServerUrl:"http://raspberrypi.local"
+                    placeholderText: "Server Url"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     font.pointSize: 14
-                    onAccepted: {fileDownloader.startDownloadIndex(text);}
+                    onAccepted: {fileDownloader.startDownloadIndex(text);_activeVehicle.logServerUrl = text;}
                 }
                 Button {
                     id: upFolder
