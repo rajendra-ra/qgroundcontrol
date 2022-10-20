@@ -347,6 +347,7 @@ public:
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
     Q_PROPERTY(Fact* throttlePct        READ throttlePct        CONSTANT)
     Q_PROPERTY(Fact* networkStatus      READ networkStatus      CONSTANT) // status value interface to ui
+    Q_PROPERTY(Fact* networkIndicatorEnabled      READ networkIndicatorEnabled      CONSTANT) // network indicator status value interface to ui
 
 //    Q_PROPERTY(Fact* fuelLevel          READ fuelLevel          CONSTANT)
     Q_PROPERTY(Fact* engineRPM          READ engineRPM          CONSTANT)
@@ -740,6 +741,7 @@ public:
     Fact* engineRPM                         () { return &_engineRPMFact; }
     Fact* rotorRPM                          () { return &_rotorRPMFact; }
     Fact* networkStatus                     () { return &_networkStatusFact; } // getter for network status
+    Fact* networkIndicatorEnabled           () { return &_networkIndicatorEnabledFact; } // getter for network indicator enable status
 
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
     FactGroup* gps2FactGroup                () { return &_gps2FactGroup; }
@@ -1446,6 +1448,7 @@ private:
     Fact _hobbsFact;
     Fact _throttlePctFact;
     Fact _networkStatusFact; // fact variable to store network status
+    Fact _networkIndicatorEnabledFact; // fact variable to store network indicator enable status
 //    Fact _fuelLevelFact;
     Fact _engineRPMFact;
     Fact _rotorRPMFact;
@@ -1502,6 +1505,7 @@ private:
     static const char* _hobbsFactName;
     static const char* _throttlePctFactName;
     static const char* _networkStatusFactName;
+    static const char* _networkIndicatorEnabledFactName;
 
 //    static const char*  _fuelLevelFactName;
     static const char*  _engineRPMFactName;

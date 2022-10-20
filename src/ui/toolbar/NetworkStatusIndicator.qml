@@ -20,9 +20,10 @@ import QGroundControl.Palette               1.0
 Item {
     id: _root
 
-    property bool showIndicator: networkStatus & 255
+    property bool showIndicator: networkIndicatorEnabled & 255
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
+    property real networkIndicatorEnabled: _activeVehicle ?_activeVehicle.networkIndicatorEnabled.value:0
     property real networkStatus: _activeVehicle ?_activeVehicle.networkStatus.value:0
 
     anchors.top:    parent.top

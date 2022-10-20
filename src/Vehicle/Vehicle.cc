@@ -97,6 +97,8 @@ const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
 // init: for network status fact name
 const char* Vehicle::_networkStatusFactName =       "networkStatus";
+// init: for network indicator enable status fact name
+const char* Vehicle::_networkIndicatorEnabledFactName ="networkIndicatorEnabled";
 
 const char*  Vehicle::_engineRPMFactName =          "engineRPM";
 const char*  Vehicle::_rotorRPMFactName =           "rotorRPM";
@@ -186,8 +188,9 @@ Vehicle::Vehicle(LinkInterface*             link,
 
 //    , _fuelLevelFact                    (0, _fuelLevelFactName,         FactMetaData::valueTypeInt32)
     , _networkStatusFact            (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
-    , _engineRPMFact                    (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
-    , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)  /* init: network status fact  */
+    , _networkIndicatorEnabledFact  (0, _networkIndicatorEnabledFactName,     FactMetaData::valueTypeUint8)
+    , _engineRPMFact                (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
+    , _rotorRPMFact                 (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)  /* init: network status fact  */
     , _gpsFactGroup                 (this)
     , _gps2FactGroup                (this)
     , _windFactGroup                (this)
@@ -344,6 +347,7 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _throttlePctFact                  (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
 //    , _fuelLevelFact                    (0, _fuelLevelFactName,         FactMetaData::valueTypeInt32)
     , _networkStatusFact                (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
+    , _networkIndicatorEnabledFact      (0, _networkIndicatorEnabledFactName,     FactMetaData::valueTypeUint8)
     , _engineRPMFact                    (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
     , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)
     , _gpsFactGroup                     (this)
@@ -467,7 +471,9 @@ void Vehicle::_commonInit()
     _addFact(&_headingToHomeFact,       _headingToHomeFactName);
     _addFact(&_distanceToGCSFact,       _distanceToGCSFactName);
     _addFact(&_throttlePctFact,         _throttlePctFactName);
-    _addFact(&_networkStatusFact,       _networkStatusFactName); // add varible to vehicle class
+    _addFact(&_networkStatusFact,       _networkStatusFactName);
+    _addFact(&_networkIndicatorEnabledFact,       _networkIndicatorEnabledFactName);
+
 
 //    _addFact(&_fuelLevelFact,           _fuelLevelFactName);
     _addFact(&_rotorRPMFact,            _rotorRPMFactName);
@@ -493,6 +499,7 @@ void Vehicle::_commonInit()
 
     // set default value
     _networkStatusFact.setRawValue(0b00);
+    _networkIndicatorEnabledFact.setRawValue(0b0);
 
     // Add firmware-specific fact groups, if provided
     QMap<QString, FactGroup*>* fwFactGroups = _firmwarePlugin->factGroups();
@@ -2627,6 +2634,10 @@ void Vehicle::_gotProgressUpdate(float progressValue)
     }
     _loadProgress = progressValue;
     emit loadProgressChanged(progressValue);
+    // check if R10_COMP_EN_MSK param then set its value
+    if(_parameterManager->parameterExists(_defaultComponentId,"R10_COMP_EN_MSK")){
+        _networkIndicatorEnabledFact.setRawValue(_parameterManager->getParameter(_defaultComponentId,"R10_COMP_EN_MSK")->rawValue().toUInt());
+    }
 }
 
 void Vehicle::_firstMissionLoadComplete()
