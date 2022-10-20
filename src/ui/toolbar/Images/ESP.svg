@@ -9,7 +9,7 @@
    viewBox="-255 447 72 72"
    style="enable-background:new -255 447 72 72;"
    xml:space="preserve"
-   sodipodi:docname="OBC.svg"
+   sodipodi:docname="ESP.svg"
    inkscape:version="1.2.1 (0f2f062aeb, 2022-09-21, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,12 +26,12 @@
    inkscape:deskcolor="#505050"
    showgrid="false"
    inkscape:zoom="8.6031325"
-   inkscape:cx="20.050836"
-   inkscape:cy="38.067529"
+   inkscape:cx="11.449318"
+   inkscape:cy="38.009411"
    inkscape:window-width="1852"
-   inkscape:window-height="1016"
-   inkscape:window-x="68"
-   inkscape:window-y="27"
+   inkscape:window-height="1043"
+   inkscape:window-x="1988"
+   inkscape:window-y="0"
    inkscape:window-maximized="1"
    inkscape:current-layer="g26" />
 <style
@@ -44,21 +44,20 @@
 	
 	
 	
-<ellipse
-   style="fill:#ff0000;fill-opacity:0;stroke:#ffffff;stroke-width:4.05031;stroke-dasharray:none;stroke-opacity:1"
+<circle
+   style="fill:#ff0000;fill-opacity:0;stroke:#ffffff;stroke-width:4.05435;stroke-dasharray:none;stroke-opacity:1"
    id="path482"
    cx="-219"
    cy="483"
-   rx="33.474842"
-   ry="33.474838" /><text
+   r="33.472828" /><text
    xml:space="preserve"
-   style="font-size:32px;line-height:1.25;font-family:sans-serif;letter-spacing:-3px;stroke-width:1.08024"
-   x="-250.49219"
+   style="font-size:32px;line-height:1.25;font-family:sans-serif;letter-spacing:-3px;stroke-width:2;stroke-dasharray:none"
+   x="-246.9375"
    y="494.64844"
    id="text1768"><tspan
      sodipodi:role="line"
      id="tspan1766"
-     x="-250.49219"
+     x="-246.9375"
      y="494.64844"
-     style="font-size:32px;fill:#ffffff;fill-opacity:1;stroke-width:1.08024">OBC</tspan></text></g>
+     style="font-size:32px;fill:#ffffff;fill-opacity:1;stroke-width:2;stroke-dasharray:none">ESP</tspan></text></g>
 </svg>

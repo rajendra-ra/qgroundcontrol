@@ -2001,23 +2001,28 @@ void Vehicle::_handleComponentsHeartbeat(mavlink_message_t& message)
         // update counter for every vehicle heartbeat
         _dlbHeartbeatCount++;
         _obcHeartbeatCount++;
+        _espHeartbeatCount++;
         // set status disconneted if heartbeat not received for more then 5 secs
         if(_dlbHeartbeatCount>5)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b1); // set dlb status disconnented
         if(_obcHeartbeatCount>5)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b10); // set obc status disconnented
+        if(_espHeartbeatCount>5)
+            _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b100); // set esp status disconnented
         return;
     }
     switch (message.compid) {
     case MAV_COMP_ID_USER1:
-        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b1); // set status connented
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b1); // set dlb status connented
         _dlbHeartbeatCount = 0;
-//        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
         break;
     case MAV_COMP_ID_ONBOARD_COMPUTER:
-        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b10); // set status connented
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b10); // set obc status connented
         _obcHeartbeatCount = 0;
-//        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
+        break;
+    case MAV_COMP_ID_USER2:
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b100); // set esp status connented
+        _espHeartbeatCount = 0;
         break;
     default:
         break;

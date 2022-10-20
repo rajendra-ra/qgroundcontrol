@@ -10,7 +10,7 @@
    style="enable-background:new -255 447 72 72;"
    xml:space="preserve"
    sodipodi:docname="DLB.svg"
-   inkscape:version="1.2.1 (0b8a7e5fb6, 2022-09-14, custom)"
+   inkscape:version="1.2.1 (0f2f062aeb, 2022-09-21, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +26,7 @@
    inkscape:deskcolor="#505050"
    showgrid="false"
    inkscape:zoom="8.6031325"
-   inkscape:cx="23.421701"
+   inkscape:cx="12.262975"
    inkscape:cy="38.067529"
    inkscape:window-width="1852"
    inkscape:window-height="1016"
@@ -45,19 +45,19 @@
 	
 	
 <circle
-   style="fill:#ff0000;fill-opacity:0;stroke:#ffffff;stroke-width:2.28319;stroke-opacity:1"
+   style="fill:#ff0000;fill-opacity:0;stroke:#ffffff;stroke-width:3.96002;stroke-dasharray:none;stroke-opacity:1"
    id="path482"
    cx="-219"
    cy="483"
-   r="33.858406" /><text
+   r="33.519989" /><text
    xml:space="preserve"
-   style="font-size:28.8064px;line-height:1.25;font-family:sans-serif;stroke-width:1.08024"
-   x="-248.39012"
-   y="493.5"
+   style="font-size:32px;line-height:1.25;font-family:sans-serif;letter-spacing:-3px;stroke-width:1.08024"
+   x="-248.64844"
+   y="494.66406"
    id="text1768"><tspan
      sodipodi:role="line"
      id="tspan1766"
-     x="-248.39012"
-     y="493.5"
-     style="fill:#ffffff;fill-opacity:1;stroke-width:1.08024">DLB</tspan></text></g>
+     x="-248.64844"
+     y="494.66406"
+     style="font-size:32px;fill:#ffffff;fill-opacity:1;stroke-width:1.08024">DLB</tspan></text></g>
 </svg>

@@ -1150,6 +1150,8 @@ private:
 
     int _obcHeartbeatCount = 0; // obc missed heartbeat counter
     int _dlbHeartbeatCount = 0; // dlb missed heartbeat counter
+    int _espHeartbeatCount = 0; // esp missed heartbeat counter
+
 
     // store all dlb error messages
     QVector<CompMessage*>    _compMessages;

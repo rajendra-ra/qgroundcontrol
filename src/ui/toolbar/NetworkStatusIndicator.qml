@@ -29,16 +29,16 @@ Item {
     anchors.top:    parent.top
     anchors.bottom: parent.bottom
 
-    width: height*2 + ScreenTools.defaultFontPixelWidth
+    width: height*3 + ScreenTools.defaultFontPixelWidth*2
 
-    Row {
+    RowLayout {
         anchors.fill: parent
         spacing: ScreenTools.defaultFontPixelWidth
         Rectangle {
             width:height
             height: parent.height
-            anchors.left: parent.left
-            anchors.top: parent.top
+//            anchors.left: parent.left
+//            anchors.top: parent.top
             color: "transparent"
             QGCColoredImage {
                 id:                 dlbIcon
@@ -48,15 +48,15 @@ Item {
                 source:             "/qmlimages/DLB.svg"
                 fillMode:           Image.PreserveAspectFit
                 sourceSize.height:  height
-                opacity:            1//_activeVehicle && (networkStatus & 0b1) ? 0.4 : 0.5
+                opacity:            1
                 color:              _activeVehicle && (networkStatus & 0b1) ? "green" : "red"
             }
         }
         Rectangle {
             width:height
             height: parent.height
-            anchors.right: parent.right
-            anchors.top: parent.top
+//            anchors.top: parent.top
+//            anchors.bottom:     parent.bottom
             color: "transparent"
             QGCColoredImage {
                 id:                 obcIcon
@@ -66,8 +66,26 @@ Item {
                 source:             "/qmlimages/OBC.svg"
                 fillMode:           Image.PreserveAspectFit
                 sourceSize.height:  height
-                opacity:            1//_activeVehicle && (networkStatus & 0b1) ? 0.4 : 0.4
+                opacity:            1
                 color:              _activeVehicle && (networkStatus & 0b10) ? "green" : "red"
+            }
+        }
+        Rectangle {
+            width:height
+            height: parent.height
+//            anchors.top: parent.top
+//            anchors.bottom:     parent.bottom
+            color: "transparent"
+            QGCColoredImage {
+                id:                 espIcon
+                width:              height
+                anchors.top:        parent.top
+                anchors.bottom:     parent.bottom
+                source:             "/qmlimages/ESP.svg"
+                fillMode:           Image.PreserveAspectFit
+                sourceSize.height:  height
+                opacity:            1
+                color:              _activeVehicle && (networkStatus & 0b100) ? "green" : "red"
             }
         }
     }

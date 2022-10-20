@@ -154,6 +154,7 @@
         <file alias="RC.svg">src/ui/toolbar/Images/RC.svg</file>
         <file alias="DLB.svg">src/ui/toolbar/Images/DLB.svg</file>
         <file alias="OBC.svg">src/ui/toolbar/Images/OBC.svg</file>
+        <file alias="ESP.svg">src/ui/toolbar/Images/ESP.svg</file>
         <file alias="RCLoss.svg">src/AutoPilotPlugins/PX4/Images/RCLoss.svg</file>
         <file alias="RCLossLight.svg">src/AutoPilotPlugins/PX4/Images/RCLossLight.svg</file>
         <file alias="ReturnToHomeAltitude.svg">src/AutoPilotPlugins/PX4/Images/ReturnToHomeAltitude.svg</file>
