@@ -40,10 +40,10 @@ Item {
     RowLayout {
         id: layout
         anchors.fill: parent
-        spacing: 6
+        spacing: ScreenTools.defaultFontPixelWidth
         Rectangle {
             color: 'transparent'
-            Layout.fillWidth: true
+            implicitWidth: height
             Layout.fillHeight: true
             QGCColoredImage {
                 anchors.fill:       parent
@@ -61,6 +61,8 @@ Item {
             color: 'transparent'
             Layout.fillWidth: true
             Layout.fillHeight: true
+            border.color: "grey"
+            border.width: 1
             Column {
                 visible: Math.max(vibeX,vibeY,vibeZ) > vibeThreshold
                 Text {
