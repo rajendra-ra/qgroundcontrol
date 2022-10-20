@@ -24,7 +24,7 @@ Item {
     anchors.bottom: parent.bottom
     width:          rpmIndicatorRow.width
 
-    property bool showIndicator: false
+    property bool showIndicator: true
 
     property var _activeVehicle:    QGroundControl.multiVehicleManager.activeVehicle
 
