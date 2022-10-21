@@ -1206,6 +1206,11 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+                    if(_compMessages.count()>100){
+                        delete _compMessages.first();
+                        _compMessages.pop_front();
+                        _compMessageCount--;
+                    }
                     emit newComponentMessage(formattedmessage->getFormatedText());
 
                 }
@@ -1240,6 +1245,11 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+                    if(_compMessages.count()>100){
+                        delete _compMessages.first();
+                        _compMessages.pop_front();
+                        _compMessageCount--;
+                    }
                     emit newComponentMessage(formattedmessage->getFormatedText());
 
                 }
@@ -1274,6 +1284,11 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+                    if(_compMessages.count()>100){
+                        delete _compMessages.first();
+                        _compMessages.pop_front();
+                        _compMessageCount--;
+                    }
                     emit newComponentMessage(formattedmessage->getFormatedText());
 
                 }
