@@ -73,13 +73,12 @@ AnalyzePage {
                 onGoingBusy:{ }
                 onBackReady:{
                     if(_dirdownload){
-                        if(_downloadListDir.length>0){
-                        } else if(_downloadListFiles.length>0){
-                        } else {
+                        if(_downloadListDir.length && _downloadListFiles.length){
                             _totalFiles = 0;
+                            downloadProgress.value = 0.0;
                         }
                     } else {
-                        downloadProgress.value = 0.0
+                        downloadProgress.value = 0.0;
                     }
                 }
                 onIsBusyChanged:{
@@ -103,14 +102,21 @@ AnalyzePage {
                 }
 
                 onDownloadProgress:{
+                    let p = 0;
                     if(bytesTotal){
-                        downloadProgress.value = bytesReceived*100/bytesTotal;
-                        if(_dirdownload && _totalFiles){
-                            downloadProgress.value = (1-_downloadListFiles.length)*100/_totalFiles;
+                        if(_dirdownload){
+                            if(_totalFiles>0){
+                                p = ((_totalFiles-_downloadListFiles.length-1) + bytesReceived/bytesTotal)/_totalFiles;
+                            } else {
+                                p = 0;
+                            }
+                        } else {
+                            p = bytesReceived/bytesTotal;
                         }
                     } else {
-                        downloadProgress.value = 0;
+                        p = 0;
                     }
+                    downloadProgress.value = p;
                 }
             }
             RowLayout {
@@ -127,7 +133,11 @@ AnalyzePage {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     font.pointSize: 14
-                    onAccepted: {fileDownloader.startDownloadIndex(text);_activeVehicle.logServerUrl = text;}
+                    onAccepted: {
+                        fileDownloader.startDownloadIndex(text);
+                        if(_activeVehicle)
+                            _activeVehicle.logServerUrl = text;
+                    }
                 }
                 Button {
                     id: upFolder
