@@ -966,6 +966,11 @@ void Vehicle::_chunkedStatusTextCompleted(uint8_t compId)
             setPrearmError(messageText);
         }
     }
+    // check for OBC log downloading text
+    if(messageText.contains(QStringLiteral("PreArm: Downloading logs"), Qt::CaseInsensitive)){
+        setOBCLogDownloadTriggered(true);
+        _autologtriggeredcounter = 0;
+    };
 
     // If the message is NOTIFY or higher severity, or starts with a '#',
     // then read it aloud.
@@ -2017,6 +2022,8 @@ void Vehicle::_handleComponentsHeartbeat(mavlink_message_t& message)
         _dlbHeartbeatCount++;
         _obcHeartbeatCount++;
         _espHeartbeatCount++;
+        _autologtriggeredcounter++;
+        _autologcounter++;
         // set status disconneted if heartbeat not received for more then 5 secs
         if(_dlbHeartbeatCount>5)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b1); // set dlb status disconnented
@@ -2024,6 +2031,14 @@ void Vehicle::_handleComponentsHeartbeat(mavlink_message_t& message)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b10); // set obc status disconnented
         if(_espHeartbeatCount>5)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b100); // set esp status disconnented
+        if(_autologcounter>5){
+            sendRCOverride(9,1000);
+            _autologcounter = 0;
+        }
+        if(_autologtriggeredcounter>30){
+            setOBCLogDownloadTriggered(false);
+            _autologtriggeredcounter = 0;
+        }
         return;
     }
     switch (message.compid) {
@@ -2284,6 +2299,11 @@ void Vehicle::clearComponentMessages()
     // send variable change signal
     emit compMessageTypeChanged();
     emit compMessageCountChanged();
+}
+void Vehicle::obcRequestLogTrigger()
+{
+    sendRCOverride(9,2000);
+//    setOBCLogDownloadTriggered(true);
 }
 
 void Vehicle::_handletextMessageReceived(UASMessage* message)

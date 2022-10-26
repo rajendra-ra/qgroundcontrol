@@ -371,6 +371,7 @@ public:
     Q_PROPERTY(QmlObjectListModel*  batteries       READ batteries                  CONSTANT)
     Q_PROPERTY(Actuators*           actuators       READ actuators                  CONSTANT)
 
+    Q_PROPERTY(bool     obcLogDownloadTriggered     READ obcLogDownloadTriggered    NOTIFY obcLogDownloadTriggeredChanged)
     Q_PROPERTY(int      firmwareMajorVersion        READ firmwareMajorVersion       NOTIFY firmwareVersionChanged)
     Q_PROPERTY(int      firmwareMinorVersion        READ firmwareMinorVersion       NOTIFY firmwareVersionChanged)
     Q_PROPERTY(int      firmwarePatchVersion        READ firmwarePatchVersion       NOTIFY firmwareVersionChanged)
@@ -386,10 +387,10 @@ public:
     /// Resets link status counters
     Q_INVOKABLE void resetCounters  ();
 
-    // Called when the message drop-down is invoked to clear current count
+    /// Called when the message drop-down is invoked to clear current count
     Q_INVOKABLE void resetMessages();
 
-    // Called when the message drop-down is invoked to clear current count
+    /// Called when the message drop-down is invoked to clear current count
     Q_INVOKABLE void resetComponentMessages();
 
     Q_INVOKABLE void virtualTabletJoystickValue(double roll, double pitch, double yaw, double thrust);
@@ -451,6 +452,9 @@ public:
 
     /// Clear Component Messages
     Q_INVOKABLE void clearComponentMessages();
+
+    /// Trigger OBC request log.
+    Q_INVOKABLE void obcRequestLogTrigger();
 
     Q_INVOKABLE void sendPlan(QString planFile);
 
@@ -536,7 +540,8 @@ public:
     void setAutopilotSigningEnabled(bool checked);
     // set GCS signing status
     void setGCSSigningEnabled(bool checked);
-
+    // set GCS signing status
+    void setOBCLogDownloadTriggered(bool ok=true){_obcLogDownloadTriggered = ok;emit obcLogDownloadTriggeredChanged();};
     void updateFlightDistance(double distance);
 
     bool joystickEnabled            () const;
@@ -627,6 +632,7 @@ public:
     } MessageType_t;
 
     bool            messageTypeNone             () { return _currentMessageType == MessageNone; }
+    bool            obcLogDownloadTriggered     () { return _obcLogDownloadTriggered; }
     bool            messageTypeNormal           () { return _currentMessageType == MessageNormal; }
     bool            messageTypeWarning          () { return _currentMessageType == MessageWarning; }
     bool            messageTypeError            () { return _currentMessageType == MessageError; }
@@ -1008,6 +1014,8 @@ signals:
     void vehicleUIDChanged              ();
     void loadProgressChanged            (float value);
 
+    void obcLogDownloadTriggeredChanged ();
+
     /// New RC channel values coming from RC_CHANNELS message
     ///     @param channelCount Number of available channels, cMaxRcChannels max
     ///     @param pwmValues -1 signals channel not available
@@ -1148,9 +1156,12 @@ private:
     // load meta data (DLB Error code Description)
     void _loadDLBMetaData();
 
-    int _obcHeartbeatCount = 0; // obc missed heartbeat counter
-    int _dlbHeartbeatCount = 0; // dlb missed heartbeat counter
-    int _espHeartbeatCount = 0; // esp missed heartbeat counter
+    int _obcHeartbeatCount              = 0; // obc missed heartbeat counter
+    int _dlbHeartbeatCount              = 0; // dlb missed heartbeat counter
+    int _espHeartbeatCount              = 0; // esp missed heartbeat counter
+    int _autologcounter                 = 0;
+    int _autologtriggeredcounter        = 0;
+    bool _obcLogDownloadTriggered       = false;
 
 
     // store all dlb error messages

@@ -249,7 +249,7 @@ AnalyzePage {
                         id: refreshBtn
                         enabled:    !fileDownloader.isBusy
                         text:       qsTr("Refresh")
-                        width:      _butttonWidth
+                        width:      _butttonWidth*2
                         font.pointSize: 14
                         onClicked: {
                             fileDownloader.startDownloadIndex(addressField.text);
@@ -259,7 +259,7 @@ AnalyzePage {
                         id: downloadBtn
                         enabled:   listView1.selection.count > 0 && !fileDownloader.isBusy
                         text:       qsTr("Download")
-                        width:      _butttonWidth
+                        width:      _butttonWidth*2
                         font.pointSize: 14
                         onClicked: {
                             listView1.selection.forEach(function(rowIndex){
@@ -299,11 +299,24 @@ AnalyzePage {
                         id: cancelBtn
                         enabled:    fileDownloader.isBusy
                         text:       qsTr("Cancel")
-                        width:      _butttonWidth
+                        width:      _butttonWidth*2
                         font.pointSize: 14
                         onClicked: {
                             fileDownloader.abortDownload();
                         }
+                    }
+                    QGCButton {
+                        id: downloadTriggerOBC
+                        enabled:    _activeVehicle?true:false
+                        text:       qsTr("Auto Log Download \nTrigger")
+                        width:      _butttonWidth*2
+                        font.pointSize: 12
+                        onClicked: {
+                            _activeVehicle.obcRequestLogTrigger();
+                        }
+                    }
+                    QGCLabel {
+                        text:_activeVehicle && _activeVehicle.obcLogDownloadTriggered?qsTr("AutoLog Triggered"):"";
                     }
                 }
             }
