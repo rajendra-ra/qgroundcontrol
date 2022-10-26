@@ -540,7 +540,7 @@ public:
     void setAutopilotSigningEnabled(bool checked);
     // set GCS signing status
     void setGCSSigningEnabled(bool checked);
-    // set GCS signing status
+    // set autolog download trigger status
     void setOBCLogDownloadTriggered(bool ok=true){_obcLogDownloadTriggered = ok;emit obcLogDownloadTriggeredChanged();};
     void updateFlightDistance(double distance);
 
@@ -1159,9 +1159,9 @@ private:
     int _obcHeartbeatCount              = 0; // obc missed heartbeat counter
     int _dlbHeartbeatCount              = 0; // dlb missed heartbeat counter
     int _espHeartbeatCount              = 0; // esp missed heartbeat counter
-    int _autologcounter                 = 0;
-    int _autologtriggeredcounter        = 0;
-    bool _obcLogDownloadTriggered       = false;
+    int _autologcounter                 = 0; // autolog missed heartbeat counter
+    int _autologtriggeredcounter        = 0; // autolog status_text missed heartbeat counter
+    bool _obcLogDownloadTriggered       = false; // autolog downloading status heartbeat counter
 
 
     // store all dlb error messages

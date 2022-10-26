@@ -966,7 +966,7 @@ void Vehicle::_chunkedStatusTextCompleted(uint8_t compId)
             setPrearmError(messageText);
         }
     }
-    // check for OBC log downloading text
+    // check for autolog log downloading text
     if(messageText.contains(QStringLiteral("PreArm: Downloading logs"), Qt::CaseInsensitive)){
         setOBCLogDownloadTriggered(true);
         _autologtriggeredcounter = 0;
@@ -2300,10 +2300,11 @@ void Vehicle::clearComponentMessages()
     emit compMessageTypeChanged();
     emit compMessageCountChanged();
 }
+
+// method to trigger autolog downnload usin RC_CHANNEL_OVERRIDE
 void Vehicle::obcRequestLogTrigger()
 {
     sendRCOverride(9,2000);
-//    setOBCLogDownloadTriggered(true);
 }
 
 void Vehicle::_handletextMessageReceived(UASMessage* message)
