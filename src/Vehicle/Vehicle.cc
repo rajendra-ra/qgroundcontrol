@@ -1211,11 +1211,15 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+
+                    // remove messages from list if there are more than 100
+                    // removing oldest messages
                     if(_compMessages.count()>100){
                         delete _compMessages.first();
                         _compMessages.pop_front();
                         _compMessageCount--;
                     }
+
                     emit newComponentMessage(formattedmessage->getFormatedText());
 
                 }
@@ -1250,6 +1254,8 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+                    // remove messages from list if there are more than 100
+                    // removing oldest messages
                     if(_compMessages.count()>100){
                         delete _compMessages.first();
                         _compMessages.pop_front();
@@ -1289,6 +1295,8 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+                    // remove messages from list if there are more than 100
+                    // removing oldest messages
                     if(_compMessages.count()>100){
                         delete _compMessages.first();
                         _compMessages.pop_front();
@@ -2031,6 +2039,7 @@ void Vehicle::_handleComponentsHeartbeat(mavlink_message_t& message)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b10); // set obc status disconnented
         if(_espHeartbeatCount>5)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b100); // set esp status disconnented
+        // send RC value 1000 after 5 heartbeats(~5 secs)
         if(_autologcounter>5){
             sendRCOverride(9,1000);
             _autologcounter = 0;
