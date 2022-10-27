@@ -20,24 +20,25 @@ import QGroundControl.Palette               1.0
 Item {
     id: _root
 
-    property bool showIndicator: networkStatus & 255
+    property bool showIndicator: networkIndicatorEnabled & 255
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
+    property real networkIndicatorEnabled: _activeVehicle ?_activeVehicle.networkIndicatorEnabled.value:0
     property real networkStatus: _activeVehicle ?_activeVehicle.networkStatus.value:0
 
     anchors.top:    parent.top
     anchors.bottom: parent.bottom
 
-    width: height*2 + ScreenTools.defaultFontPixelWidth
+    width: height*3 + ScreenTools.defaultFontPixelWidth*2
 
-    Row {
+    RowLayout {
         anchors.fill: parent
         spacing: ScreenTools.defaultFontPixelWidth
         Rectangle {
             width:height
             height: parent.height
-            anchors.left: parent.left
-            anchors.top: parent.top
+//            anchors.left: parent.left
+//            anchors.top: parent.top
             color: "transparent"
             QGCColoredImage {
                 id:                 dlbIcon
@@ -47,15 +48,15 @@ Item {
                 source:             "/qmlimages/DLB.svg"
                 fillMode:           Image.PreserveAspectFit
                 sourceSize.height:  height
-                opacity:            1//_activeVehicle && (networkStatus & 0b1) ? 0.4 : 0.5
+                opacity:            1
                 color:              _activeVehicle && (networkStatus & 0b1) ? "green" : "red"
             }
         }
         Rectangle {
             width:height
             height: parent.height
-            anchors.right: parent.right
-            anchors.top: parent.top
+//            anchors.top: parent.top
+//            anchors.bottom:     parent.bottom
             color: "transparent"
             QGCColoredImage {
                 id:                 obcIcon
@@ -65,8 +66,26 @@ Item {
                 source:             "/qmlimages/OBC.svg"
                 fillMode:           Image.PreserveAspectFit
                 sourceSize.height:  height
-                opacity:            1//_activeVehicle && (networkStatus & 0b1) ? 0.4 : 0.4
+                opacity:            1
                 color:              _activeVehicle && (networkStatus & 0b10) ? "green" : "red"
+            }
+        }
+        Rectangle {
+            width:height
+            height: parent.height
+//            anchors.top: parent.top
+//            anchors.bottom:     parent.bottom
+            color: "transparent"
+            QGCColoredImage {
+                id:                 espIcon
+                width:              height
+                anchors.top:        parent.top
+                anchors.bottom:     parent.bottom
+                source:             "/qmlimages/ESP.svg"
+                fillMode:           Image.PreserveAspectFit
+                sourceSize.height:  height
+                opacity:            1
+                color:              _activeVehicle && (networkStatus & 0b100) ? "green" : "red"
             }
         }
     }

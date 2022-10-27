@@ -97,6 +97,8 @@ const char* Vehicle::_hobbsFactName =               "hobbs";
 const char* Vehicle::_throttlePctFactName =         "throttlePct";
 // init: for network status fact name
 const char* Vehicle::_networkStatusFactName =       "networkStatus";
+// init: for network indicator enable status fact name
+const char* Vehicle::_networkIndicatorEnabledFactName ="networkIndicatorEnabled";
 
 const char*  Vehicle::_engineRPMFactName =          "engineRPM";
 const char*  Vehicle::_rotorRPMFactName =           "rotorRPM";
@@ -186,8 +188,9 @@ Vehicle::Vehicle(LinkInterface*             link,
 
 //    , _fuelLevelFact                    (0, _fuelLevelFactName,         FactMetaData::valueTypeInt32)
     , _networkStatusFact            (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
-    , _engineRPMFact                    (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
-    , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)  /* init: network status fact  */
+    , _networkIndicatorEnabledFact  (0, _networkIndicatorEnabledFactName,     FactMetaData::valueTypeUint8)
+    , _engineRPMFact                (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
+    , _rotorRPMFact                 (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)  /* init: network status fact  */
     , _gpsFactGroup                 (this)
     , _gps2FactGroup                (this)
     , _windFactGroup                (this)
@@ -344,6 +347,7 @@ Vehicle::Vehicle(MAV_AUTOPILOT              firmwareType,
     , _throttlePctFact                  (0, _throttlePctFactName,       FactMetaData::valueTypeUint16)
 //    , _fuelLevelFact                    (0, _fuelLevelFactName,         FactMetaData::valueTypeInt32)
     , _networkStatusFact                (0, _networkStatusFactName,     FactMetaData::valueTypeUint8)
+    , _networkIndicatorEnabledFact      (0, _networkIndicatorEnabledFactName,     FactMetaData::valueTypeUint8)
     , _engineRPMFact                    (0, _engineRPMFactName,         FactMetaData::valueTypeFloat)
     , _rotorRPMFact                     (0, _rotorRPMFactName,          FactMetaData::valueTypeFloat)
     , _gpsFactGroup                     (this)
@@ -467,7 +471,9 @@ void Vehicle::_commonInit()
     _addFact(&_headingToHomeFact,       _headingToHomeFactName);
     _addFact(&_distanceToGCSFact,       _distanceToGCSFactName);
     _addFact(&_throttlePctFact,         _throttlePctFactName);
-    _addFact(&_networkStatusFact,       _networkStatusFactName); // add varible to vehicle class
+    _addFact(&_networkStatusFact,       _networkStatusFactName);
+    _addFact(&_networkIndicatorEnabledFact,       _networkIndicatorEnabledFactName);
+
 
 //    _addFact(&_fuelLevelFact,           _fuelLevelFactName);
     _addFact(&_rotorRPMFact,            _rotorRPMFactName);
@@ -493,6 +499,7 @@ void Vehicle::_commonInit()
 
     // set default value
     _networkStatusFact.setRawValue(0b00);
+    _networkIndicatorEnabledFact.setRawValue(0b0);
 
     // Add firmware-specific fact groups, if provided
     QMap<QString, FactGroup*>* fwFactGroups = _firmwarePlugin->factGroups();
@@ -959,6 +966,11 @@ void Vehicle::_chunkedStatusTextCompleted(uint8_t compId)
             setPrearmError(messageText);
         }
     }
+    // check for autolog log downloading text
+    if(messageText.contains(QStringLiteral("PreArm: Downloading logs"), Qt::CaseInsensitive)){
+        setOBCLogDownloadTriggered(true);
+        _autologtriggeredcounter = 0;
+    };
 
     // If the message is NOTIFY or higher severity, or starts with a '#',
     // then read it aloud.
@@ -1199,6 +1211,15 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+
+                    // remove messages from list if there are more than 100
+                    // removing oldest messages
+                    if(_compMessages.count()>100){
+                        delete _compMessages.first();
+                        _compMessages.pop_front();
+                        _compMessageCount--;
+                    }
+
                     emit newComponentMessage(formattedmessage->getFormatedText());
 
                 }
@@ -1233,6 +1254,13 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+                    // remove messages from list if there are more than 100
+                    // removing oldest messages
+                    if(_compMessages.count()>100){
+                        delete _compMessages.first();
+                        _compMessages.pop_front();
+                        _compMessageCount--;
+                    }
                     emit newComponentMessage(formattedmessage->getFormatedText());
 
                 }
@@ -1267,6 +1295,13 @@ void Vehicle::_handleComponentMessage2(mavlink_message_t& message)
                     formattedmessage = _formatTextMessage(message.compid,severity,_s);
                     // add message to list
                     _compMessages.append(formattedmessage);
+                    // remove messages from list if there are more than 100
+                    // removing oldest messages
+                    if(_compMessages.count()>100){
+                        delete _compMessages.first();
+                        _compMessages.pop_front();
+                        _compMessageCount--;
+                    }
                     emit newComponentMessage(formattedmessage->getFormatedText());
 
                 }
@@ -1994,23 +2029,39 @@ void Vehicle::_handleComponentsHeartbeat(mavlink_message_t& message)
         // update counter for every vehicle heartbeat
         _dlbHeartbeatCount++;
         _obcHeartbeatCount++;
+        _espHeartbeatCount++;
+        _autologtriggeredcounter++;
+        _autologcounter++;
         // set status disconneted if heartbeat not received for more then 5 secs
         if(_dlbHeartbeatCount>5)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b1); // set dlb status disconnented
         if(_obcHeartbeatCount>5)
             _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b10); // set obc status disconnented
+        if(_espHeartbeatCount>5)
+            _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() & ~0b100); // set esp status disconnented
+        // send RC value 1000 after 5 heartbeats(~5 secs)
+        if(_autologcounter>5){
+            sendRCOverride(9,1000);
+            _autologcounter = 0;
+        }
+        if(_autologtriggeredcounter>30){
+            setOBCLogDownloadTriggered(false);
+            _autologtriggeredcounter = 0;
+        }
         return;
     }
     switch (message.compid) {
     case MAV_COMP_ID_USER1:
-        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b1); // set status connented
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b1); // set dlb status connented
         _dlbHeartbeatCount = 0;
-//        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
         break;
     case MAV_COMP_ID_ONBOARD_COMPUTER:
-        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b10); // set status connented
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b10); // set obc status connented
         _obcHeartbeatCount = 0;
-//        qCDebug(VehicleLog) << "Heartbeat got from Component:"<<message.compid<<" ns:"<<_networkStatusFact.rawValue().toInt();
+        break;
+    case MAV_COMP_ID_USER2:
+        _networkStatusFact.setRawValue(_networkStatusFact.rawValue().toInt() | 0b100); // set esp status connented
+        _espHeartbeatCount = 0;
         break;
     default:
         break;
@@ -2259,6 +2310,12 @@ void Vehicle::clearComponentMessages()
     emit compMessageCountChanged();
 }
 
+// method to trigger autolog downnload usin RC_CHANNEL_OVERRIDE
+void Vehicle::obcRequestLogTrigger()
+{
+    sendRCOverride(9,2000);
+}
+
 void Vehicle::_handletextMessageReceived(UASMessage* message)
 {
     if (message) {
@@ -2369,6 +2426,8 @@ void Vehicle::_loadSettings()
     _keyFile = settings.value("MAVLINK_SIGNING_KEY_FILE","").toString();
     // load auto signing setting
     _autoSigning = settings.value("MAVLINK_SIGNING_AUTO","").toBool();
+    // load log server url
+    _logServerUrl = settings.value("LOG_SERVER_URL","").toString();
     // emit signal for keyfile path change
     emit keyFileChanged(_keyFile);
     // if there is signing key availabl e and auto signing is enabled then enable packet signing
@@ -2627,6 +2686,10 @@ void Vehicle::_gotProgressUpdate(float progressValue)
     }
     _loadProgress = progressValue;
     emit loadProgressChanged(progressValue);
+    // check if R10_COMP_EN_MSK param then set its value
+    if(_parameterManager->parameterExists(_defaultComponentId,"R10_COMP_EN_MSK")){
+        _networkIndicatorEnabledFact.setRawValue(_parameterManager->getParameter(_defaultComponentId,"R10_COMP_EN_MSK")->rawValue().toUInt());
+    }
 }
 
 void Vehicle::_firstMissionLoadComplete()
@@ -3882,6 +3945,17 @@ void Vehicle::setAutoSigning(bool checked)
     _autoSigning = checked;
     _setting.setValue("MAVLINK_SIGNING_AUTO",_autoSigning);
     emit autoSigningChanged(_autoSigning);
+}
+/**
+*  helper function to set log server url
+*/
+void Vehicle::setLogServerUrl(QString url)
+{
+    QSettings _setting;
+    _setting.beginGroup(QString(_settingsGroup).arg(_id));
+    _logServerUrl = url;
+    _setting.setValue("LOG_SERVER_URL",_logServerUrl);
+    emit logServerUrlChanged(_logServerUrl);
 }
 /**
 *  helper function to set vehicle signing status

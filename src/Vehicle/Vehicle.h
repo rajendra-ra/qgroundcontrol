@@ -313,6 +313,7 @@ public:
     Q_PROPERTY(QString  gotoFlightMode          READ gotoFlightMode                                 CONSTANT)                   ///< Flight mode vehicle is in while performing goto
     Q_PROPERTY(QString  keyFile                 READ keyFile                                        NOTIFY keyFileChanged)      ///< key file property
     Q_PROPERTY(bool     autoSigning             READ autoSigning               WRITE setAutoSigning NOTIFY autoSigningChanged)  ///< auto signing setting property
+    Q_PROPERTY(QString  logServerUrl            READ logServerUrl              WRITE setLogServerUrl NOTIFY logServerUrlChanged)///< log server url
 
     Q_PROPERTY(ParameterManager*        parameterManager    READ parameterManager   CONSTANT)
     Q_PROPERTY(VehicleLinkManager*      vehicleLinkManager  READ vehicleLinkManager CONSTANT)
@@ -347,6 +348,7 @@ public:
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
     Q_PROPERTY(Fact* throttlePct        READ throttlePct        CONSTANT)
     Q_PROPERTY(Fact* networkStatus      READ networkStatus      CONSTANT) // status value interface to ui
+    Q_PROPERTY(Fact* networkIndicatorEnabled      READ networkIndicatorEnabled      CONSTANT) // network indicator status value interface to ui
 
 //    Q_PROPERTY(Fact* fuelLevel          READ fuelLevel          CONSTANT)
     Q_PROPERTY(Fact* engineRPM          READ engineRPM          CONSTANT)
@@ -369,6 +371,7 @@ public:
     Q_PROPERTY(QmlObjectListModel*  batteries       READ batteries                  CONSTANT)
     Q_PROPERTY(Actuators*           actuators       READ actuators                  CONSTANT)
 
+    Q_PROPERTY(bool     obcLogDownloadTriggered     READ obcLogDownloadTriggered    NOTIFY obcLogDownloadTriggeredChanged)
     Q_PROPERTY(int      firmwareMajorVersion        READ firmwareMajorVersion       NOTIFY firmwareVersionChanged)
     Q_PROPERTY(int      firmwareMinorVersion        READ firmwareMinorVersion       NOTIFY firmwareVersionChanged)
     Q_PROPERTY(int      firmwarePatchVersion        READ firmwarePatchVersion       NOTIFY firmwareVersionChanged)
@@ -384,10 +387,10 @@ public:
     /// Resets link status counters
     Q_INVOKABLE void resetCounters  ();
 
-    // Called when the message drop-down is invoked to clear current count
+    /// Called when the message drop-down is invoked to clear current count
     Q_INVOKABLE void resetMessages();
 
-    // Called when the message drop-down is invoked to clear current count
+    /// Called when the message drop-down is invoked to clear current count
     Q_INVOKABLE void resetComponentMessages();
 
     Q_INVOKABLE void virtualTabletJoystickValue(double roll, double pitch, double yaw, double thrust);
@@ -449,6 +452,9 @@ public:
 
     /// Clear Component Messages
     Q_INVOKABLE void clearComponentMessages();
+
+    /// Trigger OBC request log.
+    Q_INVOKABLE void obcRequestLogTrigger();
 
     Q_INVOKABLE void sendPlan(QString planFile);
 
@@ -519,6 +525,7 @@ public:
     QString gotoFlightMode          () const;
     QString keyFile                 () const; // getter for key file path
     bool autoSigning                () { return _autoSigning;}; // getter for auto signing setting
+    QString logServerUrl            () { return _logServerUrl;}; // getter for log server url
 
     // Property accessors
 
@@ -527,11 +534,14 @@ public:
 
     // set auto signing setting
     void setAutoSigning(bool checked);
+    // set log server url
+    void setLogServerUrl(QString url);
     // set Vehicle signing status
     void setAutopilotSigningEnabled(bool checked);
     // set GCS signing status
     void setGCSSigningEnabled(bool checked);
-
+    // set autolog download trigger status
+    void setOBCLogDownloadTriggered(bool ok=true){_obcLogDownloadTriggered = ok;emit obcLogDownloadTriggeredChanged();};
     void updateFlightDistance(double distance);
 
     bool joystickEnabled            () const;
@@ -622,6 +632,7 @@ public:
     } MessageType_t;
 
     bool            messageTypeNone             () { return _currentMessageType == MessageNone; }
+    bool            obcLogDownloadTriggered     () { return _obcLogDownloadTriggered; }
     bool            messageTypeNormal           () { return _currentMessageType == MessageNormal; }
     bool            messageTypeWarning          () { return _currentMessageType == MessageWarning; }
     bool            messageTypeError            () { return _currentMessageType == MessageError; }
@@ -740,6 +751,7 @@ public:
     Fact* engineRPM                         () { return &_engineRPMFact; }
     Fact* rotorRPM                          () { return &_rotorRPMFact; }
     Fact* networkStatus                     () { return &_networkStatusFact; } // getter for network status
+    Fact* networkIndicatorEnabled           () { return &_networkIndicatorEnabledFact; } // getter for network indicator enable status
 
     FactGroup* gpsFactGroup                 () { return &_gpsFactGroup; }
     FactGroup* gps2FactGroup                () { return &_gps2FactGroup; }
@@ -1002,6 +1014,8 @@ signals:
     void vehicleUIDChanged              ();
     void loadProgressChanged            (float value);
 
+    void obcLogDownloadTriggeredChanged ();
+
     /// New RC channel values coming from RC_CHANNELS message
     ///     @param channelCount Number of available channels, cMaxRcChannels max
     ///     @param pwmValues -1 signals channel not available
@@ -1043,6 +1057,7 @@ signals:
     void sensorsParametersResetAck      (bool success);
     void keyFileChanged                 (QString keyFile);  // key file change signal
     void autoSigningChanged             (bool autoSigning); // auto signing setting change signal
+    void logServerUrlChanged            (QString url);      // log server url change signal
     void autopilotSigningEnabledChanged ();                 // vehicle signing status change signal
     void gcsSigningEnabledChanged       ();                 // GCS signing status change signal
 
@@ -1141,8 +1156,13 @@ private:
     // load meta data (DLB Error code Description)
     void _loadDLBMetaData();
 
-    int _obcHeartbeatCount = 0; // obc missed heartbeat counter
-    int _dlbHeartbeatCount = 0; // dlb missed heartbeat counter
+    int _obcHeartbeatCount              = 0; // obc missed heartbeat counter
+    int _dlbHeartbeatCount              = 0; // dlb missed heartbeat counter
+    int _espHeartbeatCount              = 0; // esp missed heartbeat counter
+    int _autologcounter                 = 0; // autolog missed heartbeat counter
+    int _autologtriggeredcounter        = 0; // autolog status_text missed heartbeat counter
+    bool _obcLogDownloadTriggered       = false; // autolog downloading status heartbeat counter
+
 
     // store all dlb error messages
     QVector<CompMessage*>    _compMessages;
@@ -1161,6 +1181,7 @@ private:
     secret_key_t _key;
     QString _keyFile; // key file path
     bool _autoSigning = false; // auto mavlink signing
+    QString _logServerUrl = "http://raspberrypi.local"; // log server url
     mavlink_setup_signing_t _setupSigning; // intermidiate variable to store key and timestamp
     MAV_AUTOPILOT       _firmwareType;
     MAV_TYPE            _vehicleType;
@@ -1446,6 +1467,7 @@ private:
     Fact _hobbsFact;
     Fact _throttlePctFact;
     Fact _networkStatusFact; // fact variable to store network status
+    Fact _networkIndicatorEnabledFact; // fact variable to store network indicator enable status
 //    Fact _fuelLevelFact;
     Fact _engineRPMFact;
     Fact _rotorRPMFact;
@@ -1502,6 +1524,7 @@ private:
     static const char* _hobbsFactName;
     static const char* _throttlePctFactName;
     static const char* _networkStatusFactName;
+    static const char* _networkIndicatorEnabledFactName;
 
 //    static const char*  _fuelLevelFactName;
     static const char*  _engineRPMFactName;

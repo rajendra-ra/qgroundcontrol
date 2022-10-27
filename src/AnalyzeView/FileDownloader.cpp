@@ -94,6 +94,9 @@ void FileDownloader::a_abortDownload(){
     destinationFile.remove();
 }
 void FileDownloader::startDownload(QUrl url, QString fileName){
+    if(!nam){
+        nam = new QNetworkAccessManager(); // init network manager if not already
+    }
     if(isBusy()) return; // do nothin if busy
     // get parent directory of file
     QStringList _list =  fileName.split("/");
@@ -119,7 +122,7 @@ void FileDownloader::startDownload(QUrl url, QString fileName){
 }
 void FileDownloader::startDownloadIndex(QUrl url){
     if(!nam){
-        nam = new QNetworkAccessManager(); // int network manager if not already
+        nam = new QNetworkAccessManager(); // init network manager if not already
     }
     if(isBusy()) return; // do nothing if already busy
     emit goingBusy(); // set busy

@@ -36,6 +36,9 @@ AnalyzePage {
     property var _downloadListFiles :[]
     property int _totalFiles:0
 
+    property var    _activeVehicle:         QGroundControl.multiVehicleManager.activeVehicle
+
+
     QGCPalette { id: palette; colorGroupEnabled: enabled }
 
     Component {
@@ -70,13 +73,12 @@ AnalyzePage {
                 onGoingBusy:{ }
                 onBackReady:{
                     if(_dirdownload){
-                        if(_downloadListDir.length>0){
-                        } else if(_downloadListFiles.length>0){
-                        } else {
+                        if(_downloadListDir.length && _downloadListFiles.length){
                             _totalFiles = 0;
+                            downloadProgress.value = 0.0;
                         }
                     } else {
-                        downloadProgress.value = 0.0
+                        downloadProgress.value = 0.0;
                     }
                 }
                 onIsBusyChanged:{
@@ -100,14 +102,21 @@ AnalyzePage {
                 }
 
                 onDownloadProgress:{
+                    let p = 0;
                     if(bytesTotal){
-                        downloadProgress.value = bytesReceived*100/bytesTotal;
-                        if(_dirdownload && _totalFiles){
-                            downloadProgress.value = (1-_downloadListFiles.length)*100/_totalFiles;
+                        if(_dirdownload){
+                            if(_totalFiles>0){
+                                p = ((_totalFiles-_downloadListFiles.length-1) + bytesReceived/bytesTotal)/_totalFiles;
+                            } else {
+                                p = 0;
+                            }
+                        } else {
+                            p = bytesReceived/bytesTotal;
                         }
                     } else {
-                        downloadProgress.value = 0;
+                        p = 0;
                     }
+                    downloadProgress.value = p;
                 }
             }
             RowLayout {
@@ -119,13 +128,16 @@ AnalyzePage {
 
                 TextField {
                     id:addressField
-                    property string rootUri: "http://localhost:8080/"
-                    text: "http://localhost:8080/"
-                    placeholderText: "http://localhost:8080/"
+                    text: _activeVehicle?_activeVehicle.logServerUrl:"http://raspberrypi.local"
+                    placeholderText: "Server Url"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     font.pointSize: 14
-                    onAccepted: {fileDownloader.startDownloadIndex(text);}
+                    onAccepted: {
+                        fileDownloader.startDownloadIndex(text);
+                        if(_activeVehicle)
+                            _activeVehicle.logServerUrl = text;
+                    }
                 }
                 Button {
                     id: upFolder
@@ -237,7 +249,7 @@ AnalyzePage {
                         id: refreshBtn
                         enabled:    !fileDownloader.isBusy
                         text:       qsTr("Refresh")
-                        width:      _butttonWidth
+                        width:      _butttonWidth*2
                         font.pointSize: 14
                         onClicked: {
                             fileDownloader.startDownloadIndex(addressField.text);
@@ -247,7 +259,7 @@ AnalyzePage {
                         id: downloadBtn
                         enabled:   listView1.selection.count > 0 && !fileDownloader.isBusy
                         text:       qsTr("Download")
-                        width:      _butttonWidth
+                        width:      _butttonWidth*2
                         font.pointSize: 14
                         onClicked: {
                             listView1.selection.forEach(function(rowIndex){
@@ -287,11 +299,24 @@ AnalyzePage {
                         id: cancelBtn
                         enabled:    fileDownloader.isBusy
                         text:       qsTr("Cancel")
-                        width:      _butttonWidth
+                        width:      _butttonWidth*2
                         font.pointSize: 14
                         onClicked: {
                             fileDownloader.abortDownload();
                         }
+                    }
+                    QGCButton {
+                        id: downloadTriggerOBC
+                        enabled:    _activeVehicle?true:false
+                        text:       qsTr("Auto Log Download \nTrigger")
+                        width:      _butttonWidth*2
+                        font.pointSize: 12
+                        onClicked: {
+                            _activeVehicle.obcRequestLogTrigger();
+                        }
+                    }
+                    QGCLabel {
+                        text:_activeVehicle && _activeVehicle.obcLogDownloadTriggered?qsTr("AutoLog Triggered"):"";
                     }
                 }
             }
