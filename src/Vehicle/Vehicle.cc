@@ -1132,7 +1132,7 @@ void Vehicle::_handleComponentMessage(mavlink_message_t& message)
     CompMessage* formattedmessage;          // error message to display
     QString s = "[%1]: %2";                 // template string to display on notice board
     int severity = MAV_SEVERITY_WARNING;    // severity level of error
-    const uint8_t dlb_mask = 0b001;         // dlb enable bitmask
+//    const uint8_t dlb_mask = 0b001;         // dlb enable bitmask
     uint16_t err = 0;
     switch(message.msgid)
     {
