@@ -104,7 +104,7 @@ Item {
                 onNewComponentMessage :{
                     messageText.append(formatMessage(formattedMessage))
                     //-- Hack to scroll down
-                    messageFlick.flick(0,-500)
+                    messageFlick.flick(0,-5000)
                 }
             }
 

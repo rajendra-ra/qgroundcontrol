@@ -1166,11 +1166,12 @@ void Vehicle::_handleComponentMessage(mavlink_message_t& message)
     // add message to list
     _compMessages.append(formattedmessage);
     // check if error message popup is enabled
-    if(_parameterManager->parameterExists(_defaultComponentId,"R10_COMP_EN_MSK")){
-        if (formattedmessage->severityIsError() && _parameterManager->getParameter(_defaultComponentId,"R10_COMP_EN_MSK")->rawValue().toInt() & dlb_mask) {
-            qgcApp()->showCriticalVehicleMessage(formattedmessage->getText());
-        }
-    }
+    // this is disabled because ardupilot already send it.
+//    if(_parameterManager->parameterExists(_defaultComponentId,"R10_COMP_EN_MSK")){
+//        if (formattedmessage->severityIsError() && _parameterManager->getParameter(_defaultComponentId,"R10_COMP_EN_MSK")->rawValue().toInt() & dlb_mask) {
+//            qgcApp()->showCriticalVehicleMessage(formattedmessage->getText());
+//        }
+//    }
     // send message receive signal
     emit newComponentMessage(formattedmessage->getFormatedText());
 }
