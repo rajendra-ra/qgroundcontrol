@@ -1132,14 +1132,41 @@ void Vehicle::_handleComponentMessage(mavlink_message_t& message)
     CompMessage* formattedmessage;          // error message to display
     QString s = "[%1]: %2";                 // template string to display on notice board
     int severity = MAV_SEVERITY_WARNING;    // severity level of error
-//    const uint8_t dlb_mask = 0b001;         // dlb enable bitmask
+    const uint8_t dlb_mask = 0b001;         // dlb enable bitmask
     uint16_t err = 0;
+    bool show_popup = false;
     switch(message.msgid)
     {
     case MAVLINK_MSG_ID_R10_DLB_ERROR:
+    {
         mavlink_r10_dlb_error_t dlb_error;
         mavlink_msg_r10_dlb_error_decode(&message,&dlb_error);
         err = dlb_error.ERROR_CODE;
+        // in case of ADC failure
+        if(err == DLB_ADC_FAILURE){
+            /// if interval < 1sec then:
+            ///     if popup_shown_since_time < 10secs:
+            ///         dont show popup;
+            ///     else:
+            ///         show popup;
+            ///         update popup_shown_since_time;
+            /// else:
+            ///     dont show popup;
+            /// update interval;
+
+            if(_lastADCFailureTime.secsTo(QTime::currentTime())<1){
+                if(_lastPopupTime.secsTo(QTime::currentTime())<10){
+                    show_popup = false;
+                } else {
+                    show_popup = true;
+                    _lastPopupTime = QTime::currentTime();
+                }
+            } else {
+                show_popup = false;
+            }
+            _lastADCFailureTime = QTime::currentTime();
+        }
+    }
         break;
 
     // case MAVLINK_MSG_ID_R10_VSEN_ERR:
@@ -1167,11 +1194,11 @@ void Vehicle::_handleComponentMessage(mavlink_message_t& message)
     _compMessages.append(formattedmessage);
     // check if error message popup is enabled
     // this is disabled because ardupilot already send it.
-//    if(_parameterManager->parameterExists(_defaultComponentId,"R10_COMP_EN_MSK")){
-//        if (formattedmessage->severityIsError() && _parameterManager->getParameter(_defaultComponentId,"R10_COMP_EN_MSK")->rawValue().toInt() & dlb_mask) {
-//            qgcApp()->showCriticalVehicleMessage(formattedmessage->getText());
-//        }
-//    }
+    if(_parameterManager->parameterExists(_defaultComponentId,"R10_COMP_EN_MSK")){
+        if (formattedmessage->severityIsError() && (_parameterManager->getParameter(_defaultComponentId,"R10_COMP_EN_MSK")->rawValue().toInt() & dlb_mask) && show_popup) {
+            qgcApp()->showCriticalVehicleMessage(formattedmessage->getText());
+        }
+    }
     // send message receive signal
     emit newComponentMessage(formattedmessage->getFormatedText());
 }

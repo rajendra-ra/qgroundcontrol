@@ -1429,6 +1429,9 @@ private:
     // DLB Error Code Mapping
     // `ERROR_CODE -> Description`
     QMap<uint16_t, QString> _dlbErrorCodeMetaDataMap;
+    // DLB_ERROR: ADC_FAILURE
+    QTime _lastADCFailureTime   = QTime::currentTime();
+    QTime _lastPopupTime        = QTime::currentTime().addSecs(-10);
     
     // Enum for XMLParser to check state
     // to check which element it is reading
