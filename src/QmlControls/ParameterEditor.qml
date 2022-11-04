@@ -372,7 +372,7 @@ Item {
         QGCViewDialog {
             function accept() {
                 hideDialog()
-                _activeVehicle.rebootVehicle()
+                _activeVehicle.rebootComponent(parseInt(valueField.text))
             }
             QGCFlickable {
                 anchors.fill:   parent
